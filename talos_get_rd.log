@@ -1,0 +1,151 @@
+NODE              NAMESPACE   TYPE                 ID                                                 VERSION   ALIASES
+192.168.122.188   meta        ResourceDefinition   acquireconfigspecs.v1alpha1.talos.dev              1         acquireconfigspec acs
+192.168.122.188   meta        ResourceDefinition   acquireconfigstatuses.v1alpha1.talos.dev           1         acquireconfigstatus acs
+192.168.122.188   meta        ResourceDefinition   addressspecs.net.talos.dev                         1         addressspec as
+192.168.122.188   meta        ResourceDefinition   addressstatuses.net.talos.dev                      1         address addresses addressstatus as
+192.168.122.188   meta        ResourceDefinition   adjtimestatuses.v1alpha1.talos.dev                 1         adjtimestatus as
+192.168.122.188   meta        ResourceDefinition   admissioncontrolconfigs.kubernetes.talos.dev       1         admissioncontrolconfig acc accs
+192.168.122.188   meta        ResourceDefinition   affiliates.cluster.talos.dev                       1         affiliate
+192.168.122.188   meta        ResourceDefinition   apicertificates.secrets.talos.dev                  1         apicertificate ac acs
+192.168.122.188   meta        ResourceDefinition   apiserverconfigs.kubernetes.talos.dev              1         apiserverconfig apisc apiscs
+192.168.122.188   meta        ResourceDefinition   auditpolicyconfigs.kubernetes.talos.dev            1         auditpolicyconfig apc apcs
+192.168.122.188   meta        ResourceDefinition   authorizationconfigs.kubernetes.talos.dev          1         authorizationconfig ac acs
+192.168.122.188   meta        ResourceDefinition   blockdevices.block.talos.dev                       1         blockdevice bd bds
+192.168.122.188   meta        ResourceDefinition   blocksymlinks.block.talos.dev                      1         blocksymlink bs
+192.168.122.188   meta        ResourceDefinition   bootstrapmanifestsconfigs.kubernetes.talos.dev     1         bootstrapmanifestsconfig bmc bmcs
+192.168.122.188   meta        ResourceDefinition   certsans.secrets.talos.dev                         1         certsan csan csans
+192.168.122.188   meta        ResourceDefinition   configstatuses.kubernetes.talos.dev                1         configstatus cs
+192.168.122.188   meta        ResourceDefinition   controllermanagerconfigs.kubernetes.talos.dev      1         controllermanagerconfig cmc cmcs
+192.168.122.188   meta        ResourceDefinition   cpustats.perf.talos.dev                            1         cpustat cpus
+192.168.122.188   meta        ResourceDefinition   deviceconfigspecs.net.talos.dev                    1         deviceconfigspec dcs
+192.168.122.188   meta        ResourceDefinition   devicesstatuses.runtime.talos.dev                  1         devicesstatus ds
+192.168.122.188   meta        ResourceDefinition   diagnostics.runtime.talos.dev                      1         diagnostic
+192.168.122.188   meta        ResourceDefinition   discoveredvolumes.block.talos.dev                  1         discoveredvolume dv dvs
+192.168.122.188   meta        ResourceDefinition   discoveryconfigs.cluster.talos.dev                 1         discoveryconfig dc dcs
+192.168.122.188   meta        ResourceDefinition   discoveryrefreshrequests.block.talos.dev           1         discoveryrefreshrequest drr drrs
+192.168.122.188   meta        ResourceDefinition   discoveryrefreshstatuses.block.talos.dev           1         discoveryrefreshstatus drs
+192.168.122.188   meta        ResourceDefinition   disks.block.talos.dev                              1         disk
+192.168.122.188   meta        ResourceDefinition   dnsresolvecaches.net.talos.dev                     1         dnsresolvecach dnsrc dnsrcs
+192.168.122.188   meta        ResourceDefinition   dnsupstreams.net.talos.dev                         1         dnsupstream dnsu dnsus
+192.168.122.188   meta        ResourceDefinition   endpoints.kubernetes.talos.dev                     1         endpoint
+192.168.122.188   meta        ResourceDefinition   etcdconfigs.etcd.talos.dev                         1         etcdconfig ec ecs
+192.168.122.188   meta        ResourceDefinition   etcdmembers.etcd.talos.dev                         1         etcdmember em ems
+192.168.122.188   meta        ResourceDefinition   etcdrootsecrets.secrets.talos.dev                  1         etcdrootsecret ers
+192.168.122.188   meta        ResourceDefinition   etcdsecrets.secrets.talos.dev                      1         etcdsecret es
+192.168.122.188   meta        ResourceDefinition   etcdspecs.etcd.talos.dev                           1         etcdspec es
+192.168.122.188   meta        ResourceDefinition   etcfilespecs.files.talos.dev                       1         etcfilespec efs
+192.168.122.188   meta        ResourceDefinition   etcfilestatuses.files.talos.dev                    1         etcfilestatus efs
+192.168.122.188   meta        ResourceDefinition   ethernetspecs.net.talos.dev                        1         ethernetspec es
+192.168.122.188   meta        ResourceDefinition   ethernetstatuses.net.talos.dev                     1         ethtool ethernetstatus es
+192.168.122.188   meta        ResourceDefinition   eventsinkconfigs.runtime.talos.dev                 1         eventsinkconfig esc escs
+192.168.122.188   meta        ResourceDefinition   extensionserviceconfigs.runtime.talos.dev          1         extensionserviceconfig esc escs
+192.168.122.188   meta        ResourceDefinition   extensionserviceconfigstatuses.runtime.talos.dev   1         extensionserviceconfigstatus escs
+192.168.122.188   meta        ResourceDefinition   extensionstatuses.runtime.talos.dev                1         extensions extensionstatus es
+192.168.122.188   meta        ResourceDefinition   extramanifestsconfigs.kubernetes.talos.dev         1         extramanifestsconfig emc emcs
+192.168.122.188   meta        ResourceDefinition   hardwareaddresses.net.talos.dev                    1         hardwareaddress ha has
+192.168.122.188   meta        ResourceDefinition   hostdnsconfigs.net.talos.dev                       1         hostdnsconfig hdnsc hdnscs
+192.168.122.188   meta        ResourceDefinition   hostnamespecs.net.talos.dev                        1         hostnamespec hs
+192.168.122.188   meta        ResourceDefinition   hostnamestatuses.net.talos.dev                     1         hostname hostnamestatus hs
+192.168.122.188   meta        ResourceDefinition   identities.cluster.talos.dev                       1         identity
+192.168.122.188   meta        ResourceDefinition   imagecacheconfigs.cri.talos.dev                    1         imagecacheconfig icc iccs
+192.168.122.188   meta        ResourceDefinition   infos.cluster.talos.dev                            1         info
+192.168.122.188   meta        ResourceDefinition   kernelmodulespecs.runtime.talos.dev                1         modules kernelmodulespec kms
+192.168.122.188   meta        ResourceDefinition   kernelparamdefaultspecs.runtime.talos.dev          1         kernelparamdefaultspec kpds
+192.168.122.188   meta        ResourceDefinition   kernelparamspecs.runtime.talos.dev                 1         kernelparamspec kps
+192.168.122.188   meta        ResourceDefinition   kernelparamstatuses.runtime.talos.dev              1         sysctls kernelparameters kernelparams kernelparamstatus kps
+192.168.122.188   meta        ResourceDefinition   kmsglogconfigs.runtime.talos.dev                   1         kmsglogconfig klc klcs
+192.168.122.188   meta        ResourceDefinition   kubeletconfigs.kubernetes.talos.dev                1         kubeletconfig kc kcs
+192.168.122.188   meta        ResourceDefinition   kubeletlifecycles.kubernetes.talos.dev             1         kubeletlifecycle kl kls
+192.168.122.188   meta        ResourceDefinition   kubeletsecrets.secrets.talos.dev                   1         kubeletsecret ks
+192.168.122.188   meta        ResourceDefinition   kubeletspecs.kubernetes.talos.dev                  1         kubeletspec ks
+192.168.122.188   meta        ResourceDefinition   kubeprismconfigs.kubernetes.talos.dev              1         kubeprismconfig kpc kpcs
+192.168.122.188   meta        ResourceDefinition   kubeprismendpoints.kubernetes.talos.dev            1         kubeprismendpoint kpe kpes
+192.168.122.188   meta        ResourceDefinition   kubeprismstatuses.kubernetes.talos.dev             1         kubeprismstatus kps
+192.168.122.188   meta        ResourceDefinition   kubernetesaccessconfigs.cluster.talos.dev          1         kubernetesaccessconfig kac kacs
+192.168.122.188   meta        ResourceDefinition   kubernetesdynamiccerts.secrets.talos.dev           1         kubernetesdynamiccert kdc kdcs
+192.168.122.188   meta        ResourceDefinition   kubernetesrootsecrets.secrets.talos.dev            1         kubernetesrootsecret krs
+192.168.122.188   meta        ResourceDefinition   kubernetessecrets.secrets.talos.dev                1         kubernetessecret ks
+192.168.122.188   meta        ResourceDefinition   kubespanconfigs.kubespan.talos.dev                 1         kubespanconfig ksc kscs
+192.168.122.188   meta        ResourceDefinition   kubespanendpoints.kubespan.talos.dev               1         kubespanendpoint kse kses
+192.168.122.188   meta        ResourceDefinition   kubespanidentities.kubespan.talos.dev              1         kubespanidentity ksi ksis
+192.168.122.188   meta        ResourceDefinition   kubespanpeerspecs.kubespan.talos.dev               1         kubespanpeerspec ksps
+192.168.122.188   meta        ResourceDefinition   kubespanpeerstatuses.kubespan.talos.dev            1         kubespanpeerstatus ksps
+192.168.122.188   meta        ResourceDefinition   linkrefreshes.net.talos.dev                        1         linkrefresh lr lrs
+192.168.122.188   meta        ResourceDefinition   linkspecs.net.talos.dev                            1         linkspec ls
+192.168.122.188   meta        ResourceDefinition   linkstatuses.net.talos.dev                         1         link links linkstatus ls
+192.168.122.188   meta        ResourceDefinition   machineconfigs.config.talos.dev                    1         machineconfig mc mcs
+192.168.122.188   meta        ResourceDefinition   machineresetsignals.runtime.talos.dev              1         machineresetsignal mrs
+192.168.122.188   meta        ResourceDefinition   machinestatuses.runtime.talos.dev                  1         machinestatus ms
+192.168.122.188   meta        ResourceDefinition   machinetypes.config.talos.dev                      1         machinetype mt mts
+192.168.122.188   meta        ResourceDefinition   maintenancerootsecrets.secrets.talos.dev           1         maintenancerootsecret mrs
+192.168.122.188   meta        ResourceDefinition   maintenanceservicecertificates.secrets.talos.dev   1         maintenanceservicecertificate msc mscs
+192.168.122.188   meta        ResourceDefinition   maintenanceserviceconfigs.runtime.talos.dev        1         maintenanceserviceconfig msc mscs
+192.168.122.188   meta        ResourceDefinition   maintenanceservicerequests.runtime.talos.dev       1         maintenanceservicerequest msr msrs
+192.168.122.188   meta        ResourceDefinition   manifests.kubernetes.talos.dev                     1         manifest
+192.168.122.188   meta        ResourceDefinition   manifeststatuses.kubernetes.talos.dev              1         manifeststatus ms
+192.168.122.188   meta        ResourceDefinition   members.cluster.talos.dev                          1         member
+192.168.122.188   meta        ResourceDefinition   memorymodules.hardware.talos.dev                   1         memorymodules ram memorymodule mm mms
+192.168.122.188   meta        ResourceDefinition   memorystats.perf.talos.dev                         1         memorystat ms
+192.168.122.188   meta        ResourceDefinition   metakeys.runtime.talos.dev                         1         meta metakey mk mks
+192.168.122.188   meta        ResourceDefinition   metaloads.runtime.talos.dev                        1         metaload ml mls
+192.168.122.188   meta        ResourceDefinition   mountrequests.block.talos.dev                      1         mountrequest mr mrs
+192.168.122.188   meta        ResourceDefinition   mountstatuses.block.talos.dev                      1         mountstatus ms
+192.168.122.188   meta        ResourceDefinition   mountstatuses.runtime.talos.dev                    1         mounts
+192.168.122.188   meta        ResourceDefinition   namespaces.meta.cosi.dev                           1         ns namespace
+192.168.122.188   meta        ResourceDefinition   networkstatuses.net.talos.dev                      1         netstatus netstatuses networkstatus ns
+192.168.122.188   meta        ResourceDefinition   nftableschains.net.talos.dev                       1         chain chains nftableschain ntc ntcs
+192.168.122.188   meta        ResourceDefinition   nodeaddresses.net.talos.dev                        1         nodeaddress na nas
+192.168.122.188   meta        ResourceDefinition   nodeaddressfilters.net.talos.dev                   1         nodeaddressfilter naf nafs
+192.168.122.188   meta        ResourceDefinition   nodeaddresssortalgorithms.net.talos.dev            1         nodeaddresssortalgorithm nasa nasas
+192.168.122.188   meta        ResourceDefinition   nodeannotationspecs.k8s.talos.dev                  1         nodeannotationspec nas
+192.168.122.188   meta        ResourceDefinition   nodecordonedspecs.k8s.talos.dev                    1         nodecordonedspec ncs
+192.168.122.188   meta        ResourceDefinition   nodeipconfigs.kubernetes.talos.dev                 1         nodeipconfig nipc nipcs
+192.168.122.188   meta        ResourceDefinition   nodeips.kubernetes.talos.dev                       1         nodeip nip nips
+192.168.122.188   meta        ResourceDefinition   nodelabelspecs.k8s.talos.dev                       1         nodelabelspec nls
+192.168.122.188   meta        ResourceDefinition   nodenames.kubernetes.talos.dev                     1         nodename
+192.168.122.188   meta        ResourceDefinition   nodestatuses.kubernetes.talos.dev                  1         nodestatus ns
+192.168.122.188   meta        ResourceDefinition   nodetaintspecs.k8s.talos.dev                       1         nodetaintspec nts
+192.168.122.188   meta        ResourceDefinition   operatorspecs.net.talos.dev                        1         operatorspec os
+192.168.122.188   meta        ResourceDefinition   osrootsecrets.secrets.talos.dev                    1         osrootsecret osrs
+192.168.122.188   meta        ResourceDefinition   pcidevices.hardware.talos.dev                      1         devices device pcidevice pcid pcids
+192.168.122.188   meta        ResourceDefinition   pcidriverrebindconfigs.runtime.talos.dev           1         pcidriverrebindconfig pcidrc pcidrcs
+192.168.122.188   meta        ResourceDefinition   pcidriverrebindstatuses.runtime.talos.dev          1         pcidriverrebinds pcidriverrebindstatus pcidrs
+192.168.122.188   meta        ResourceDefinition   pcrstatuses.hardware.talos.dev                     1         pcrstatus pcrs
+192.168.122.188   meta        ResourceDefinition   pkistatuses.etcd.talos.dev                         1         pkistatus pkis
+192.168.122.188   meta        ResourceDefinition   platformmetadatas.talos.dev                        1         platformmetadata pm pms
+192.168.122.188   meta        ResourceDefinition   probespecs.net.talos.dev                           1         probespec ps
+192.168.122.188   meta        ResourceDefinition   probestatuses.net.talos.dev                        1         probe probes probestatus ps
+192.168.122.188   meta        ResourceDefinition   processors.hardware.talos.dev                      1         cpus cpu processor
+192.168.122.188   meta        ResourceDefinition   registryconfigs.cri.talos.dev                      1         registryconfig rc rcs
+192.168.122.188   meta        ResourceDefinition   resolverspecs.net.talos.dev                        1         resolverspec rs
+192.168.122.188   meta        ResourceDefinition   resolverstatuses.net.talos.dev                     1         resolvers resolverstatus rs
+192.168.122.188   meta        ResourceDefinition   resourcedefinitions.meta.cosi.dev                  1         api-resources resourcedefinition rd rds
+192.168.122.188   meta        ResourceDefinition   routespecs.net.talos.dev                           1         routespec rs
+192.168.122.188   meta        ResourceDefinition   routestatuses.net.talos.dev                        1         route routes routestatus rs
+192.168.122.188   meta        ResourceDefinition   schedulerconfigs.kubernetes.talos.dev              1         schedulerconfig sc scs
+192.168.122.188   meta        ResourceDefinition   seccompprofiles.cri.talos.dev                      1         seccompprofile sp sps
+192.168.122.188   meta        ResourceDefinition   secretstatuses.kubernetes.talos.dev                1         secretstatus ss
+192.168.122.188   meta        ResourceDefinition   securitystates.talos.dev                           1         securitystate ss
+192.168.122.188   meta        ResourceDefinition   services.v1alpha1.talos.dev                        1         svc service
+192.168.122.188   meta        ResourceDefinition   siderolinkconfigs.siderolink.talos.dev             1         siderolinkconfig sc scs
+192.168.122.188   meta        ResourceDefinition   siderolinkstatuses.siderolink.talos.dev            1         siderolinkstatus ss
+192.168.122.188   meta        ResourceDefinition   siderolinktunnels.siderolink.talos.dev             1         siderolinktunnel st sts
+192.168.122.188   meta        ResourceDefinition   staticpods.kubernetes.talos.dev                    1         staticpod sp sps
+192.168.122.188   meta        ResourceDefinition   staticpodserverstatuses.kubernetes.talos.dev       1         staticpodserverstatus spss
+192.168.122.188   meta        ResourceDefinition   staticpodstatuses.kubernetes.talos.dev             1         podstatus staticpodstatus sps
+192.168.122.188   meta        ResourceDefinition   systemdisks.block.talos.dev                        1         systemdisk sd sds
+192.168.122.188   meta        ResourceDefinition   systeminformations.hardware.talos.dev              1         systeminformation systeminformation si sis
+192.168.122.188   meta        ResourceDefinition   timeserverspecs.net.talos.dev                      1         timeserverspec tss
+192.168.122.188   meta        ResourceDefinition   timeserverstatuses.net.talos.dev                   1         timeserver timeservers timeserverstatus tss
+192.168.122.188   meta        ResourceDefinition   timestatuses.v1alpha1.talos.dev                    1         timestatus ts
+192.168.122.188   meta        ResourceDefinition   trustdcertificates.secrets.talos.dev               1         trustdcertificate tc tcs
+192.168.122.188   meta        ResourceDefinition   uniquemachinetokens.runtime.talos.dev              1         uniquemachinetoken umt umts
+192.168.122.188   meta        ResourceDefinition   userdiskconfigstatuses.block.talos.dev             1         userdiskconfigstatus udcs
+192.168.122.188   meta        ResourceDefinition   versions.runtime.talos.dev                         1         version
+192.168.122.188   meta        ResourceDefinition   volumeconfigs.block.talos.dev                      1         volumeconfig vc vcs
+192.168.122.188   meta        ResourceDefinition   volumelifecycles.block.talos.dev                   1         volumelifecycle vl vls
+192.168.122.188   meta        ResourceDefinition   volumemountrequests.block.talos.dev                1         volumemountrequest vmr vmrs
+192.168.122.188   meta        ResourceDefinition   volumemountstatuses.block.talos.dev                1         volumemountstatus vms
+192.168.122.188   meta        ResourceDefinition   volumestatuses.block.talos.dev                     1         volumestatus vs
+192.168.122.188   meta        ResourceDefinition   watchdogtimerconfigs.runtime.talos.dev             1         watchdogtimerconfig wtc wtcs
+192.168.122.188   meta        ResourceDefinition   watchdogtimerstatuses.runtime.talos.dev            1         watchdogtimerstatus wts
