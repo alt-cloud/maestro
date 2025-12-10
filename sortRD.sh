@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dir=getSubcommands
+dir="/tmp/getSubcommands_$$"
 mkdir $dir
 rm -f $dir/*
 
@@ -21,3 +21,4 @@ do
   echo "${NS}:"
   sed -e 's/^/  - /' $NS
 done
+rm -rf $dir
