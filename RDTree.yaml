@@ -1,0 +1,168 @@
+block:
+  - blockdevice bd bds
+  - blocksymlink bs
+  - discoveredvolume dv dvs
+  - discoveryrefreshrequest drr drrs
+  - discoveryrefreshstatus drs
+  - disk
+  - mountrequest mr mrs
+  - mountstatus ms
+  - systemdisk sd sds
+  - userdiskconfigstatus udcs
+  - volumeconfig vc vcs
+  - volumelifecycle vl vls
+  - volumemountrequest vmr vmrs
+  - volumemountstatus vms
+  - volumestatus vs
+cluster:
+  - affiliate
+  - discoveryconfig dc dcs
+  - identity
+  - info
+  - kubernetesaccessconfig kac kacs
+  - member
+config:
+  - machineconfig mc mcs
+  - machinetype mt mts
+cri:
+  - imagecacheconfig icc iccs
+  - registryconfig rc rcs
+  - seccompprofile sp sps
+etcd:
+  - etcdconfig ec ecs
+  - etcdmember em ems
+  - etcdspec es
+  - pkistatus pkis
+files:
+  - etcfilespec efs
+  - etcfilestatus efs
+hardware:
+  - memorymodules ram memorymodule mm mms
+  - devices device pcidevice pcid pcids
+  - pcrstatus pcrs
+  - cpus cpu processor
+  - systeminformation systeminformation si sis
+k8s:
+  - nodeannotationspec nas
+  - nodecordonedspec ncs
+  - nodelabelspec nls
+  - nodetaintspec nts
+kubernetes:
+  - admissioncontrolconfig acc accs
+  - apiserverconfig apisc apiscs
+  - auditpolicyconfig apc apcs
+  - authorizationconfig ac acs
+  - bootstrapmanifestsconfig bmc bmcs
+  - configstatus cs
+  - controllermanagerconfig cmc cmcs
+  - endpoint
+  - extramanifestsconfig emc emcs
+  - kubeletconfig kc kcs
+  - kubeletlifecycle kl kls
+  - kubeletspec ks
+  - kubeprismconfig kpc kpcs
+  - kubeprismendpoint kpe kpes
+  - kubeprismstatus kps
+  - manifest
+  - manifeststatus ms
+  - nodeipconfig nipc nipcs
+  - nodeip nip nips
+  - nodename
+  - nodestatus ns
+  - schedulerconfig sc scs
+  - secretstatus ss
+  - staticpod sp sps
+  - staticpodserverstatus spss
+  - podstatus staticpodstatus sps
+kubespan:
+  - kubespanconfig ksc kscs
+  - kubespanendpoint kse kses
+  - kubespanidentity ksi ksis
+  - kubespanpeerspec ksps
+  - kubespanpeerstatus ksps
+meta:
+  - ns namespace
+  - api-resources resourcedefinition rd rds
+net:
+  - addressspec as
+  - address addresses addressstatus as
+  - deviceconfigspec dcs
+  - dnsresolvecach dnsrc dnsrcs
+  - dnsupstream dnsu dnsus
+  - ethernetspec es
+  - ethtool ethernetstatus es
+  - hardwareaddress ha has
+  - hostdnsconfig hdnsc hdnscs
+  - hostnamespec hs
+  - hostname hostnamestatus hs
+  - linkrefresh lr lrs
+  - linkspec ls
+  - link links linkstatus ls
+  - netstatus netstatuses networkstatus ns
+  - chain chains nftableschain ntc ntcs
+  - nodeaddress na nas
+  - nodeaddressfilter naf nafs
+  - nodeaddresssortalgorithm nasa nasas
+  - operatorspec os
+  - probespec ps
+  - probe probes probestatus ps
+  - resolverspec rs
+  - resolvers resolverstatus rs
+  - routespec rs
+  - route routes routestatus rs
+  - timeserverspec tss
+  - timeserver timeservers timeserverstatus tss
+perf:
+  - cpustat cpus
+  - memorystat ms
+runtime:
+  - devicesstatus ds
+  - diagnostic
+  - eventsinkconfig esc escs
+  - extensionserviceconfig esc escs
+  - extensionserviceconfigstatus escs
+  - extensions extensionstatus es
+  - modules kernelmodulespec kms
+  - kernelparamdefaultspec kpds
+  - kernelparamspec kps
+  - sysctls kernelparameters kernelparams kernelparamstatus kps
+  - kmsglogconfig klc klcs
+  - machineresetsignal mrs
+  - machinestatus ms
+  - maintenanceserviceconfig msc mscs
+  - maintenanceservicerequest msr msrs
+  - meta metakey mk mks
+  - metaload ml mls
+  - mounts
+  - pcidriverrebindconfig pcidrc pcidrcs
+  - pcidriverrebinds pcidriverrebindstatus pcidrs
+  - uniquemachinetoken umt umts
+  - version
+  - watchdogtimerconfig wtc wtcs
+  - watchdogtimerstatus wts
+secrets:
+  - apicertificate ac acs
+  - certsan csan csans
+  - etcdrootsecret ers
+  - etcdsecret es
+  - kubeletsecret ks
+  - kubernetesdynamiccert kdc kdcs
+  - kubernetesrootsecret krs
+  - kubernetessecret ks
+  - maintenancerootsecret mrs
+  - maintenanceservicecertificate msc mscs
+  - osrootsecret osrs
+  - trustdcertificate tc tcs
+siderolink:
+  - siderolinkconfig sc scs
+  - siderolinkstatus ss
+  - siderolinktunnel st sts
+talos:
+  - platformmetadata pm pms
+  - securitystate ss
+v1alpha1:
+  - acquireconfigspec acs
+  - acquireconfigstatus acs
+  - adjtimestatus as
+  - svc service
+  - timestatus ts
