@@ -22,13 +22,22 @@ cpu, cpuset, io, memory, process, swap
 
 - cluster 
 
-    * [cluster create](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-cluster-create)
+Набор команд для управления локальными кластерами на основе Docker или QEMU.
 
-    > Создает локальный кластер Kubernetes на основе Docker или QEMU.
+  * [cluster create](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-cluster-create)
+
+>     Создает локальный кластер Kubernetes на основе Docker или QEMU.
+      
+      
+      Надо тестировать.
+
+  * [cluster destroy](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-cluster-destroy)
 
       Надо тестировать.
 
-    * [cluster destroy](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-cluster-destroy)
+  * [cluster show](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-cluster-show)
 
       Надо тестировать.
+
+
 
