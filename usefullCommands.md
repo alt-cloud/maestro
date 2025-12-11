@@ -77,7 +77,7 @@ cpu, cpuset, io, memory, process, swap
 
   * [config remove](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-config-remove)
 
-  Удалить контект(ы).
+  Удалить контекcт(ы).
 
 
 
