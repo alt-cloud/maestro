@@ -243,3 +243,4 @@ cpu, cpuset, io, memory, process, swap
 
   Вывести зависимости контроллера и ресурсов как граф Graphviz. Проверяйте зависимости контроллера и ресурсов как граф Graphviz. Передайте вывод команды через программу «dot» (часть пакета graphviz) для отображения графа: talosctl inspect dependencies | dot -Tpng > graph.png
 
+- [kubeconfig](https://docs.siderolabs.com/talos/v1.11/reference/cli#)
