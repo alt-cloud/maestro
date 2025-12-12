@@ -214,3 +214,32 @@ cpu, cpuset, io, memory, process, swap
   Текуший список ресурсов для controlplane приведен в файле [talos_get_rd.log](./talos_get_rd.log).
   Дерево ресурсов приведено в файле [RDTree.yaml](./RDTree.yaml).
   Список полезных команд с примерныс вариантом вывода - в файле [usefullSubcommands.md](./usefullSubcommands.md).
+
+- [health](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-health)
+
+  Проверить состояние узла кластера.    
+
+- [image cache-create](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-image-cache-create)
+
+  Создать кэш образов в формате OCI в каталоге.
+
+- [image default](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-image-default)
+
+  Вывести список образов, используемые Talos по умолчанию.
+
+- [image list](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-image-list)
+
+  Список образов CRI.
+
+- [image pull](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-image-pull)
+
+  Загрузить образ в CRI
+
+- [inject serviceaccount](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-inject-serviceaccount)
+
+  Внедрить ServiceAccount API Talos в манифесты Kubernetes.
+
+- [inspect dependencies](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-inspect-dependencies)
+
+  Вывести зависимости контроллера и ресурсов как граф Graphviz. Проверяйте зависимости контроллера и ресурсов как граф Graphviz. Передайте вывод команды через программу «dot» (часть пакета graphviz) для отображения графа: talosctl inspect dependencies | dot -Tpng > graph.png
+
