@@ -84,17 +84,17 @@ cpu, cpuset, io, memory, process, swap
 
   Провести тест kubernetes на соответствие стандартам (около 400 тесов из 5000).
 
-  - [containers](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-containers)
+- [containers](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-containers)
 
-    Вывести список контейнеров.
+  Вывести список контейнеров.
 
 - [copy](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-copy)
 
   Скопировать данные с узла. Создает архив .tar.gz на узле, начиная с пути к источнику, и передает его обратно клиенту. Если для локального пути указан символ '-', архив выводится в стандартный вывод. В противном случае архив извлекается в локальный путь, который должен быть пустой директорией, или talosctl создает директорию, если локальный путь не существует. Команда не сохраняет права собственности и режим доступа к файлам в режиме извлечения, в то время как при потоковой передаче архива .tar сохраняются права собственности и разрешения.
 
-  - [dashboard](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-dashboard)
+- [dashboard](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-dashboard)
 
-    Отображает панель мониторинга указанного узла кластера с обзором узлов, журналами и метриками в реальном времени.
+  Отображает панель мониторинга указанного узла кластера с обзором узлов, журналами и метриками в реальном времени.
 
 - [dmesg](https://docs.siderolabs.com/talos/v1.11/reference/cli#talosctl-dmesg)
 
