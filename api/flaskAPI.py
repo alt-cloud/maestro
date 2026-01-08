@@ -1,3 +1,4 @@
+#!/bin/python3
 from flask import Flask, request, jsonify
 import subprocess
 import shlex
@@ -29,7 +30,7 @@ def talosctl():
 # - имя текущего активного кластер contaxt
 #
 # Проаеряется наличие узлов, полученных командой nmap в списке кластеров
-# Усли узел не входит ни в один из кластеров, он добавляется в кластер ClusterOfLostNodes
+# Если узел не входит ни в один из кластеров, он добавляется в кластер NULL
 # с IP-адресом или DNS именем в элемент nodes и если узел просушиавает порт 6443 в элемент endpoints
 #
 # Полученный  спсиок кластеров возвращается в ответ на запрос в формате
@@ -139,10 +140,10 @@ def nodeClusterName(configs, node):
   return ''
 
 # Функции передается результат функции configTree (configs) и результат функции nodesTree (nodes)
-# Узлы (nodes), отсутствующие в configTree добавляются в виртуальный кластер ClusterOfLostNodes
+# Узлы (nodes), отсутствующие в configTree добавляются в виртуальный кластер NULL
 def addLostNodesToConfigTree(configs, nodes):
   ret = configs
-  unknownClusterName= 'ClusterOfLostNodes'
+  unknownClusterName= 'NULL'
   for ip in nodes:
     node = nodes[ip]
     nameName = node['dns'] if len(node['dns']) > 0  else node['ip']
@@ -151,8 +152,8 @@ def addLostNodesToConfigTree(configs, nodes):
       ret['contexts'][unknownClusterName] = {'endpoints': [], 'nodes': []}
       if node['kubeState'] == 'open':
         ret['contexts'][unknownClusterName]['endpoints'].append(nameName)
-      # if node['apidState'] == 'open':
-      if node['apidState'] == 'open' or True:
+      if node['apidState'] == 'open':
+      # if node['apidState'] == 'open' or True:
         ret['contexts'][unknownClusterName]['nodes'].append(nameName)
   return ret
 
