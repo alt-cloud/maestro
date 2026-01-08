@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-// import { registerAppBarAction } from '@kinvolk/headlamp-plugin/lib';
-
-// Below are some imports you may want to use.
-//   See README.md for links to plugin development documentation.
-// import { Headlamp, K8s, useTranslation } from '@kinvolk/headlamp-plugin/lib';
-// import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
-// import { K8s } from '@kinvolk/headlamp-plugin/lib/K8s';
-// import { Typography } from '@mui/material';
-
-// registerAppBarAction(<span>Hello from maestro</span>);
-
 // Example of using i18n (internationalization):
 // function MyComponent() {
 //   const { t } = useTranslation();
@@ -57,9 +46,6 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-import yamlText from './manifests/config.yaml?raw';
-import * as yaml from 'js-yaml';
-
 interface Cluster {
   id: number;
   name: string;
@@ -72,28 +58,38 @@ interface Column {
 }
 
 const columns: Column[] = [
-  { id: 'name', label: 'Name', sortable: true }
+  { id: 'currentContext', label: 'Current', sortable: true },
+  { id: 'clusterName', label: 'ClusterName', sortable: true },
+  { id: 'controlplanes', label: 'Controlplanes', sortable: false },
+  { id: 'workers', label: 'Workers', sortable: false }
 ];
 
-async function loadYamlByName(fileName: string) {
-  if (yamlFiles[fileName]) {
-    const text = await yamlFiles[fileName]();
-    return yaml.load(text);
-  }
-  throw new Error(`Unknown YAML file: ${fileName}`);
-  }
+function NodesLinks(pars) {
+//   alert(JSON.stringify(pars))
+  return (
+    <TableCell sx={{ verticalAlign: 'top', whiteSpace: 'pre-line' }}>
+      {pars.nodes.map((node, index) => (
+        <><Link key={node} to="/maestro/node?cluster={pars.clusterName}&node={node}&type={pars.type}" >{node}</Link><br /></>
+      ))}
+    </TableCell>
+  );
+}
 
 function ClusterTable() {
-  const fileName = '.kube/config';
-  const data = yaml.load(fileName);
-  alert(data);
   const [rows, setRows] = useState<Cluster[]>([
-    { id: 1, name: <Link to="/maestro/cluster/Maestro">admin@Maestro</Link> }
+    {
+      id: "Maestro",
+      currentContext: '*',
+      clusterName: 'Maestro',
+      controlplanes: ["192.168.122.33"],
+      workers: ["192.168.122.33", "192.168.122.87"]
+    },
+    { id: "Cluster1", currentContext: '', clusterName: 'Cluster1',  'controlplanes': [], 'workers': []},
+    { id: "NULL", currentContext: '', clusterName: 'NULL',  'controlplanes': [], 'workers': ["192.168.122.1"]},
   ]);
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [orderBy, setOrderBy] = useState<keyof Cluster>('name');
+  const [orderBy, setOrderBy] = useState<keyof Cluster>('id');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -145,9 +141,10 @@ function ClusterTable() {
           <TableBody>
             {paginatedRows.map(row => (
               <TableRow key={row.id}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.age}</TableCell>
-                <TableCell>{row.email}</TableCell>
+                <TableCell sx={{ verticalAlign: 'top' }}>{row.currentContext}</TableCell>
+                <TableCell sx={{ verticalAlign: 'top' }}>{row.clusterName}</TableCell>
+                <NodesLinks clusterName={row.clusterName} nodes={row.controlplanes} type='controlplane'/>
+                <NodesLinks clusterName={row.clusterName} nodes={row.workers} type='worker'/>
               </TableRow>
             ))}
           </TableBody>
