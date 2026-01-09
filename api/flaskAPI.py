@@ -171,6 +171,7 @@ def getListClusters(configs):
     clusterInfo = configs['contexts'][clusterName]
     retRow['currentContext'] = ( clusterName == context)
     retRow['clusterName'] = clusterName
+    retRow['id'] = clusterName
     endpoints = clusterInfo['endpoints'] if 'endpoints' in clusterInfo else []
     retRow['controlplanes'] = endpoints
     nodes = clusterInfo['nodes'] if 'nodes' in clusterInfo else []
