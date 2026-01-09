@@ -27,55 +27,9 @@ import {
   registerSidebarEntry,
   registerSidebarEntryFilter,
 } from '@kinvolk/headlamp-plugin/lib';
-import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
-import Typography from '@mui/material/Typography';
 import React from 'react';
 import MaestroIcon from './maestro.svg';
-
-import { useState } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TablePagination,
-  TableSortLabel
-} from '@mui/material';
-import { Link } from 'react-router-dom';
-
-interface Cluster {
-  id: number;
-  name: string;
-}
-
-interface Column {
-  id: keyof Cluster;
-  label: string;
-  sortable?: boolean;
-}
-
-const columns: Column[] = [
-  { id: 'currentContext', label: 'Current', sortable: true },
-  { id: 'clusterName', label: 'ClusterName', sortable: true },
-  { id: 'controlplanes', label: 'Controlplanes', sortable: false },
-  { id: 'workers', label: 'Workers', sortable: false }
-];
-
-function NodesLinks(pars) {
-//   alert(JSON.stringify(pars))
-  return (
-    <TableCell sx={{ verticalAlign: 'top', whiteSpace: 'pre-line' }}>
-      {pars.nodes.map((node, index) => (
-        <><Link key={node} to="/maestro/node?cluster={pars.clusterName}&node={node}&type={pars.type}" >{node}</Link><br /></>
-      ))}
-    </TableCell>
-  );
-}
-
-import MainPage from './MainPage';
+import MaestroMainPage from './MaestroMainPage';
 
 // Add an entry to the home sidebar (not in cluster).
 registerSidebarEntry({
@@ -98,7 +52,7 @@ registerRoute({
   name: 'maestro',
   exact: true,
   component: () => (
-      <MainPage/>
+      <MaestroMainPage enabled={true} />
   ),
 });
 // Adds a completely new sidebar + entry because the sidebar "myplugin" does not exist.
