@@ -1,0 +1,682 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "loop0",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop0",
+        "generation": 2,
+        "major": 7,
+        "minor": 0,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "loop1",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop1",
+        "generation": 2,
+        "major": 7,
+        "minor": 1,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "loop2",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop2",
+        "generation": 2,
+        "major": 7,
+        "minor": 2,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "loop3",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop3",
+        "generation": 2,
+        "major": 7,
+        "minor": 3,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "loop4",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop4",
+        "generation": 2,
+        "major": 7,
+        "minor": 4,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "loop5",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop5",
+        "generation": 2,
+        "major": 7,
+        "minor": 5,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "loop6",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop6",
+        "generation": 2,
+        "major": 7,
+        "minor": 6,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "loop7",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop7",
+        "generation": 2,
+        "major": 7,
+        "minor": 7,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "sr0",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0/block/sr0",
+        "generation": 2,
+        "major": 11,
+        "minor": 0,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "vda",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 3
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda",
+        "generation": 3,
+        "major": 253,
+        "minor": 0,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "vda1",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda1",
+        "generation": 2,
+        "major": 253,
+        "minor": 1,
+        "parent": "vda",
+        "partitionName": "EFI",
+        "partitionNumber": 1,
+        "type": "partition"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "vda2",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda2",
+        "generation": 2,
+        "major": 253,
+        "minor": 2,
+        "parent": "vda",
+        "partitionName": "BIOS",
+        "partitionNumber": 2,
+        "type": "partition"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "vda3",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda3",
+        "generation": 2,
+        "major": 253,
+        "minor": 3,
+        "parent": "vda",
+        "partitionName": "BOOT",
+        "partitionNumber": 3,
+        "type": "partition"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "vda4",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda4",
+        "generation": 2,
+        "major": 253,
+        "minor": 4,
+        "parent": "vda",
+        "partitionName": "META",
+        "partitionNumber": 4,
+        "type": "partition"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "vda5",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda5",
+        "generation": 2,
+        "major": 253,
+        "minor": 5,
+        "parent": "vda",
+        "partitionName": "STATE",
+        "partitionNumber": 5,
+        "type": "partition"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "vda6",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda6",
+        "generation": 2,
+        "major": 253,
+        "minor": 6,
+        "parent": "vda",
+        "partitionName": "EPHEMERAL",
+        "partitionNumber": 6,
+        "type": "partition"
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "loop0",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop0",
+        "generation": 2,
+        "major": 7,
+        "minor": 0,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "loop1",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop1",
+        "generation": 2,
+        "major": 7,
+        "minor": 1,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "loop2",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop2",
+        "generation": 2,
+        "major": 7,
+        "minor": 2,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "loop3",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop3",
+        "generation": 2,
+        "major": 7,
+        "minor": 3,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "loop4",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop4",
+        "generation": 2,
+        "major": 7,
+        "minor": 4,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "loop5",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop5",
+        "generation": 2,
+        "major": 7,
+        "minor": 5,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "loop6",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop6",
+        "generation": 2,
+        "major": 7,
+        "minor": 6,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "loop7",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/virtual/block/loop7",
+        "generation": 2,
+        "major": 7,
+        "minor": 7,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "sr0",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0/block/sr0",
+        "generation": 2,
+        "major": 11,
+        "minor": 0,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 3
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda",
+        "generation": 3,
+        "major": 253,
+        "minor": 0,
+        "type": "disk"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda1",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda1",
+        "generation": 2,
+        "major": 253,
+        "minor": 1,
+        "parent": "vda",
+        "partitionName": "EFI",
+        "partitionNumber": 1,
+        "type": "partition"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda2",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda2",
+        "generation": 2,
+        "major": 253,
+        "minor": 2,
+        "parent": "vda",
+        "partitionName": "BIOS",
+        "partitionNumber": 2,
+        "type": "partition"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda3",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda3",
+        "generation": 2,
+        "major": 253,
+        "minor": 3,
+        "parent": "vda",
+        "partitionName": "BOOT",
+        "partitionNumber": 3,
+        "type": "partition"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda4",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda4",
+        "generation": 2,
+        "major": 253,
+        "minor": 4,
+        "parent": "vda",
+        "partitionName": "META",
+        "partitionNumber": 4,
+        "type": "partition"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda5",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda5",
+        "generation": 2,
+        "major": 253,
+        "minor": 5,
+        "parent": "vda",
+        "partitionName": "STATE",
+        "partitionNumber": 5,
+        "type": "partition"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda6",
+        "namespace": "runtime",
+        "owner": "block.DevicesController",
+        "phase": "running",
+        "type": "BlockDevices.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "devicePath": "/sys/devices/pci0000:00/0000:00:02.3/0000:04:00.0/virtio3/block/vda/vda6",
+        "generation": 2,
+        "major": 253,
+        "minor": 6,
+        "parent": "vda",
+        "partitionName": "EPHEMERAL",
+        "partitionNumber": 6,
+        "type": "partition"
+      }
+    }
+  ]
+}
