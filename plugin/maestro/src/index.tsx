@@ -28,8 +28,12 @@ import {
   registerSidebarEntryFilter,
 } from '@kinvolk/headlamp-plugin/lib';
 import React from 'react';
+import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
+import Typography from '@mui/material/Typography';
+
 import MaestroIcon from './maestro.svg';
 import MaestroMainPage from './MaestroMainPage';
+import GetBlockBlockDevice from './get/block/blockdevice/Page';
 
 // Add an entry to the home sidebar (not in cluster).
 registerSidebarEntry({
@@ -55,14 +59,16 @@ registerRoute({
       <MaestroMainPage enabled={true} />
   ),
 });
+
 // Adds a completely new sidebar + entry because the sidebar "myplugin" does not exist.
 registerSidebarEntry({
-  name: 'backtoclusters',
-  label: 'Back to Clusters',
+  name: 'backtoroot',
+  label: 'Back to /',
   url: '/',
   icon: 'mdi:hexagon',
   sidebar: 'myplugin',
 });
+
 // Adds a entry to the recently created sidebar "maestro".
 registerSidebarEntry({
   name: 'maestro',
@@ -72,3 +78,80 @@ registerSidebarEntry({
   sidebar: 'myplugin',
 });
 
+// GET Tree
+registerRoute({
+  path: '/maestro/get',
+  sidebar: {
+    item: 'maestro',
+    sidebar: 'myplugin',
+  },
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_get',
+//   id: 'maestro_get',
+  exact: true,
+  component: () => (
+    <SectionBox title="Talosctl get page" textAlign="center" paddingTop={2}>
+      <Typography>TALOSCTL GET PAGE</Typography>
+    </SectionBox>
+  ),
+});
+registerSidebarEntry({
+  parent: null,
+  name: 'get',
+  label: 'GET',
+  url: '/maestro/get',
+  icon: 'MaestroIcon',
+  sidebar: 'myplugin',
+});
+
+
+// GET/BLOCK Tree
+registerRoute({
+  path: '/maestro/get/block',
+  sidebar: {
+    item: 'maestro',
+    sidebar: 'myplugin',
+  },
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_get_block',
+  exact: true,
+  component: () => (
+    <SectionBox title="Talosctl get/block page" textAlign="center" paddingTop={2}>
+      <Typography>TALOSCTL GET/BLOCK PAGE</Typography>
+    </SectionBox>
+  ),
+});
+registerSidebarEntry({
+//   parent: '/maestro/get',
+  name: 'block',
+  label: 'BLOCK',
+  url: '/maestro/get/block',
+  icon: 'MaestroIcon',
+  sidebar: 'myplugin',
+});
+
+// GET/BLOCK/BLOCKDEVICE Tree
+registerRoute({
+  path: '/maestro/get/block/blockdevice',
+  sidebar: {
+    item: 'maestro',
+    sidebar: 'myplugin',
+  },
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_get_block_blockdevice',
+  exact: true,
+  component: () => (
+    <GetBlockBlockDevice/>
+  ),
+});
+registerSidebarEntry({
+//   parent: '/maestro/get',
+  name: 'blockdevice',
+  label: 'BLOCKDEVICE',
+  url: '/maestro/get/block/blockdevice',
+  icon: 'MaestroIcon',
+  sidebar: 'myplugin',
+});
