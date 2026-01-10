@@ -37,7 +37,7 @@ function NodesLinks(pars) {
   return (
     <TableCell sx={{ verticalAlign: 'top', whiteSpace: 'pre-line' }}>
       {pars.nodes.map((node, index) => (
-        <><Link key={node} to="/maestro/node?cluster={pars.clusterName}&node={node}&type={pars.type}" >{node}</Link><br /></>
+        <><Link key={node} to="/maestro/get/block/blockdevice?cluster={pars.clusterName}&node={node}&type={pars.type}" >{node}</Link><br /></>
       ))}
     </TableCell>
   );
@@ -155,6 +155,7 @@ const MaestroMainPage: React.FC<{ enabled: boolean }> = ({ enabled }) => {
     { id: "Cluster1", currentContext: '', clusterName: 'Cluster1',  'controlplanes': [], 'workers': []},
     { id: "NULL", currentContext: '', clusterName: 'NULL',  'controlplanes': [], 'workers': ["192.168.122.1"]},
   ]);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [orderBy, setOrderBy] = useState<keyof Cluster>('id');
