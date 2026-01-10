@@ -8,16 +8,16 @@
         "owner": "time.AdjtimeStatusController",
         "phase": "running",
         "type": "AdjtimeStatuses.v1alpha1.talos.dev",
-        "updated": "2026-01-10T18:30:30Z",
-        "version": 10745
+        "updated": "2026-01-10T20:20:00Z",
+        "version": 10964
       },
       "node": "192.168.122.33",
       "spec": {
         "constant": 7,
         "estError": "0s",
-        "frequencyAdjustmentRatio": 0.9999844689788818,
-        "maxError": "397.5ms",
-        "offset": "-2.37092ms",
+        "frequencyAdjustmentRatio": 0.9999832515411377,
+        "maxError": "98.5ms",
+        "offset": "-22.708988ms",
         "state": "TIME_OK",
         "status": "STA_PLL | STA_NANO",
         "syncStatus": true
@@ -33,18 +33,18 @@
         "owner": "time.AdjtimeStatusController",
         "phase": "running",
         "type": "AdjtimeStatuses.v1alpha1.talos.dev",
-        "updated": "2026-01-10T18:30:13Z",
-        "version": 10745
+        "updated": "2026-01-10T20:19:43Z",
+        "version": 10964
       },
       "node": "192.168.122.87",
       "spec": {
-        "constant": 7,
+        "constant": 6,
         "estError": "0s",
-        "frequencyAdjustmentRatio": 0.9999852718353271,
-        "maxError": "773ms",
-        "offset": "-23.945\u00b5s",
+        "frequencyAdjustmentRatio": 0.9999531926269531,
+        "maxError": "474ms",
+        "offset": "-2.029374ms",
         "state": "TIME_OK",
-        "status": "STA_PLL | STA_NANO",
+        "status": "STA_PLL | STA_NANO | STA_MODE",
         "syncStatus": true
       }
     }
