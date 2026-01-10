@@ -1,0 +1,38 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "version",
+        "namespace": "runtime",
+        "owner": "runtime.VersionController",
+        "phase": "running",
+        "type": "Versions.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "version": "v1.10.6"
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "version",
+        "namespace": "runtime",
+        "owner": "runtime.VersionController",
+        "phase": "running",
+        "type": "Versions.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "version": "v1.10.6"
+      }
+    }
+  ]
+}

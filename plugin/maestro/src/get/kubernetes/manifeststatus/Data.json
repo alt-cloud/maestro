@@ -1,0 +1,31 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:49:36Z",
+        "id": "manifests",
+        "namespace": "controlplane",
+        "owner": "k8s.ManifestApplyController",
+        "phase": "running",
+        "type": "ManifestStatuses.kubernetes.talos.dev",
+        "updated": "2026-01-02T17:49:36Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "manifestsApplied": [
+          "00-kubelet-bootstrapping-token",
+          "01-csr-approver-role-binding",
+          "01-csr-node-bootstrap",
+          "01-csr-renewal-role-binding",
+          "05-flannel",
+          "10-kube-proxy",
+          "11-core-dns",
+          "11-core-dns-svc",
+          "11-kube-config-in-cluster"
+        ]
+      }
+    }
+  ],
+  "192.168.122.87": []
+}

@@ -1,0 +1,40 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "first",
+        "namespace": "network",
+        "owner": "network.HardwareAddrController",
+        "phase": "running",
+        "type": "HardwareAddresses.net.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "hardwareAddr": "52:54:00:f6:c5:27",
+        "name": "enp1s0"
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "first",
+        "namespace": "network",
+        "owner": "network.HardwareAddrController",
+        "phase": "running",
+        "type": "HardwareAddresses.net.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "hardwareAddr": "52:54:00:b7:95:ba",
+        "name": "enp1s0"
+      }
+    }
+  ]
+}

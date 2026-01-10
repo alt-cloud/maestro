@@ -1,0 +1,24 @@
+{
+  "meta": [
+    "created",
+    "id",
+    "namespace",
+    "owner",
+    "phase",
+    "type",
+    "updated",
+    "version"
+  ],
+  "spec": [
+    "allowSchedulingOnControlPlane",
+    "cloudProviderExternal",
+    "clusterDNS",
+    "clusterDomain",
+    "defaultRuntimeSeccompEnabled",
+    "disableManifestsDirectory",
+    "enableFSQuotaMonitoring",
+    "image",
+    "skipNodeRegistration",
+    "staticPodListURL"
+  ]
+}

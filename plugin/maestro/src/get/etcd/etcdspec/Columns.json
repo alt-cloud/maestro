@@ -10,13 +10,11 @@
     "version"
   ],
   "spec": [
-    "devicePath",
-    "generation",
-    "major",
-    "minor",
-    "type",
-    "parent",
-    "partitionName",
-    "partitionNumber"
+    "advertisedAddresses",
+    "extraArgs",
+    "image",
+    "listenClientAddresses",
+    "listenPeerAddresses",
+    "name"
   ]
 }

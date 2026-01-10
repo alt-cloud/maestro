@@ -10,13 +10,12 @@
     "version"
   ],
   "spec": [
-    "devicePath",
-    "generation",
-    "major",
-    "minor",
-    "type",
-    "parent",
-    "partitionName",
-    "partitionNumber"
+    "config",
+    "enabled",
+    "environmentVariables",
+    "extraArgs",
+    "extraVolumes",
+    "image",
+    "resources"
   ]
 }

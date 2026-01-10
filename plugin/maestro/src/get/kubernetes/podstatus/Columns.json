@@ -10,13 +10,14 @@
     "version"
   ],
   "spec": [
-    "devicePath",
-    "generation",
-    "major",
-    "minor",
-    "type",
-    "parent",
-    "partitionName",
-    "partitionNumber"
+    "conditions",
+    "containerStatuses",
+    "hostIP",
+    "hostIPs",
+    "phase",
+    "podIP",
+    "podIPs",
+    "qosClass",
+    "startTime"
   ]
 }

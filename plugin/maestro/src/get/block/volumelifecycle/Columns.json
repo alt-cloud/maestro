@@ -1,0 +1,14 @@
+{
+  "meta": [
+    "created",
+    "finalizers",
+    "id",
+    "namespace",
+    "owner",
+    "phase",
+    "type",
+    "updated",
+    "version"
+  ],
+  "spec": []
+}

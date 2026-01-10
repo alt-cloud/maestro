@@ -1,0 +1,42 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "node",
+        "namespace": "runtime",
+        "owner": "time.SyncController",
+        "phase": "running",
+        "type": "TimeStatuses.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "epoch": 0,
+        "syncDisabled": false,
+        "synced": true
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "node",
+        "namespace": "runtime",
+        "owner": "time.SyncController",
+        "phase": "running",
+        "type": "TimeStatuses.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:16Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "epoch": 0,
+        "syncDisabled": false,
+        "synced": true
+      }
+    }
+  ]
+}

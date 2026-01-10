@@ -1,0 +1,86 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:48Z",
+        "id": "no-k8s",
+        "namespace": "network",
+        "owner": "k8s.AddressFilterController",
+        "phase": "running",
+        "type": "NodeAddressFilters.net.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "excludeSubnets": [
+          "10.244.0.0/16",
+          "10.96.0.0/12"
+        ],
+        "includeSubnets": []
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:48Z",
+        "id": "only-k8s",
+        "namespace": "network",
+        "owner": "k8s.AddressFilterController",
+        "phase": "running",
+        "type": "NodeAddressFilters.net.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "excludeSubnets": [],
+        "includeSubnets": [
+          "10.244.0.0/16",
+          "10.96.0.0/12"
+        ]
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "id": "no-k8s",
+        "namespace": "network",
+        "owner": "k8s.AddressFilterController",
+        "phase": "running",
+        "type": "NodeAddressFilters.net.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "excludeSubnets": [
+          "10.244.0.0/16",
+          "10.96.0.0/12"
+        ],
+        "includeSubnets": []
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "id": "only-k8s",
+        "namespace": "network",
+        "owner": "k8s.AddressFilterController",
+        "phase": "running",
+        "type": "NodeAddressFilters.net.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "excludeSubnets": [],
+        "includeSubnets": [
+          "10.244.0.0/16",
+          "10.96.0.0/12"
+        ]
+      }
+    }
+  ]
+}

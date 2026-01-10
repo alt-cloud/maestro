@@ -1,0 +1,358 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "cri/conf.d/01-registries.part",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "specVersion": "3"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "id": "cri/conf.d/20-customization.part",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:48Z",
+        "id": "cri/conf.d/base-spec.json",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "cri/conf.d/cri.toml",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 3
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "specVersion": "4"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:48Z",
+        "id": "hosts",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "iscsi/initiatorname.iscsi",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "machine-id",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "nvme/hostid",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "nvme/hostnqn",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "resolv.conf",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 4
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "specVersion": "4"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "ssl/certs/ca-certificates.crt",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "specVersion": "2"
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "cri/conf.d/01-registries.part",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "specVersion": "3"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "id": "cri/conf.d/20-customization.part",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "id": "cri/conf.d/base-spec.json",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "cri/conf.d/cri.toml",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 4
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "specVersion": "4"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "id": "hosts",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "iscsi/initiatorname.iscsi",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "machine-id",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "nvme/hostid",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "nvme/hostnqn",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "specVersion": "2"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "resolv.conf",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 4
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "specVersion": "4"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "ssl/certs/ca-certificates.crt",
+        "namespace": "files",
+        "owner": "files.EtcFileController",
+        "phase": "running",
+        "type": "EtcFileStatuses.files.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "specVersion": "2"
+      }
+    }
+  ]
+}

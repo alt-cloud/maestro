@@ -1,0 +1,124 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "latest",
+        "namespace": "perf",
+        "owner": "perf.StatsController",
+        "phase": "running",
+        "type": "CPUStats.perf.talos.dev",
+        "updated": "2026-01-10T18:30:00Z",
+        "version": 10746
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "contextSwitches": 1587258196,
+        "cpu": [
+          {
+            "guest": 0,
+            "guestNice": 0,
+            "idle": 669540.18,
+            "iowait": 1386.73,
+            "irq": 0,
+            "nice": 0,
+            "softIrq": 1323.58,
+            "steal": 246.94,
+            "system": 6158.48,
+            "user": 9858.05
+          },
+          {
+            "guest": 0,
+            "guestNice": 0,
+            "idle": 667869.91,
+            "iowait": 3074.27,
+            "irq": 0,
+            "nice": 0,
+            "softIrq": 1333.41,
+            "steal": 250.35,
+            "system": 6140.04,
+            "user": 9816.13
+          }
+        ],
+        "cpuTotal": {
+          "guest": 0,
+          "guestNice": 0,
+          "idle": 1337410.09,
+          "iowait": 4461.01,
+          "irq": 0,
+          "nice": 0,
+          "softIrq": 2656.99,
+          "steal": 497.3,
+          "system": 12298.52,
+          "user": 19674.18
+        },
+        "irqTotal": 753789057,
+        "processBlocked": 0,
+        "processCreated": 1297625,
+        "processRunning": 3,
+        "softIrqTotal": 144910919
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "latest",
+        "namespace": "perf",
+        "owner": "perf.StatsController",
+        "phase": "running",
+        "type": "CPUStats.perf.talos.dev",
+        "updated": "2026-01-10T18:30:14Z",
+        "version": 10749
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "contextSwitches": 384952333,
+        "cpu": [
+          {
+            "guest": 0,
+            "guestNice": 0,
+            "idle": 686218.35,
+            "iowait": 9.9,
+            "irq": 0,
+            "nice": 0,
+            "softIrq": 269.85,
+            "steal": 105.35,
+            "system": 2567.43,
+            "user": 3075.71
+          },
+          {
+            "guest": 0,
+            "guestNice": 0,
+            "idle": 686208.47,
+            "iowait": 0.44,
+            "irq": 0,
+            "nice": 0,
+            "softIrq": 251.21,
+            "steal": 106.1,
+            "system": 2570.76,
+            "user": 3050.79
+          }
+        ],
+        "cpuTotal": {
+          "guest": 0,
+          "guestNice": 0,
+          "idle": 1372426.82,
+          "iowait": 10.35,
+          "irq": 0,
+          "nice": 0,
+          "softIrq": 521.07,
+          "steal": 211.46,
+          "system": 5138.2,
+          "user": 6126.51
+        },
+        "irqTotal": 194534474,
+        "processBlocked": 0,
+        "processCreated": 1296148,
+        "processRunning": 2,
+        "softIrqTotal": 51284779
+      }
+    }
+  ]
+}

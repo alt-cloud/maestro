@@ -1,0 +1,712 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "loop0",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/9",
+          "/dev/disk/by-loop-inode/0:2-6",
+          "/dev/disk/by-loop-ref/\\x2frootfs.sqsh"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "loop1",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/2"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "loop2",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/3"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "loop3",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/4"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "loop4",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/5"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "loop5",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/6"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "loop6",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/7"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "loop7",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/8"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "sr0",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/12",
+          "/dev/disk/by-id/ata-QEMU_DVD-ROM_QM00001",
+          "/dev/disk/by-path/pci-0000:00:1f.2-ata-1",
+          "/dev/disk/by-path/pci-0000:00:1f.2-ata-1.0"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "vda",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10",
+          "/dev/disk/by-path/pci-0000:04:00.0",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "vda1",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10-part1",
+          "/dev/disk/by-label/EFI",
+          "/dev/disk/by-partlabel/EFI",
+          "/dev/disk/by-partuuid/ff286cfb-36ac-4116-96ec-e85d523084ed",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-label/EFI",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partlabel/EFI",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partnum/1",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partuuid/ff286cfb-36ac-4116-96ec-e85d523084ed",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-uuid/481E-353A",
+          "/dev/disk/by-path/pci-0000:04:00.0-part1",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0-part1",
+          "/dev/disk/by-uuid/481E-353A"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "vda2",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10-part2",
+          "/dev/disk/by-partlabel/BIOS",
+          "/dev/disk/by-partuuid/6a663dd5-9beb-421d-9f75-e2be6e6ff662",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partlabel/BIOS",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partnum/2",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partuuid/6a663dd5-9beb-421d-9f75-e2be6e6ff662",
+          "/dev/disk/by-path/pci-0000:04:00.0-part2",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0-part2"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "vda3",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10-part3",
+          "/dev/disk/by-label/BOOT",
+          "/dev/disk/by-partlabel/BOOT",
+          "/dev/disk/by-partuuid/f7c66050-841f-4ca4-a3b0-865a07e9b3fa",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-label/BOOT",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partlabel/BOOT",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partnum/3",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partuuid/f7c66050-841f-4ca4-a3b0-865a07e9b3fa",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-uuid/c5f18e94-6726-49a9-8b6b-e59c0dbac5a3",
+          "/dev/disk/by-path/pci-0000:04:00.0-part3",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0-part3",
+          "/dev/disk/by-uuid/c5f18e94-6726-49a9-8b6b-e59c0dbac5a3"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "vda4",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10-part4",
+          "/dev/disk/by-partlabel/META",
+          "/dev/disk/by-partuuid/98e7cb22-dbf6-4dbd-bef0-bcb533346856",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partlabel/META",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partnum/4",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partuuid/98e7cb22-dbf6-4dbd-bef0-bcb533346856",
+          "/dev/disk/by-path/pci-0000:04:00.0-part4",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0-part4"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "vda5",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10-part5",
+          "/dev/disk/by-label/STATE",
+          "/dev/disk/by-partlabel/STATE",
+          "/dev/disk/by-partuuid/aad0e4f2-741a-456c-8f86-98b66316c2a8",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-label/STATE",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partlabel/STATE",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partnum/5",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partuuid/aad0e4f2-741a-456c-8f86-98b66316c2a8",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-uuid/5c5d1b88-0e20-45d6-8212-d173f7711180",
+          "/dev/disk/by-path/pci-0000:04:00.0-part5",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0-part5",
+          "/dev/disk/by-uuid/5c5d1b88-0e20-45d6-8212-d173f7711180"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "vda6",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10-part6",
+          "/dev/disk/by-label/EPHEMERAL",
+          "/dev/disk/by-partlabel/EPHEMERAL",
+          "/dev/disk/by-partuuid/bc7d4f69-16bb-4f91-a72d-c331e8c42661",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-label/EPHEMERAL",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partlabel/EPHEMERAL",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partnum/6",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partuuid/bc7d4f69-16bb-4f91-a72d-c331e8c42661",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-uuid/45a2f21e-4d30-4ce2-9ff2-b8068061a6f0",
+          "/dev/disk/by-path/pci-0000:04:00.0-part6",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0-part6",
+          "/dev/disk/by-uuid/45a2f21e-4d30-4ce2-9ff2-b8068061a6f0"
+        ]
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "loop0",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/9",
+          "/dev/disk/by-loop-inode/0:2-6",
+          "/dev/disk/by-loop-ref/\\x2frootfs.sqsh"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "loop1",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/2"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "loop2",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/3"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "loop3",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/4"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "loop4",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/5"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "loop5",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/6"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "loop6",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/7"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "loop7",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/8"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "sr0",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/12",
+          "/dev/disk/by-id/ata-QEMU_DVD-ROM_QM00001",
+          "/dev/disk/by-path/pci-0000:00:1f.2-ata-1",
+          "/dev/disk/by-path/pci-0000:00:1f.2-ata-1.0"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10",
+          "/dev/disk/by-path/pci-0000:04:00.0",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda1",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10-part1",
+          "/dev/disk/by-label/EFI",
+          "/dev/disk/by-partlabel/EFI",
+          "/dev/disk/by-partuuid/2898273d-d363-4d0c-bef4-484c2b49074c",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-label/EFI",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partlabel/EFI",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partnum/1",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partuuid/2898273d-d363-4d0c-bef4-484c2b49074c",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-uuid/462A-2EA6",
+          "/dev/disk/by-path/pci-0000:04:00.0-part1",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0-part1",
+          "/dev/disk/by-uuid/462A-2EA6"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda2",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10-part2",
+          "/dev/disk/by-partlabel/BIOS",
+          "/dev/disk/by-partuuid/4fb809cd-b2ea-49bd-9bbc-91c71d719216",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partlabel/BIOS",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partnum/2",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partuuid/4fb809cd-b2ea-49bd-9bbc-91c71d719216",
+          "/dev/disk/by-path/pci-0000:04:00.0-part2",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0-part2"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda3",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10-part3",
+          "/dev/disk/by-label/BOOT",
+          "/dev/disk/by-partlabel/BOOT",
+          "/dev/disk/by-partuuid/6183e62f-07ce-4262-9f15-5e9c602c771b",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-label/BOOT",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partlabel/BOOT",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partnum/3",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partuuid/6183e62f-07ce-4262-9f15-5e9c602c771b",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-uuid/3e437861-e84d-4ba9-8c12-9f5d5f69273e",
+          "/dev/disk/by-path/pci-0000:04:00.0-part3",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0-part3",
+          "/dev/disk/by-uuid/3e437861-e84d-4ba9-8c12-9f5d5f69273e"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda4",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10-part4",
+          "/dev/disk/by-partlabel/META",
+          "/dev/disk/by-partuuid/edfb8802-5bc2-41a7-b75d-530599fe62ba",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partlabel/META",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partnum/4",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partuuid/edfb8802-5bc2-41a7-b75d-530599fe62ba",
+          "/dev/disk/by-path/pci-0000:04:00.0-part4",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0-part4"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda5",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10-part5",
+          "/dev/disk/by-label/STATE",
+          "/dev/disk/by-partlabel/STATE",
+          "/dev/disk/by-partuuid/8c673781-02ea-497a-85f0-4ee24c463669",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-label/STATE",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partlabel/STATE",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partnum/5",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partuuid/8c673781-02ea-497a-85f0-4ee24c463669",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-uuid/639bcc1c-5336-4d3e-8969-375032dc9d3d",
+          "/dev/disk/by-path/pci-0000:04:00.0-part5",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0-part5",
+          "/dev/disk/by-uuid/639bcc1c-5336-4d3e-8969-375032dc9d3d"
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "vda6",
+        "namespace": "runtime",
+        "owner": "block.SymlinksController",
+        "phase": "running",
+        "type": "BlockSymlinks.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "paths": [
+          "/dev/disk/by-diskseq/10-part6",
+          "/dev/disk/by-label/EPHEMERAL",
+          "/dev/disk/by-partlabel/EPHEMERAL",
+          "/dev/disk/by-partuuid/d10c9cf7-a3bd-4398-9c67-f7c3cd3b79c2",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-label/EPHEMERAL",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partlabel/EPHEMERAL",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partnum/6",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-partuuid/d10c9cf7-a3bd-4398-9c67-f7c3cd3b79c2",
+          "/dev/disk/by-path/pci-0000:04:00.0-part/by-uuid/71bca71c-e20b-433d-8922-011777867d8c",
+          "/dev/disk/by-path/pci-0000:04:00.0-part6",
+          "/dev/disk/by-path/virtio-pci-0000:04:00.0-part6",
+          "/dev/disk/by-uuid/71bca71c-e20b-433d-8922-011777867d8c"
+        ]
+      }
+    }
+  ]
+}

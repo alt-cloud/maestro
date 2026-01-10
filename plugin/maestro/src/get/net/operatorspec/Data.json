@@ -1,0 +1,50 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "dhcp4/enp1s0",
+        "namespace": "network",
+        "owner": "OperatorMergeControllers.net.talos.dev",
+        "phase": "running",
+        "type": "OperatorSpecs.net.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "dhcp4": {
+          "routeMetric": 1024
+        },
+        "layer": "default",
+        "linkName": "enp1s0",
+        "operator": "dhcp4",
+        "requireUp": true
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "dhcp4/enp1s0",
+        "namespace": "network",
+        "owner": "OperatorMergeControllers.net.talos.dev",
+        "phase": "running",
+        "type": "OperatorSpecs.net.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "dhcp4": {
+          "routeMetric": 1024
+        },
+        "layer": "default",
+        "linkName": "enp1s0",
+        "operator": "dhcp4",
+        "requireUp": true
+      }
+    }
+  ]
+}

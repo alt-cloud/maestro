@@ -1,0 +1,76 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:49:59Z",
+        "id": "alt-orchestra-r73-g6e",
+        "namespace": "k8s",
+        "owner": "k8s.NodeStatusController",
+        "phase": "running",
+        "type": "NodeStatuses.kubernetes.talos.dev",
+        "updated": "2026-01-10T13:57:30Z",
+        "version": 39
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "annotations": {
+          "flannel.alpha.coreos.com/backend-data": "{\"VNI\":1,\"VtepMAC\":\"72:19:94:23:8d:de\"}",
+          "flannel.alpha.coreos.com/backend-type": "vxlan",
+          "flannel.alpha.coreos.com/kube-subnet-manager": "true",
+          "flannel.alpha.coreos.com/public-ip": "192.168.122.33",
+          "node.alpha.kubernetes.io/ttl": "0",
+          "talos.dev/owned-labels": "[\"node-role.kubernetes.io/control-plane\",\"node.kubernetes.io/exclude-from-external-load-balancers\"]",
+          "talos.dev/owned-taints": "[\"node-role.kubernetes.io/control-plane\"]",
+          "volumes.kubernetes.io/controller-managed-attach-detach": "true"
+        },
+        "labels": {
+          "beta.kubernetes.io/arch": "amd64",
+          "beta.kubernetes.io/os": "linux",
+          "kubernetes.io/arch": "amd64",
+          "kubernetes.io/hostname": "alt-orchestra-r73-g6e",
+          "kubernetes.io/os": "linux",
+          "node-role.kubernetes.io/control-plane": "",
+          "node.kubernetes.io/exclude-from-external-load-balancers": ""
+        },
+        "nodeReady": true,
+        "nodename": "alt-orchestra-r73-g6e",
+        "unschedulable": false
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:50:00Z",
+        "id": "alt-orchestra-ej9-t33",
+        "namespace": "k8s",
+        "owner": "k8s.NodeStatusController",
+        "phase": "running",
+        "type": "NodeStatuses.kubernetes.talos.dev",
+        "updated": "2026-01-10T13:57:30Z",
+        "version": 38
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "annotations": {
+          "flannel.alpha.coreos.com/backend-data": "{\"VNI\":1,\"VtepMAC\":\"92:a8:c8:23:5c:9a\"}",
+          "flannel.alpha.coreos.com/backend-type": "vxlan",
+          "flannel.alpha.coreos.com/kube-subnet-manager": "true",
+          "flannel.alpha.coreos.com/public-ip": "192.168.122.87",
+          "node.alpha.kubernetes.io/ttl": "0",
+          "volumes.kubernetes.io/controller-managed-attach-detach": "true"
+        },
+        "labels": {
+          "beta.kubernetes.io/arch": "amd64",
+          "beta.kubernetes.io/os": "linux",
+          "kubernetes.io/arch": "amd64",
+          "kubernetes.io/hostname": "alt-orchestra-ej9-t33",
+          "kubernetes.io/os": "linux"
+        },
+        "nodeReady": true,
+        "nodename": "alt-orchestra-ej9-t33",
+        "unschedulable": false
+      }
+    }
+  ]
+}

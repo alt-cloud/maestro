@@ -1,0 +1,44 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:48Z",
+        "id": "admission-control",
+        "namespace": "controlplane",
+        "owner": "k8s.ControlPlaneAdmissionControlController",
+        "phase": "running",
+        "type": "AdmissionControlConfigs.kubernetes.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "config": [
+          {
+            "configuration": {
+              "apiVersion": "pod-security.admission.config.k8s.io/v1alpha1",
+              "defaults": {
+                "audit": "restricted",
+                "audit-version": "latest",
+                "enforce": "baseline",
+                "enforce-version": "latest",
+                "warn": "restricted",
+                "warn-version": "latest"
+              },
+              "exemptions": {
+                "namespaces": [
+                  "kube-system"
+                ],
+                "runtimeClasses": [],
+                "usernames": []
+              },
+              "kind": "PodSecurityConfiguration"
+            },
+            "name": "PodSecurity"
+          }
+        ]
+      }
+    }
+  ],
+  "192.168.122.87": []
+}

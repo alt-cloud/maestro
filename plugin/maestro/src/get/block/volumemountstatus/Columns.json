@@ -1,0 +1,20 @@
+{
+  "meta": [
+    "created",
+    "id",
+    "labels",
+    "namespace",
+    "owner",
+    "phase",
+    "type",
+    "updated",
+    "version",
+    "finalizers"
+  ],
+  "spec": [
+    "readOnly",
+    "requester",
+    "target",
+    "volumeID"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:47:37Z",
+        "id": "local",
+        "namespace": "etcd",
+        "owner": "etcd.MemberController",
+        "phase": "running",
+        "type": "EtcdMembers.etcd.talos.dev",
+        "updated": "2026-01-02T17:47:37Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "memberID": "a898e3dad810d41d"
+      }
+    }
+  ],
+  "192.168.122.87": []
+}

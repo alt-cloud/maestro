@@ -1,0 +1,46 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "id": "EPHEMERAL",
+        "namespace": "runtime",
+        "owner": "runtime.MountStatusController",
+        "phase": "running",
+        "type": "MountStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "encrypted": false,
+        "filesystemType": "xfs",
+        "options": [],
+        "source": "/dev/vda6",
+        "target": "/var"
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "id": "EPHEMERAL",
+        "namespace": "runtime",
+        "owner": "runtime.MountStatusController",
+        "phase": "running",
+        "type": "MountStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "encrypted": false,
+        "filesystemType": "xfs",
+        "options": [],
+        "source": "/dev/vda6",
+        "target": "/var"
+      }
+    }
+  ]
+}

@@ -10,13 +10,7 @@
     "version"
   ],
   "spec": [
-    "devicePath",
-    "generation",
-    "major",
-    "minor",
-    "type",
-    "parent",
-    "partitionName",
-    "partitionNumber"
+    "stage",
+    "status"
   ]
 }

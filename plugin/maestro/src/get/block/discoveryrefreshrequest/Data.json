@@ -1,0 +1,38 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "refresh",
+        "namespace": "runtime",
+        "owner": "block.VolumeManagerController",
+        "phase": "running",
+        "type": "DiscoveryRefreshRequests.block.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "request": 1
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "refresh",
+        "namespace": "runtime",
+        "owner": "block.VolumeManagerController",
+        "phase": "running",
+        "type": "DiscoveryRefreshRequests.block.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "request": 1
+      }
+    }
+  ]
+}

@@ -10,13 +10,14 @@
     "version"
   ],
   "spec": [
-    "devicePath",
-    "generation",
-    "major",
-    "minor",
-    "type",
-    "parent",
-    "partitionName",
-    "partitionNumber"
+    "class",
+    "class_id",
+    "product",
+    "product_id",
+    "subclass",
+    "subclass_id",
+    "vendor",
+    "vendor_id",
+    "driver"
   ]
 }

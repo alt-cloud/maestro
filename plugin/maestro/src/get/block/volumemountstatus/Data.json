@@ -1,0 +1,1094 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "id": "/var/mnt",
+        "labels": {
+          "mount-status-id": "/var/mnt"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "block.UserVolumeConfigController",
+        "target": "/var/mnt",
+        "volumeID": "/var/mnt"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "id": "EPHEMERAL",
+        "labels": {
+          "mount-status-id": "EPHEMERAL"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "sequencer",
+        "target": "/var",
+        "volumeID": "EPHEMERAL"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/etc/cni",
+        "labels": {
+          "mount-status-id": "/etc/cni"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/etc/cni",
+        "volumeID": "/etc/cni"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/etc/kubernetes",
+        "labels": {
+          "mount-status-id": "/etc/kubernetes"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/etc/kubernetes",
+        "volumeID": "/etc/kubernetes"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/opt",
+        "labels": {
+          "mount-status-id": "/opt"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/opt",
+        "volumeID": "/opt"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/usr/libexec/kubernetes",
+        "labels": {
+          "mount-status-id": "/usr/libexec/kubernetes"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/usr/libexec/kubernetes",
+        "volumeID": "/usr/libexec/kubernetes"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/var/lib",
+        "labels": {
+          "mount-status-id": "/var/lib"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/var/lib",
+        "volumeID": "/var/lib"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/var/lib/cni",
+        "labels": {
+          "mount-status-id": "/var/lib/cni"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/var/lib/cni",
+        "volumeID": "/var/lib/cni"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/var/lib/containerd",
+        "labels": {
+          "mount-status-id": "/var/lib/containerd"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/var/lib/containerd",
+        "volumeID": "/var/lib/containerd"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/var/run",
+        "labels": {
+          "mount-status-id": "/var/run"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/var/run",
+        "volumeID": "/var/run"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/var/run/lock",
+        "labels": {
+          "mount-status-id": "/var/run/lock"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/var/run/lock",
+        "volumeID": "/var/run/lock"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:50Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/etcd-/var/lib",
+        "labels": {
+          "mount-status-id": "/var/lib"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:50Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/etcd",
+        "target": "/var/lib",
+        "volumeID": "/var/lib"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:50Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/etcd-ETCD",
+        "labels": {
+          "mount-status-id": "ETCD"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:50Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/etcd",
+        "target": "/var/lib/etcd",
+        "volumeID": "ETCD"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/lib",
+        "labels": {
+          "mount-status-id": "/var/lib"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/lib",
+        "volumeID": "/var/lib"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/lib/kubelet",
+        "labels": {
+          "mount-status-id": "/var/lib/kubelet"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/lib/kubelet",
+        "volumeID": "/var/lib/kubelet"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/lib/kubelet/seccomp",
+        "labels": {
+          "mount-status-id": "/var/lib/kubelet/seccomp"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/lib/kubelet/seccomp",
+        "volumeID": "/var/lib/kubelet/seccomp"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/lib/kubelet/seccomp/profiles",
+        "labels": {
+          "mount-status-id": "/var/lib/kubelet/seccomp/profiles"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/lib/kubelet/seccomp/profiles",
+        "volumeID": "/var/lib/kubelet/seccomp/profiles"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/log",
+        "labels": {
+          "mount-status-id": "/var/log"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/log",
+        "volumeID": "/var/log"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/log/audit",
+        "labels": {
+          "mount-status-id": "/var/log/audit"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/log/audit",
+        "volumeID": "/var/log/audit"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/log/audit/kube",
+        "labels": {
+          "mount-status-id": "/var/log/audit/kube"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/log/audit/kube",
+        "volumeID": "/var/log/audit/kube"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/log/containers",
+        "labels": {
+          "mount-status-id": "/var/log/containers"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/log/containers",
+        "volumeID": "/var/log/containers"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/log/pods",
+        "labels": {
+          "mount-status-id": "/var/log/pods"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/log/pods",
+        "volumeID": "/var/log/pods"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/mnt",
+        "labels": {
+          "mount-status-id": "/var/mnt"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/mnt",
+        "volumeID": "/var/mnt"
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "id": "/var/mnt",
+        "labels": {
+          "mount-status-id": "/var/mnt"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "block.UserVolumeConfigController",
+        "target": "/var/mnt",
+        "volumeID": "/var/mnt"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "id": "EPHEMERAL",
+        "labels": {
+          "mount-status-id": "EPHEMERAL"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "sequencer",
+        "target": "/var",
+        "volumeID": "EPHEMERAL"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/etc/cni",
+        "labels": {
+          "mount-status-id": "/etc/cni"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/etc/cni",
+        "volumeID": "/etc/cni"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/etc/kubernetes",
+        "labels": {
+          "mount-status-id": "/etc/kubernetes"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/etc/kubernetes",
+        "volumeID": "/etc/kubernetes"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/opt",
+        "labels": {
+          "mount-status-id": "/opt"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/opt",
+        "volumeID": "/opt"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/usr/libexec/kubernetes",
+        "labels": {
+          "mount-status-id": "/usr/libexec/kubernetes"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/usr/libexec/kubernetes",
+        "volumeID": "/usr/libexec/kubernetes"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/var/lib",
+        "labels": {
+          "mount-status-id": "/var/lib"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/var/lib",
+        "volumeID": "/var/lib"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/var/lib/cni",
+        "labels": {
+          "mount-status-id": "/var/lib/cni"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/var/lib/cni",
+        "volumeID": "/var/lib/cni"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/var/lib/containerd",
+        "labels": {
+          "mount-status-id": "/var/lib/containerd"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/var/lib/containerd",
+        "volumeID": "/var/lib/containerd"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/var/run",
+        "labels": {
+          "mount-status-id": "/var/run"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/var/run",
+        "volumeID": "/var/run"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/cri-/var/run/lock",
+        "labels": {
+          "mount-status-id": "/var/run/lock"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/cri",
+        "target": "/var/run/lock",
+        "volumeID": "/var/run/lock"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:18Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/lib",
+        "labels": {
+          "mount-status-id": "/var/lib"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:18Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/lib",
+        "volumeID": "/var/lib"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:18Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/lib/kubelet",
+        "labels": {
+          "mount-status-id": "/var/lib/kubelet"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:18Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/lib/kubelet",
+        "volumeID": "/var/lib/kubelet"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:18Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/lib/kubelet/seccomp",
+        "labels": {
+          "mount-status-id": "/var/lib/kubelet/seccomp"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:18Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/lib/kubelet/seccomp",
+        "volumeID": "/var/lib/kubelet/seccomp"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:18Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/lib/kubelet/seccomp/profiles",
+        "labels": {
+          "mount-status-id": "/var/lib/kubelet/seccomp/profiles"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:18Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/lib/kubelet/seccomp/profiles",
+        "volumeID": "/var/lib/kubelet/seccomp/profiles"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:18Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/log",
+        "labels": {
+          "mount-status-id": "/var/log"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:18Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/log",
+        "volumeID": "/var/log"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:18Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/log/audit",
+        "labels": {
+          "mount-status-id": "/var/log/audit"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:18Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/log/audit",
+        "volumeID": "/var/log/audit"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:18Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/log/audit/kube",
+        "labels": {
+          "mount-status-id": "/var/log/audit/kube"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:18Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/log/audit/kube",
+        "volumeID": "/var/log/audit/kube"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:18Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/log/containers",
+        "labels": {
+          "mount-status-id": "/var/log/containers"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:18Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/log/containers",
+        "volumeID": "/var/log/containers"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:18Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/log/pods",
+        "labels": {
+          "mount-status-id": "/var/log/pods"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:18Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/log/pods",
+        "volumeID": "/var/log/pods"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:18Z",
+        "finalizers": [
+          "service"
+        ],
+        "id": "service/kubelet-/var/mnt",
+        "labels": {
+          "mount-status-id": "/var/mnt"
+        },
+        "namespace": "runtime",
+        "owner": "block.MountStatusController",
+        "phase": "running",
+        "type": "VolumeMountStatuses.block.talos.dev",
+        "updated": "2026-01-02T17:46:18Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "readOnly": false,
+        "requester": "service/kubelet",
+        "target": "/var/mnt",
+        "volumeID": "/var/mnt"
+      }
+    }
+  ]
+}

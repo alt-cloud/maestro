@@ -10,13 +10,11 @@
     "version"
   ],
   "spec": [
-    "devicePath",
-    "generation",
-    "major",
-    "minor",
-    "type",
-    "parent",
-    "partitionName",
-    "partitionNumber"
+    "addresses",
+    "hostname",
+    "machineType",
+    "nodeId",
+    "operatingSystem",
+    "controlPlane"
   ]
 }

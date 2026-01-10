@@ -1,0 +1,45 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:48Z",
+        "id": "manifests",
+        "namespace": "controlplane",
+        "owner": "k8s.ControlPlaneBootstrapManifestsController",
+        "phase": "running",
+        "type": "BootstrapManifestsConfigs.kubernetes.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "clusterDomain": "cluster.local",
+        "coreDNSEnabled": true,
+        "coreDNSImage": "registry.altlinux.org/sisyphus/coredns:v1.9.3",
+        "dnsServiceIP": "10.96.0.10",
+        "dnsServiceIPv6": "",
+        "flannelEnabled": true,
+        "flannelExtraArgs": [],
+        "flannelImage": "registry.altlinux.org/sisyphus/flannel:v0.27.0",
+        "flannelKubeServiceHost": "127.0.0.1",
+        "flannelKubeServicePort": "7445",
+        "podCIDRs": [
+          "10.244.0.0/16"
+        ],
+        "podSecurityPolicyEnabled": false,
+        "proxyArgs": [
+          "--cluster-cidr=10.244.0.0/16",
+          "--conntrack-max-per-core=0",
+          "--hostname-override=$(NODE_NAME)",
+          "--kubeconfig=/etc/kubernetes/kubeconfig",
+          "--proxy-mode=nftables"
+        ],
+        "proxyEnabled": true,
+        "proxyImage": "registry.altlinux.org/sisyphus/kube-proxy:v1.34.3",
+        "string": "https://127.0.0.1:7445",
+        "talosAPIServiceEnabled": false
+      }
+    }
+  ],
+  "192.168.122.87": []
+}

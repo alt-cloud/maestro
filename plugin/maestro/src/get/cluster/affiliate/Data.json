@@ -1,0 +1,104 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:48Z",
+        "id": "P1lnZnF5HB6CEfOpEeu74OZHhAwiO0TK7CP0pSBxwKU",
+        "namespace": "cluster",
+        "owner": "cluster.LocalAffiliateController",
+        "phase": "running",
+        "type": "Affiliates.cluster.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "addresses": [
+          "192.168.122.33"
+        ],
+        "controlPlane": {
+          "port": 6443
+        },
+        "hostname": "alt-orchestra-r73-g6e",
+        "machineType": "controlplane",
+        "nodeId": "P1lnZnF5HB6CEfOpEeu74OZHhAwiO0TK7CP0pSBxwKU",
+        "nodename": "alt-orchestra-r73-g6e",
+        "operatingSystem": "ALT Orchestra (v1.10.6)"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:50Z",
+        "id": "cYXkiX1I2gJaHRs6YXWW9Xe9kwbBZzQicDF38SdwKCd",
+        "namespace": "cluster",
+        "owner": "cluster.AffiliateMergeController",
+        "phase": "running",
+        "type": "Affiliates.cluster.talos.dev",
+        "updated": "2026-01-02T17:46:50Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "addresses": [
+          "192.168.122.87"
+        ],
+        "hostname": "alt-orchestra-ej9-t33",
+        "machineType": "worker",
+        "nodeId": "cYXkiX1I2gJaHRs6YXWW9Xe9kwbBZzQicDF38SdwKCd",
+        "nodename": "alt-orchestra-ej9-t33",
+        "operatingSystem": "ALT Orchestra (v1.10.6)"
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-10T14:02:03Z",
+        "id": "P1lnZnF5HB6CEfOpEeu74OZHhAwiO0TK7CP0pSBxwKU",
+        "namespace": "cluster",
+        "owner": "cluster.AffiliateMergeController",
+        "phase": "running",
+        "type": "Affiliates.cluster.talos.dev",
+        "updated": "2026-01-10T14:02:03Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "addresses": [
+          "192.168.122.33"
+        ],
+        "controlPlane": {
+          "port": 6443
+        },
+        "hostname": "alt-orchestra-r73-g6e",
+        "machineType": "controlplane",
+        "nodeId": "P1lnZnF5HB6CEfOpEeu74OZHhAwiO0TK7CP0pSBxwKU",
+        "nodename": "alt-orchestra-r73-g6e",
+        "operatingSystem": "ALT Orchestra (v1.10.6)"
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "id": "cYXkiX1I2gJaHRs6YXWW9Xe9kwbBZzQicDF38SdwKCd",
+        "namespace": "cluster",
+        "owner": "cluster.LocalAffiliateController",
+        "phase": "running",
+        "type": "Affiliates.cluster.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "addresses": [
+          "192.168.122.87"
+        ],
+        "hostname": "alt-orchestra-ej9-t33",
+        "machineType": "worker",
+        "nodeId": "cYXkiX1I2gJaHRs6YXWW9Xe9kwbBZzQicDF38SdwKCd",
+        "nodename": "alt-orchestra-ej9-t33",
+        "operatingSystem": "ALT Orchestra (v1.10.6)"
+      }
+    }
+  ]
+}

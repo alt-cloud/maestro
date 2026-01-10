@@ -10,13 +10,10 @@
     "version"
   ],
   "spec": [
-    "devicePath",
-    "generation",
-    "major",
-    "minor",
-    "type",
-    "parent",
-    "partitionName",
-    "partitionNumber"
+    "encrypted",
+    "filesystemType",
+    "options",
+    "source",
+    "target"
   ]
 }

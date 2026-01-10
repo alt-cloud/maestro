@@ -1,6 +1,7 @@
 {
   "meta": [
     "created",
+    "finalizers",
     "id",
     "namespace",
     "owner",
@@ -10,13 +11,7 @@
     "version"
   ],
   "spec": [
-    "devicePath",
-    "generation",
-    "major",
-    "minor",
-    "type",
-    "parent",
-    "partitionName",
-    "partitionNumber"
+    "dnsServers",
+    "layer"
   ]
 }

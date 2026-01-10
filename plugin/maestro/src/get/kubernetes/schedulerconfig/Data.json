@@ -1,0 +1,33 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:48Z",
+        "id": "kube-scheduler",
+        "namespace": "controlplane",
+        "owner": "k8s.ControlPlaneSchedulerController",
+        "phase": "running",
+        "type": "SchedulerConfigs.kubernetes.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "config": {},
+        "enabled": true,
+        "environmentVariables": {},
+        "extraArgs": {},
+        "extraVolumes": [],
+        "image": "registry.altlinux.org/sisyphus/kube-scheduler:v1.34.3",
+        "resources": {
+          "limits": {},
+          "requests": {
+            "cpu": "",
+            "memory": ""
+          }
+        }
+      }
+    }
+  ],
+  "192.168.122.87": []
+}

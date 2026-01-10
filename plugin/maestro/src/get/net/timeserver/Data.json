@@ -1,0 +1,42 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "timeservers",
+        "namespace": "network",
+        "owner": "network.TimeServerSpecController",
+        "phase": "running",
+        "type": "TimeServerStatuses.net.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "timeServers": [
+          "time.cloudflare.com"
+        ]
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "timeservers",
+        "namespace": "network",
+        "owner": "network.TimeServerSpecController",
+        "phase": "running",
+        "type": "TimeServerStatuses.net.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "timeServers": [
+          "time.cloudflare.com"
+        ]
+      }
+    }
+  ]
+}

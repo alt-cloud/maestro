@@ -1,0 +1,366 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "id": "apid",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:49Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "auditd",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "containerd",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "id": "cri",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-09T15:17:29Z",
+        "version": 16
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:48Z",
+        "id": "dashboard",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "healthy": false,
+        "running": true,
+        "unknown": true
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:47:32Z",
+        "id": "etcd",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:47:37Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:47:33Z",
+        "id": "kubelet",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-09T15:17:29Z",
+        "version": 18
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "machined",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:47Z",
+        "id": "syslogd",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:49Z",
+        "id": "trustd",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:50Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "udevd",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:55Z",
+        "id": "apid",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:56Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "auditd",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:16Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "containerd",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-08T05:19:55Z",
+        "version": 4
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "id": "cri",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-09T15:17:28Z",
+        "version": 10
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "id": "dashboard",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "healthy": false,
+        "running": true,
+        "unknown": true
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:47:34Z",
+        "id": "kubelet",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-09T15:17:30Z",
+        "version": 18
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "machined",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:16Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:16Z",
+        "id": "syslogd",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:15Z",
+        "id": "udevd",
+        "namespace": "runtime",
+        "owner": "v1alpha1.ServiceController",
+        "phase": "running",
+        "type": "Services.v1alpha1.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "healthy": true,
+        "running": true,
+        "unknown": false
+      }
+    }
+  ]
+}

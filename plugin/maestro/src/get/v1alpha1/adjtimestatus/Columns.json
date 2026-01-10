@@ -10,13 +10,13 @@
     "version"
   ],
   "spec": [
-    "devicePath",
-    "generation",
-    "major",
-    "minor",
-    "type",
-    "parent",
-    "partitionName",
-    "partitionNumber"
+    "constant",
+    "estError",
+    "frequencyAdjustmentRatio",
+    "maxError",
+    "offset",
+    "state",
+    "status",
+    "syncStatus"
   ]
 }

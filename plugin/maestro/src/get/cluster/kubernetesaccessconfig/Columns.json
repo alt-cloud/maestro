@@ -10,13 +10,8 @@
     "version"
   ],
   "spec": [
-    "devicePath",
-    "generation",
-    "major",
-    "minor",
-    "type",
-    "parent",
-    "partitionName",
-    "partitionNumber"
+    "allowedAPIRoles",
+    "allowedKubernetesNamespaces",
+    "enabled"
   ]
 }

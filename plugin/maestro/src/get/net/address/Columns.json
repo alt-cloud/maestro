@@ -10,13 +10,12 @@
     "version"
   ],
   "spec": [
-    "devicePath",
-    "generation",
-    "major",
-    "minor",
-    "type",
-    "parent",
-    "partitionName",
-    "partitionNumber"
+    "address",
+    "family",
+    "flags",
+    "linkIndex",
+    "linkName",
+    "priority",
+    "scope"
   ]
 }

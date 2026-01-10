@@ -1,0 +1,114 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:48Z",
+        "id": "cluster",
+        "namespace": "config",
+        "owner": "cluster.ConfigController",
+        "phase": "running",
+        "type": "DiscoveryConfigs.cluster.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "discoveryEnabled": true,
+        "registryKubernetesEnabled": false,
+        "registryServiceEnabled": true,
+        "serviceClusterID": "WqtaNMyMMx1QqiSOGt2YKLT6oAG_IFRm1R_A3Wm8O0Q=",
+        "serviceEncryptionKey": [
+          197,
+          44,
+          27,
+          94,
+          8,
+          110,
+          242,
+          87,
+          113,
+          80,
+          152,
+          3,
+          85,
+          146,
+          176,
+          65,
+          137,
+          250,
+          115,
+          122,
+          55,
+          50,
+          111,
+          251,
+          58,
+          215,
+          38,
+          32,
+          97,
+          45,
+          31,
+          120
+        ],
+        "serviceEndpoint": "discovery.altlinux.space:443"
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "id": "cluster",
+        "namespace": "config",
+        "owner": "cluster.ConfigController",
+        "phase": "running",
+        "type": "DiscoveryConfigs.cluster.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "discoveryEnabled": true,
+        "registryKubernetesEnabled": false,
+        "registryServiceEnabled": true,
+        "serviceClusterID": "WqtaNMyMMx1QqiSOGt2YKLT6oAG_IFRm1R_A3Wm8O0Q=",
+        "serviceEncryptionKey": [
+          197,
+          44,
+          27,
+          94,
+          8,
+          110,
+          242,
+          87,
+          113,
+          80,
+          152,
+          3,
+          85,
+          146,
+          176,
+          65,
+          137,
+          250,
+          115,
+          122,
+          55,
+          50,
+          111,
+          251,
+          58,
+          215,
+          38,
+          32,
+          97,
+          45,
+          31,
+          120
+        ],
+        "serviceEndpoint": "discovery.altlinux.space:443"
+      }
+    }
+  ]
+}

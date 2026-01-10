@@ -1,0 +1,41 @@
+{
+  "meta": [
+    "created",
+    "id",
+    "namespace",
+    "owner",
+    "phase",
+    "type",
+    "updated",
+    "version"
+  ],
+  "spec": [
+    "bondMaster",
+    "broadcastAddr",
+    "driver",
+    "driverVersion",
+    "duplex",
+    "firmwareVersion",
+    "flags",
+    "hardwareAddr",
+    "index",
+    "kind",
+    "linkIndex",
+    "linkState",
+    "mtu",
+    "operationalState",
+    "permanentAddr",
+    "port",
+    "queueDisc",
+    "slaveKind",
+    "speedMbit",
+    "type",
+    "busPath",
+    "altNames",
+    "product",
+    "productID",
+    "vendor",
+    "vendorID",
+    "masterIndex"
+  ]
+}

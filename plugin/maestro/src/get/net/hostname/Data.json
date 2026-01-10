@@ -1,0 +1,40 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:48Z",
+        "id": "hostname",
+        "namespace": "network",
+        "owner": "network.HostnameSpecController",
+        "phase": "running",
+        "type": "HostnameStatuses.net.talos.dev",
+        "updated": "2026-01-02T17:46:48Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "domainname": "",
+        "hostname": "alt-orchestra-r73-g6e"
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:17Z",
+        "id": "hostname",
+        "namespace": "network",
+        "owner": "network.HostnameSpecController",
+        "phase": "running",
+        "type": "HostnameStatuses.net.talos.dev",
+        "updated": "2026-01-02T17:46:17Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "domainname": "",
+        "hostname": "alt-orchestra-ej9-t33"
+      }
+    }
+  ]
+}

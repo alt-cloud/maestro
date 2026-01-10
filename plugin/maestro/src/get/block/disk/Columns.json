@@ -1,0 +1,28 @@
+{
+  "meta": [
+    "created",
+    "id",
+    "namespace",
+    "owner",
+    "phase",
+    "type",
+    "updated",
+    "version"
+  ],
+  "spec": [
+    "bus_path",
+    "cdrom",
+    "dev_path",
+    "io_size",
+    "pretty_size",
+    "readonly",
+    "sector_size",
+    "size",
+    "sub_system",
+    "symlinks",
+    "modalias",
+    "model",
+    "transport",
+    "rotational"
+  ]
+}

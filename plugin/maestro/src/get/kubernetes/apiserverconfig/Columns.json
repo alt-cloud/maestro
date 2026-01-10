@@ -1,0 +1,26 @@
+{
+  "meta": [
+    "created",
+    "id",
+    "namespace",
+    "owner",
+    "phase",
+    "type",
+    "updated",
+    "version"
+  ],
+  "spec": [
+    "advertisedAddress",
+    "cloudProvider",
+    "controlPlaneEndpoint",
+    "environmentVariables",
+    "etcdServers",
+    "extraArgs",
+    "extraVolumes",
+    "image",
+    "localPort",
+    "podSecurityPolicyEnabled",
+    "resources",
+    "serviceCIDR"
+  ]
+}

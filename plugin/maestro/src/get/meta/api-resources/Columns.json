@@ -10,13 +10,13 @@
     "version"
   ],
   "spec": [
-    "devicePath",
-    "generation",
-    "major",
-    "minor",
+    "aliases",
+    "allAliases",
+    "defaultNamespace",
+    "displayType",
+    "printColumns",
     "type",
-    "parent",
-    "partitionName",
-    "partitionNumber"
+    "sensitivity",
+    "skipAutomaticAliases"
   ]
 }

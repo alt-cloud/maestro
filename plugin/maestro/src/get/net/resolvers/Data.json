@@ -1,0 +1,44 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "resolvers",
+        "namespace": "network",
+        "owner": "network.ResolverSpecController",
+        "phase": "running",
+        "type": "ResolverStatuses.net.talos.dev",
+        "updated": "2026-01-02T17:46:47Z",
+        "version": 2
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "dnsServers": [
+          "192.168.122.1"
+        ],
+        "searchDomains": []
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "resolvers",
+        "namespace": "network",
+        "owner": "network.ResolverSpecController",
+        "phase": "running",
+        "type": "ResolverStatuses.net.talos.dev",
+        "updated": "2026-01-02T17:46:15Z",
+        "version": 2
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "dnsServers": [
+          "192.168.122.1"
+        ],
+        "searchDomains": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,690 @@
+{
+  "192.168.122.33": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.fs.aio-max-nr",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "1048576",
+        "default": "65536",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.fs.inotify.max_user_instances",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "8192",
+        "default": "128",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.kernel.dmesg_restrict",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "1",
+        "default": "1",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.kernel.kptr_restrict",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "1",
+        "default": "0",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.kernel.panic",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "10",
+        "default": "-1",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.kernel.perf_event_paranoid",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "3",
+        "default": "4",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.kernel.pid_max",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "262144",
+        "default": "32768",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.kernel.unprivileged_bpf_disabled",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "1",
+        "default": "2",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.kernel.yama.ptrace_scope",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "1",
+        "default": "1",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.net.bridge.bridge-nf-call-ip6tables",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "1",
+        "default": "1",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.net.bridge.bridge-nf-call-iptables",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "1",
+        "default": "1",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.net.core.bpf_jit_harden",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "2",
+        "default": "0",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.net.ipv4.ip_forward",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "1",
+        "default": "0",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.net.ipv4.tcp_keepalive_intvl",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "60",
+        "default": "75",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.net.ipv4.tcp_keepalive_time",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "600",
+        "default": "7200",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.net.ipv6.conf.default.accept_ra",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "2",
+        "default": "1",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.net.ipv6.conf.default.forwarding",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "1",
+        "default": "0",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.user.max_user_namespaces",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "0",
+        "default": "7396",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:46Z",
+        "id": "proc.sys.vm.overcommit_memory",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:46Z",
+        "version": 1
+      },
+      "node": "192.168.122.33",
+      "spec": {
+        "current": "1",
+        "default": "0",
+        "unsupported": false
+      }
+    }
+  ],
+  "192.168.122.87": [
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.fs.aio-max-nr",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "1048576",
+        "default": "65536",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.fs.inotify.max_user_instances",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "8192",
+        "default": "128",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.kernel.dmesg_restrict",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "1",
+        "default": "1",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.kernel.kptr_restrict",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "1",
+        "default": "0",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.kernel.panic",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "10",
+        "default": "-1",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.kernel.perf_event_paranoid",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "3",
+        "default": "4",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.kernel.pid_max",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "262144",
+        "default": "32768",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.kernel.unprivileged_bpf_disabled",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "1",
+        "default": "2",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.kernel.yama.ptrace_scope",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "1",
+        "default": "1",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.net.bridge.bridge-nf-call-ip6tables",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "1",
+        "default": "1",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.net.bridge.bridge-nf-call-iptables",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "1",
+        "default": "1",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.net.core.bpf_jit_harden",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "2",
+        "default": "0",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.net.ipv4.ip_forward",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "1",
+        "default": "0",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.net.ipv4.tcp_keepalive_intvl",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "60",
+        "default": "75",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.net.ipv4.tcp_keepalive_time",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "600",
+        "default": "7200",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.net.ipv6.conf.default.accept_ra",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "2",
+        "default": "1",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.net.ipv6.conf.default.forwarding",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "1",
+        "default": "0",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.user.max_user_namespaces",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "0",
+        "default": "7396",
+        "unsupported": false
+      }
+    },
+    {
+      "metadata": {
+        "created": "2026-01-02T17:46:14Z",
+        "id": "proc.sys.vm.overcommit_memory",
+        "namespace": "runtime",
+        "owner": "runtime.KernelParamSpecController",
+        "phase": "running",
+        "type": "KernelParamStatuses.runtime.talos.dev",
+        "updated": "2026-01-02T17:46:14Z",
+        "version": 1
+      },
+      "node": "192.168.122.87",
+      "spec": {
+        "current": "1",
+        "default": "0",
+        "unsupported": false
+      }
+    }
+  ]
+}

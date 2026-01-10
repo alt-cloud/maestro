@@ -10,13 +10,10 @@
     "version"
   ],
   "spec": [
-    "devicePath",
-    "generation",
-    "major",
-    "minor",
-    "type",
-    "parent",
-    "partitionName",
-    "partitionNumber"
+    "dhcp4",
+    "layer",
+    "linkName",
+    "operator",
+    "requireUp"
   ]
 }
