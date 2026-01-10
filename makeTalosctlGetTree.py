@@ -16,24 +16,41 @@ for commandSet in data:
     for commandInfo in commandInfos:
       outputs = {}
       command = commandInfo['command']
-      path= 'plugin/maestro/src/' + commandSet + '/' + command
+      path= 'plugin/maestro/src/get/' + commandSet + '/' + command
       print(path)
+      columns = {'meta': [], 'spec': []}
+      metaCols = []
+      specCols = []
       for ip in ['192.168.122.33', '192.168.122.87']:
-        result = subprocess.run(["talosctl", "get", "blockdevice", "--talosconfig", "/home/kaf/.talos/talosconfig", "-e", "192.168.122.33",  "-n", ip, "-o", "json"], capture_output=True, text=True)
+        result = subprocess.run(["talosctl", "get", command, "--talosconfig", "/home/kaf/.talos/talosconfig", "-e", "192.168.122.33",  "-n", ip, "-o", "json"], capture_output=True, text=True)
         # print(result.stdout)
         Result = '[' + result.stdout.replace("}\n{","},{") + ']'
         # print(Result)
         print('IP=', ip)
         # exit(0)
-        outputs[ip] = json.loads(Result)
-      data = json.dumps(outputs, indent=2)
-      # print(data)
+        output = json.loads(Result)
+        for row in output:
+          meta = row['metadata']
+          spec = row['spec']
+          if not isinstance(spec, dict):
+            spec = {'spec': spec}
+          metaCols = list(dict.fromkeys(metaCols + list(meta.keys())))
+          specCols = list(dict.fromkeys(specCols + list(spec.keys())))
+        outputs[ip] = output
+      Columns = {'meta': metaCols, 'spec': specCols}
+      Columns = json.dumps(Columns, indent=2)
+      Data = json.dumps(outputs, indent=2)
+      # print(Data)
       os.makedirs(path, exist_ok=True)
-      file = path + '/data.json'
+      file = path + '/Data.json'
       fp = open(file, 'w')
-      fp.write(data)
+      fp.write(Data)
+
+      fp.close()
+      file = path + '/Columns.json'
+      fp = open(file, 'w')
+      fp.write(Columns)
       fp.close()
 
-      exit(0)
-    # command = data[commandSet][commandName]['command']
-    # print(commandSet+'/'+command)
+      # exit(0)
+
