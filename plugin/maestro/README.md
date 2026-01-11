@@ -1,4 +1,4 @@
-# maestro
+# headlamp-плугин  maestro
 
 headlamp-плугин maestro поддерживает UI-интерфейс к команде talosctl и:
 - добавляет к headlamp набор WEB-страниц (UI-интерфейсы) для работы с kubetnetes развернутым под ОС ALTOrchestra/Talos;
