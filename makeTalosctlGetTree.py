@@ -4,6 +4,7 @@ import io
 import os
 import json
 import subprocess
+import shutil
 
 with open("RDTree.yaml", 'r') as stream:
     data = yaml.safe_load(stream)
@@ -17,6 +18,7 @@ for commandSet in data:
       outputs = {}
       command = commandInfo['command']
       path= 'plugin/maestro/src/get/' + commandSet + '/' + command
+      title = json.dumps({'title': 'talosctl get %s (command group %s)' % (command, commandSet)})
       print(path)
       columns = {'meta': [], 'spec': []}
       metaCols = []
@@ -42,11 +44,20 @@ for commandSet in data:
       Data = json.dumps(outputs, indent=2)
       # print(Data)
       os.makedirs(path, exist_ok=True)
+      fromPage = path + '/../../Page.tsx'
+      toPage = path + '/Page.tsx'
+      shutil.copyfile(fromPage, toPage)
+
+      file = path + '/Head.json'
+      fp = open(file, 'w')
+      fp.write(title)
+      fp.close()
+
       file = path + '/Data.json'
       fp = open(file, 'w')
       fp.write(Data)
-
       fp.close()
+
       file = path + '/Columns.json'
       fp = open(file, 'w')
       fp.write(Columns)
