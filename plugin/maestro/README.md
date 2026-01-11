@@ -45,16 +45,18 @@ headlamp-плугин maestro поддерживает UI-интерфейс к 
 
 ![talosctl get blockdevice](./Images/blockdevice.png);
 
-- talosctl get devices (группа команд hardware)
+- `talosctl get devices` (группа команд hardware)
 
-![talosctl get blockdevice](./Images/hardwareDevices.png
+![talosctl get blockdevice](./Images/hardwareDevices.png)
 
 Интерфейс поддерживает:
 
 - установку числа отображаемых строк на странице;
 - сортировку строк по убыванию или возрастанию по любому столбцу .
 
-Столбцы входящие в группу `spec` JSON-вывода команды `talosctl get` отображаются с префиксом `spec.`. Столбцы входящие в группу `metadata` с префиксом `meta`. (см. пример вывода команды [talosctl get blockdevice]](./src/get/block/blockdevice/Data.json)).
+Столбцы входящие в группу `spec` JSON-вывода команды `talosctl get` отображаются с префиксом `spec.`. Столбцы входящие в группу `metadata` с префиксом `meta`. 
+Смотри пример вывода команды 
+[talosctl get blockdevice](./src/get/block/blockdevice/Data.json).
 
 
 <!--This is the default template README for [Headlamp Plugins](https://github.com/kubernetes-sigs/headlamp).
