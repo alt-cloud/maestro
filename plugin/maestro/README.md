@@ -19,29 +19,26 @@ headlamp-плугин maestro поддерживает UI-интерфейс к 
 
 ## Главная страница 
 
-При обращении к корневоя странице плугина через [REST-интерфейс](../../api/flaskAPI.py) производится сканирования указанной сети (в данном случае 192.168.122.0/24) для получения списка узлов, имеющих открытый порт 50000 (GRPC интерфейс ALT Orchestra сервиса APID).
+При обращении к корневой странице плугина через [REST-интерфейс](../../api/flaskAPI.py) производится сканирования указанной сети (в данном случае 192.168.122.0/24) для получения списка узлов, имеющих открытый порт 50000 (GRPC интерфейс ALT Orchestra/Talos сервиса APID).
 
 Полученный список сверяется cо списком endpoint и node узлов. полученными из файла конфигурации `talosconfig` командой [talosctl config contexts](../../api/flaskAPI.py#L50) и:
-- формируется дерево узлов принадлжащим текущим кластерам c разбивкой на controlplane (enpoint) и worker узлы;
+- формируется дерево узлов принадлежащих текущим кластерам c разбивкой на controlplane (enpoint) и worker узлы;
 - узлы не принадлежащие ни к одному из узлов помещаются в виртуальный кластер `NULL`.
 Полученный список отображается в UI-интерфейсе.
 
 ![Главная страница](./Images/mainpahe.png)
 
-Для узлов, помещенных в вируальный кластер `NULL` возможны следующие действия:
+Для узлов, помещенных в виртуальный кластер `NULL` возможны следующие действия:
 - если узел уже развернут и входит в кластер, но отсутствует в качестве endpoint или node  в файле конфигурации `talosconfig` - добавление его в talosconfig в качестве endpoint или node (при "ручном" разворачивании часто эта информация отсутствует в `talosconfig`);
-- если узел находится в стадии разворачивания (начальный загрузка) добавление их в уже существующий кластер или создание нового кластера.
+- если узел находится в стадии разворачивания (начальный загрузка) - добавление его в уже существующий кластер или во вновь создаваемый.
 
 Для узлов принадлежащих кластерам возможно:
-- отображение из данных полученных командой `talosctl get`. Дерево команд приведено в файле [RDTree.yaml](../../RDTree.yaml);
-- поддержка остальных команд `talosctl`. Список команд с подкомандами приведен в [talosctl cli](https://docs.siderolabs.com/talos/v1.7/reference/cli).
-
+- Отображение данных полученных командой `talosctl get`. Дерево поддерживаемых подкоманд команды `talosctl get` приведено в файле [RDTree.yaml](../../RDTree.yaml);
+- Поддержка остальных команд `talosctl`. Список команд с подкомандами приведен в описании команд и подкоманд команды [talosctl cli](https://docs.siderolabs.com/talos/v1.7/reference/cli).
 
 ## Страницы отображения данных узла
 
-Ниже приведены 
-
-для примера два UI-интерфейса отображения данных выбранного узла, полученных через REST-интерфейс командой `talosctl get` для controlplane узла `192.168.122.33`:
+Ниже приведены в качестве примера два UI-интерфейса отображения данных выбранного узла, полученных через REST-интерфейс командой `talosctl get` для `controlplane` узла `192.168.122.33`:
 
 - `talosctl get blockdevice` (группа команд block)
 
@@ -56,22 +53,7 @@ headlamp-плугин maestro поддерживает UI-интерфейс к 
 - установку числа отображаемых строк на странице;
 - сортировку строк по убыванию или возрастанию по любому столбцу .
 
-Столбцы входящие в группу `spec` JSON-вывода команды `talosctl get` отображаются с префиксом `spec.`. Столбцы входящие в группу `metadata` с префиксом `meta`. 
-Смотри пример вывода команды 
+Столбцы входящие в группу `spec` JSON-вывода команды `talosctl get` отображаются с префиксом `spec.`. 
+Столбцы входящие в группу `metadata` - с префиксом `meta`. 
+См. пример вывода команды 
 [talosctl get blockdevice](./src/get/block/blockdevice/Data.json).
-
-
-<!--This is the default template README for [Headlamp Plugins](https://github.com/kubernetes-sigs/headlamp).
-
-- The description of your plugin should go here.
-- You should also edit the package.json file meta data (like name and description).
-
-## Developing Headlamp plugins
-
-For more information on developing Headlamp plugins, please refer to:
-
-- [Getting Started](https://headlamp.dev/docs/latest/development/plugins/), How to create a new Headlamp plugin.
-- [API Reference](https://headlamp.dev/docs/latest/development/api/), API documentation for what you can do
-- [UI Component Storybook](https://headlamp.dev/docs/latest/development/frontend/#storybook), pre-existing components you can use when creating your plugin.
-- [Plugin Examples](https://github.com/kubernetes-sigs/headlamp/tree/main/plugins/examples), Example plugins you can look at to see how it's done.
--->
