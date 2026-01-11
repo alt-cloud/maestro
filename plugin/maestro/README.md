@@ -4,6 +4,14 @@ headlamp-плугин maestro поддерживает UI-интерфейс к 
 - добавляет к headlamp набор WEB-страниц (UI-интерфейсы) для работы с kubetnetes развернутым под ОС ALTOrchestra/Talos;
 - модифицирует основной интерфейс headlamp, добавляя на него ссылки на WEB-страницы maestro или дополняя страницы информацией, полученных от команды talosctl.
 
+## Схема работы headlamp-плугина maestro
+
+Так как headlamp-плугин maestro не может напрямую обращаться к talosctl создает [REST-интерфейс](https://altlinux.space/kaf/maestro/src/branch/main/api/flaskAPI.py) для:
+- сканирования сети для получения списка узлов, развернутых под ОС ALTOrchestra/Talos;
+- обращения к talosctl для получения необходимой информации, подключению узлов к ALTOrchestra/Talos кластерам или создания новых кластеров.
+
+
+
 
 
 <!--This is the default template README for [Headlamp Plugins](https://github.com/kubernetes-sigs/headlamp).
