@@ -12,7 +12,7 @@ headlamp-плугин maestro поддерживает UI-интерфейс к 
 
 ## Главная страница 
 
-[Главная страница](Images/mainpahe.png)
+![Главная страница](./Images/mainpahe.png)
 
 
 
