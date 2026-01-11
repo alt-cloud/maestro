@@ -34,6 +34,7 @@ import Typography from '@mui/material/Typography';
 import MaestroIcon from './maestro.svg';
 import MaestroMainPage from './MaestroMainPage';
 import GetBlockBlockDevice from './get/block/blockdevice/Page';
+import GetHardwareDevices from './get/hardware/devices/Page';
 
 // Add an entry to the home sidebar (not in cluster).
 registerSidebarEntry({
@@ -152,6 +153,30 @@ registerSidebarEntry({
   name: 'blockdevice',
   label: 'BLOCKDEVICE',
   url: '/maestro/get/block/blockdevice',
+  icon: 'MaestroIcon',
+  sidebar: 'myplugin',
+});
+
+// GET/hardware/device Tree
+registerRoute({
+  path: '/maestro/get/hardware/devices',
+  sidebar: {
+    item: 'maestro',
+    sidebar: 'myplugin',
+  },
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_get_hardware_devices',
+  exact: true,
+  component: () => (
+    <GetHardwareDevices/>
+  ),
+});
+registerSidebarEntry({
+//   parent: '/maestro/get',
+  name: 'hardwaredevices',
+  label: 'HARDWAREDEVICES',
+  url: '/maestro/get/hardware/devices',
   icon: 'MaestroIcon',
   sidebar: 'myplugin',
 });
