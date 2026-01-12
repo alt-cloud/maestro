@@ -69,7 +69,7 @@
         <mxCell id="MLqv7z3PhTETLXsyigPO-22" value="" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="920" y="70" width="400" height="250" as="geometry" />
         </mxCell>
-        <mxCell id="MLqv7z3PhTETLXsyigPO-23" value="&lt;font style=&quot;font-size: 32px;&quot;&gt;&lt;b&gt;CLUSTER&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+        <mxCell id="MLqv7z3PhTETLXsyigPO-23" value="&lt;font style=&quot;font-size: 32px;&quot;&gt;&lt;b&gt;ALT Orchestra/&lt;br&gt;Talos&lt;br&gt;CLUSTER&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="985" y="150" width="270" height="120" as="geometry" />
         </mxCell>
         <mxCell id="MLqv7z3PhTETLXsyigPO-34" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0.065;entryY=0.446;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.996;exitY=0.13;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="MLqv7z3PhTETLXsyigPO-4" target="MLqv7z3PhTETLXsyigPO-22" edge="1">
