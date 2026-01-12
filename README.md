@@ -28,4 +28,4 @@ headlamp-плугин maestro, функционируюший в рамках [�
 - отображать данные узлов кластера (набор устройств, партиций, ...) см [Запрос ресурсов talosctl get](./usefullSubcommands.md);
 - работать с etcd и другими сервисами кластера (си. [Полезные команды talosctl](./usefullCommands.md)).
 
-Подробное описание пругина приведено на странице [headlamp-плугин  maestro](/plugin/maestro/README.md). 
+Подробное описание пругина приведено на странице [headlamp-плугин  maestro](./plugin/maestro/README.md). 
