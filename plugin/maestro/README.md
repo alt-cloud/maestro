@@ -62,3 +62,11 @@ headlamp-плугин maestro поддерживает UI-интерфейс к 
 ## Работа с etcd и другими сервисами кластера
 
 В разработке...
+
+
+## Ссылки
+
+- [headlamp github](https://github.com/kubernetes-sigs/headlamp);
+- [headlamp Docs](https://github.com/kubernetes-sigs/headlamp/tree/main/docs);
+- [install](https://github.com/kubernetes-sigs/headlamp/blob/main/docs/development/index.md);
+- [headlamp Development](https://headlamp.dev/docs/latest/development/).
