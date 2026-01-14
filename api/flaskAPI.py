@@ -4,8 +4,11 @@ import subprocess
 import shlex
 import os
 import json
+from flask_cors import CORS
 
 app = Flask(__name__)
+# CORS(app, origins=["http://localhost:3000"])
+CORS(app, origins=["*"])
 
 @app.route('/talosctl')
 def talosctl():
@@ -40,6 +43,40 @@ def talosctl():
 # ]
 @app.route('/map')
 def map():
+  ret='''
+[
+  {
+    "id": "Maestro",
+    "currentContext": "*",
+    "clusterName": "Maestro",
+    "controlplanes": [
+      "192.168.122.33"
+    ],
+    "workers": [
+      "192.168.122.33",
+      "192.168.122.87"
+    ]
+  },
+  {
+    "id": "Cluster1",
+    "currentContext": "",
+    "clusterName": "Cluster1",
+    "controlplanes": [],
+    "workers": []
+  },
+  {
+    "id": "NULL",
+    "currentContext": "",
+    "clusterName": "NULL",
+    "controlplanes": [],
+    "workers": [
+      "192.168.122.1"
+    ]
+  }
+]
+'''
+  return ret
+
   nets = request.args['nets']
   # Запросить список узлов сети nets слушающих порт 50000 (сервис apid) и 6443 (kubeAPI)
   nmapOut = subprocess.run(['nmap', '-p 50000,6443',  nets], capture_output=True, text=True, check=True)
