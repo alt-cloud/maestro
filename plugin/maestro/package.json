@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Maestro Headlamp plugin",
   "scripts": {
-    "start": "headlamp-plugin start",
+    "start": "NODE_ENV=development headlamp-plugin start ",
     "build": "headlamp-plugin build",
     "format": "headlamp-plugin format",
     "lint": "headlamp-plugin lint",
