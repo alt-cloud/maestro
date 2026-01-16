@@ -70,7 +70,7 @@ def map():
     "clusterName": "NULL",
     "controlplanes": [],
     "workers": [
-      "192.168.122.1"
+      "192.168.122.127"
     ]
   }
 ]
