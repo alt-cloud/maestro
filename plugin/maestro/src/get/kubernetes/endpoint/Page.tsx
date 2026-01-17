@@ -78,7 +78,7 @@ function createRows(dataRows) {
   return rows;
 }
 
-const GetBlockBlockDevice: React.FC<{ enabled: boolean }> = ({ enabled }) => {
+const TalosGetInfo: React.FC<{ enabled: boolean }> = ({ enabled }) => {
   const location = useLocation();
   // Парсим query параметры
   const queryParams = useMemo(() => {
@@ -172,4 +172,4 @@ const GetBlockBlockDevice: React.FC<{ enabled: boolean }> = ({ enabled }) => {
   );
 }
 
-export default GetBlockBlockDevice;
+export default TalosGetInfo;
