@@ -33,11 +33,16 @@ const columns: Column[] = [
 ];
 
 function NodesLinks(pars) {
-//   alert(JSON.stringify(pars))
+//   alert(JSON.stringify(pars));
+  const controlplanes = pars.controlplanes;
+//   alert('controlplanes=' + JSON.stringify(controlplanes));
+  const controlplane = controlplanes.length > 0 ? controlplanes[0] : '';
+//   alert('controlplane=' + JSON.stringify(controlplane));
+
   return (
     <TableCell sx={{ verticalAlign: 'top', whiteSpace: 'pre-line' }}>
       {pars.nodes.map((node, index) => (
-        <><Link key={node} to="/maestro/get/block/blockdevice?cluster={pars.clusterName}&node={node}&type={pars.type}" >{node}</Link><br /></>
+        <><Link key={node} to={`/maestro/get?cluster=${pars.clusterName}&controlplane=${controlplane}&node=${node}&type=${pars.type}`} >{node}</Link><br /></>
       ))}
     </TableCell>
   );
@@ -167,8 +172,8 @@ const MaestroMainPage: React.FC<{ enabled: boolean }> = ({ enabled }) => {
               <TableRow key={row.id}>
                 <TableCell sx={{ verticalAlign: 'top' }}>{row.currentContext}</TableCell>
                 <TableCell sx={{ verticalAlign: 'top' }}>{row.clusterName}</TableCell>
-                <NodesLinks clusterName={row.clusterName} nodes={row.controlplanes} type='controlplane'/>
-                <NodesLinks clusterName={row.clusterName} nodes={row.workers} type='worker'/>
+                <NodesLinks clusterName={row.clusterName} controlplanes={row.controlplanes} nodes={row.controlplanes} type='controlplane'/>
+                <NodesLinks clusterName={row.clusterName} controlplanes={row.controlplanes} nodes={row.workers} type='worker'/>
               </TableRow>
             ))}
           </TableBody>

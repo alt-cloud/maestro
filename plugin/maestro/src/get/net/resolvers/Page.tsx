@@ -88,7 +88,11 @@ const TalosGetInfo: React.FC<{ enabled: boolean }> = ({ enabled }) => {
 
 //   alert(JSON.stringify(data['192.168.122.33'], null, 2));
 //   alert(JSON.stringify(queryParams));
-  const node = '192.168.122.33';
+  const cluster = queryParams.cluster;
+  const controlplane = queryParams.controlplane;
+  const node = queryParams.node;
+  const nodeType = queryParams.type;
+//   const node = '192.168.122.33';
   const dataRows = datasRows[node];
   const Rows = createRows(dataRows);
 //   alert(JSON.stringify(Rows));
@@ -124,7 +128,7 @@ const TalosGetInfo: React.FC<{ enabled: boolean }> = ({ enabled }) => {
 
 
   return (
-  <SectionBox title={'Node: ' + node + ': ' + head.title} textAlign="center" paddingTop={2}>
+  <SectionBox title={'Cluster:' + cluster + ' Type:' + nodeType + ' Node:' + node + "\n" + head.title} textAlign="center" paddingTop={2}>
     <Paper>
       <TableContainer>
         <Table>
