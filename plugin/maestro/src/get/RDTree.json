@@ -1,0 +1,992 @@
+{
+  "block": {
+    "name": "block",
+    "commands": [
+      {
+        "id": "blockdevices",
+        "aliases": "blockdevice bd bds",
+        "command": "blockdevice",
+        "name": "blockdevice"
+      },
+      {
+        "id": "blocksymlinks",
+        "aliases": "blocksymlink bs",
+        "command": "blocksymlink",
+        "name": "blocksymlink"
+      },
+      {
+        "id": "discoveredvolumes",
+        "aliases": "discoveredvolume dv dvs",
+        "command": "discoveredvolume",
+        "name": "discoveredvolume"
+      },
+      {
+        "id": "discoveryrefreshrequests",
+        "aliases": "discoveryrefreshrequest drr drrs",
+        "command": "discoveryrefreshrequest",
+        "name": "discoveryrefreshrequest"
+      },
+      {
+        "id": "discoveryrefreshstatuses",
+        "aliases": "discoveryrefreshstatus drs",
+        "command": "discoveryrefreshstatus",
+        "name": "discoveryrefreshstatus"
+      },
+      {
+        "id": "disks",
+        "aliases": "disk",
+        "command": "disk",
+        "name": "disk"
+      },
+      {
+        "id": "mountrequests",
+        "aliases": "mountrequest mr mrs",
+        "command": "mountrequest",
+        "name": "mountrequest"
+      },
+      {
+        "id": "mountstatuses",
+        "aliases": "mountstatus ms",
+        "command": "mountstatus",
+        "name": "mountstatus"
+      },
+      {
+        "id": "systemdisks",
+        "aliases": "systemdisk sd sds",
+        "command": "systemdisk",
+        "name": "systemdisk"
+      },
+      {
+        "id": "userdiskconfigstatuses",
+        "aliases": "userdiskconfigstatus udcs",
+        "command": "userdiskconfigstatus",
+        "name": "userdiskconfigstatus"
+      },
+      {
+        "id": "volumeconfigs",
+        "aliases": "volumeconfig vc vcs",
+        "command": "volumeconfig",
+        "name": "volumeconfig"
+      },
+      {
+        "id": "volumelifecycles",
+        "aliases": "volumelifecycle vl vls",
+        "command": "volumelifecycle",
+        "name": "volumelifecycle"
+      },
+      {
+        "id": "volumemountrequests",
+        "aliases": "volumemountrequest vmr vmrs",
+        "command": "volumemountrequest",
+        "name": "volumemountrequest"
+      },
+      {
+        "id": "volumemountstatuses",
+        "aliases": "volumemountstatus vms",
+        "command": "volumemountstatus",
+        "name": "volumemountstatus"
+      },
+      {
+        "id": "volumestatuses",
+        "aliases": "volumestatus vs",
+        "command": "volumestatus",
+        "name": "volumestatus"
+      }
+    ]
+  },
+  "cluster": {
+    "name": "cluster",
+    "commands": [
+      {
+        "id": "affiliates",
+        "aliases": "affiliate",
+        "command": "affiliate",
+        "name": "affiliate"
+      },
+      {
+        "id": "discoveryconfigs",
+        "aliases": "discoveryconfig dc dcs",
+        "command": "discoveryconfig",
+        "name": "discoveryconfig"
+      },
+      {
+        "id": "identities",
+        "aliases": "identity",
+        "command": "identity",
+        "name": "identity"
+      },
+      {
+        "id": "infos",
+        "aliases": "info",
+        "command": "info",
+        "name": "info"
+      },
+      {
+        "id": "kubernetesaccessconfigs",
+        "aliases": "kubernetesaccessconfig kac kacs",
+        "command": "kubernetesaccessconfig",
+        "name": "kubernetesaccessconfig"
+      },
+      {
+        "id": "members",
+        "aliases": "member",
+        "command": "member",
+        "name": "member"
+      }
+    ]
+  },
+  "config": {
+    "name": "config",
+    "commands": [
+      {
+        "id": "machineconfigs",
+        "aliases": "machineconfig mc mcs",
+        "command": "machineconfig",
+        "name": "machineconfig"
+      },
+      {
+        "id": "machinetypes",
+        "aliases": "machinetype mt mts",
+        "command": "machinetype",
+        "name": "machinetype"
+      }
+    ]
+  },
+  "cri": {
+    "name": "cri",
+    "commands": [
+      {
+        "id": "imagecacheconfigs",
+        "aliases": "imagecacheconfig icc iccs",
+        "command": "imagecacheconfig",
+        "name": "imagecacheconfig"
+      },
+      {
+        "id": "registryconfigs",
+        "aliases": "registryconfig rc rcs",
+        "command": "registryconfig",
+        "name": "registryconfig"
+      },
+      {
+        "id": "seccompprofiles",
+        "aliases": "seccompprofile sp sps",
+        "command": "seccompprofile",
+        "name": "seccompprofile"
+      }
+    ]
+  },
+  "etcd": {
+    "name": "etcd",
+    "commands": [
+      {
+        "id": "etcdconfigs",
+        "aliases": "etcdconfig ec ecs",
+        "command": "etcdconfig",
+        "name": "etcdconfig"
+      },
+      {
+        "id": "etcdmembers",
+        "aliases": "etcdmember em ems",
+        "command": "etcdmember",
+        "name": "etcdmember"
+      },
+      {
+        "id": "etcdspecs",
+        "aliases": "etcdspec es",
+        "command": "etcdspec",
+        "name": "etcdspec"
+      },
+      {
+        "id": "pkistatuses",
+        "aliases": "pkistatus pkis",
+        "command": "pkistatus",
+        "name": "pkistatus"
+      }
+    ]
+  },
+  "files": {
+    "name": "files",
+    "commands": [
+      {
+        "id": "etcfilespecs",
+        "aliases": "etcfilespec efs",
+        "command": "etcfilespec",
+        "name": "etcfilespec"
+      },
+      {
+        "id": "etcfilestatuses",
+        "aliases": "etcfilestatus efs",
+        "command": "etcfilestatus",
+        "name": "etcfilestatus"
+      }
+    ]
+  },
+  "hardware": {
+    "name": "hardware",
+    "commands": [
+      {
+        "id": "memorymodules",
+        "aliases": "memorymodules ram memorymodule mm mms",
+        "command": "memorymodules",
+        "name": "memorymodules"
+      },
+      {
+        "id": "pcidevices",
+        "aliases": "devices device pcidevice pcid pcids",
+        "command": "devices",
+        "name": "devices"
+      },
+      {
+        "id": "pcrstatuses",
+        "aliases": "pcrstatus pcrs",
+        "command": "pcrstatus",
+        "name": "pcrstatus"
+      },
+      {
+        "id": "processors",
+        "aliases": "cpus cpu processor",
+        "command": "cpus",
+        "name": "cpus"
+      },
+      {
+        "id": "systeminformations",
+        "aliases": "systeminformation systeminformation si sis",
+        "command": "systeminformation",
+        "name": "systeminformation"
+      }
+    ]
+  },
+  "k8s": {
+    "name": "k8s",
+    "commands": [
+      {
+        "id": "nodeannotationspecs",
+        "aliases": "nodeannotationspec nas",
+        "command": "nodeannotationspec",
+        "name": "nodeannotationspec"
+      },
+      {
+        "id": "nodecordonedspecs",
+        "aliases": "nodecordonedspec ncs",
+        "command": "nodecordonedspec",
+        "name": "nodecordonedspec"
+      },
+      {
+        "id": "nodelabelspecs",
+        "aliases": "nodelabelspec nls",
+        "command": "nodelabelspec",
+        "name": "nodelabelspec"
+      },
+      {
+        "id": "nodetaintspecs",
+        "aliases": "nodetaintspec nts",
+        "command": "nodetaintspec",
+        "name": "nodetaintspec"
+      }
+    ]
+  },
+  "kubernetes": {
+    "name": "kubernetes",
+    "commands": [
+      {
+        "id": "admissioncontrolconfigs",
+        "aliases": "admissioncontrolconfig acc accs",
+        "command": "admissioncontrolconfig",
+        "name": "admissioncontrolconfig"
+      },
+      {
+        "id": "apiserverconfigs",
+        "aliases": "apiserverconfig apisc apiscs",
+        "command": "apiserverconfig",
+        "name": "apiserverconfig"
+      },
+      {
+        "id": "auditpolicyconfigs",
+        "aliases": "auditpolicyconfig apc apcs",
+        "command": "auditpolicyconfig",
+        "name": "auditpolicyconfig"
+      },
+      {
+        "id": "authorizationconfigs",
+        "aliases": "authorizationconfig ac acs",
+        "command": "authorizationconfig",
+        "name": "authorizationconfig"
+      },
+      {
+        "id": "bootstrapmanifestsconfigs",
+        "aliases": "bootstrapmanifestsconfig bmc bmcs",
+        "command": "bootstrapmanifestsconfig",
+        "name": "bootstrapmanifestsconfig"
+      },
+      {
+        "id": "configstatuses",
+        "aliases": "configstatus cs",
+        "command": "configstatus",
+        "name": "configstatus"
+      },
+      {
+        "id": "controllermanagerconfigs",
+        "aliases": "controllermanagerconfig cmc cmcs",
+        "command": "controllermanagerconfig",
+        "name": "controllermanagerconfig"
+      },
+      {
+        "id": "endpoints",
+        "aliases": "endpoint",
+        "command": "endpoint",
+        "name": "endpoint"
+      },
+      {
+        "id": "extramanifestsconfigs",
+        "aliases": "extramanifestsconfig emc emcs",
+        "command": "extramanifestsconfig",
+        "name": "extramanifestsconfig"
+      },
+      {
+        "id": "kubeletconfigs",
+        "aliases": "kubeletconfig kc kcs",
+        "command": "kubeletconfig",
+        "name": "kubeletconfig"
+      },
+      {
+        "id": "kubeletlifecycles",
+        "aliases": "kubeletlifecycle kl kls",
+        "command": "kubeletlifecycle",
+        "name": "kubeletlifecycle"
+      },
+      {
+        "id": "kubeletspecs",
+        "aliases": "kubeletspec ks",
+        "command": "kubeletspec",
+        "name": "kubeletspec"
+      },
+      {
+        "id": "kubeprismconfigs",
+        "aliases": "kubeprismconfig kpc kpcs",
+        "command": "kubeprismconfig",
+        "name": "kubeprismconfig"
+      },
+      {
+        "id": "kubeprismendpoints",
+        "aliases": "kubeprismendpoint kpe kpes",
+        "command": "kubeprismendpoint",
+        "name": "kubeprismendpoint"
+      },
+      {
+        "id": "kubeprismstatuses",
+        "aliases": "kubeprismstatus kps",
+        "command": "kubeprismstatus",
+        "name": "kubeprismstatus"
+      },
+      {
+        "id": "manifests",
+        "aliases": "manifest",
+        "command": "manifest",
+        "name": "manifest"
+      },
+      {
+        "id": "manifeststatuses",
+        "aliases": "manifeststatus ms",
+        "command": "manifeststatus",
+        "name": "manifeststatus"
+      },
+      {
+        "id": "nodeipconfigs",
+        "aliases": "nodeipconfig nipc nipcs",
+        "command": "nodeipconfig",
+        "name": "nodeipconfig"
+      },
+      {
+        "id": "nodeips",
+        "aliases": "nodeip nip nips",
+        "command": "nodeip",
+        "name": "nodeip"
+      },
+      {
+        "id": "nodenames",
+        "aliases": "nodename",
+        "command": "nodename",
+        "name": "nodename"
+      },
+      {
+        "id": "nodestatuses",
+        "aliases": "nodestatus ns",
+        "command": "nodestatus",
+        "name": "nodestatus"
+      },
+      {
+        "id": "schedulerconfigs",
+        "aliases": "schedulerconfig sc scs",
+        "command": "schedulerconfig",
+        "name": "schedulerconfig"
+      },
+      {
+        "id": "secretstatuses",
+        "aliases": "secretstatus ss",
+        "command": "secretstatus",
+        "name": "secretstatus"
+      },
+      {
+        "id": "staticpods",
+        "aliases": "staticpod sp sps",
+        "command": "staticpod",
+        "name": "staticpod"
+      },
+      {
+        "id": "staticpodserverstatuses",
+        "aliases": "staticpodserverstatus spss",
+        "command": "staticpodserverstatus",
+        "name": "staticpodserverstatus"
+      },
+      {
+        "id": "staticpodstatuses",
+        "aliases": "podstatus staticpodstatus sps",
+        "command": "podstatus",
+        "name": "podstatus"
+      }
+    ]
+  },
+  "kubespan": {
+    "name": "kubespan",
+    "commands": [
+      {
+        "id": "kubespanconfigs",
+        "aliases": "kubespanconfig ksc kscs",
+        "command": "kubespanconfig",
+        "name": "kubespanconfig"
+      },
+      {
+        "id": "kubespanendpoints",
+        "aliases": "kubespanendpoint kse kses",
+        "command": "kubespanendpoint",
+        "name": "kubespanendpoint"
+      },
+      {
+        "id": "kubespanidentities",
+        "aliases": "kubespanidentity ksi ksis",
+        "command": "kubespanidentity",
+        "name": "kubespanidentity"
+      },
+      {
+        "id": "kubespanpeerspecs",
+        "aliases": "kubespanpeerspec ksps",
+        "command": "kubespanpeerspec",
+        "name": "kubespanpeerspec"
+      },
+      {
+        "id": "kubespanpeerstatuses",
+        "aliases": "kubespanpeerstatus ksps",
+        "command": "kubespanpeerstatus",
+        "name": "kubespanpeerstatus"
+      }
+    ]
+  },
+  "meta": {
+    "name": "meta",
+    "commands": [
+      {
+        "id": "namespaces",
+        "aliases": "ns namespace",
+        "command": "ns",
+        "name": "ns"
+      },
+      {
+        "id": "resourcedefinitions",
+        "aliases": "api-resources resourcedefinition rd rds",
+        "command": "api-resources",
+        "name": "api-resources"
+      }
+    ]
+  },
+  "net": {
+    "name": "net",
+    "commands": [
+      {
+        "id": "addressspecs",
+        "aliases": "addressspec as",
+        "command": "addressspec",
+        "name": "addressspec"
+      },
+      {
+        "id": "addressstatuses",
+        "aliases": "address addresses addressstatus as",
+        "command": "address",
+        "name": "address"
+      },
+      {
+        "id": "deviceconfigspecs",
+        "aliases": "deviceconfigspec dcs",
+        "command": "deviceconfigspec",
+        "name": "deviceconfigspec"
+      },
+      {
+        "id": "dnsresolvecaches",
+        "aliases": "dnsresolvecach dnsrc dnsrcs",
+        "command": "dnsresolvecach",
+        "name": "dnsresolvecach"
+      },
+      {
+        "id": "dnsupstreams",
+        "aliases": "dnsupstream dnsu dnsus",
+        "command": "dnsupstream",
+        "name": "dnsupstream"
+      },
+      {
+        "id": "ethernetspecs",
+        "aliases": "ethernetspec es",
+        "command": "ethernetspec",
+        "name": "ethernetspec"
+      },
+      {
+        "id": "ethernetstatuses",
+        "aliases": "ethtool ethernetstatus es",
+        "command": "ethtool",
+        "name": "ethtool"
+      },
+      {
+        "id": "hardwareaddresses",
+        "aliases": "hardwareaddress ha has",
+        "command": "hardwareaddress",
+        "name": "hardwareaddress"
+      },
+      {
+        "id": "hostdnsconfigs",
+        "aliases": "hostdnsconfig hdnsc hdnscs",
+        "command": "hostdnsconfig",
+        "name": "hostdnsconfig"
+      },
+      {
+        "id": "hostnamespecs",
+        "aliases": "hostnamespec hs",
+        "command": "hostnamespec",
+        "name": "hostnamespec"
+      },
+      {
+        "id": "hostnamestatuses",
+        "aliases": "hostname hostnamestatus hs",
+        "command": "hostname",
+        "name": "hostname"
+      },
+      {
+        "id": "linkrefreshes",
+        "aliases": "linkrefresh lr lrs",
+        "command": "linkrefresh",
+        "name": "linkrefresh"
+      },
+      {
+        "id": "linkspecs",
+        "aliases": "linkspec ls",
+        "command": "linkspec",
+        "name": "linkspec"
+      },
+      {
+        "id": "linkstatuses",
+        "aliases": "link links linkstatus ls",
+        "command": "link",
+        "name": "link"
+      },
+      {
+        "id": "networkstatuses",
+        "aliases": "netstatus netstatuses networkstatus ns",
+        "command": "netstatus",
+        "name": "netstatus"
+      },
+      {
+        "id": "nftableschains",
+        "aliases": "chain chains nftableschain ntc ntcs",
+        "command": "chain",
+        "name": "chain"
+      },
+      {
+        "id": "nodeaddresses",
+        "aliases": "nodeaddress na nas",
+        "command": "nodeaddress",
+        "name": "nodeaddress"
+      },
+      {
+        "id": "nodeaddressfilters",
+        "aliases": "nodeaddressfilter naf nafs",
+        "command": "nodeaddressfilter",
+        "name": "nodeaddressfilter"
+      },
+      {
+        "id": "nodeaddresssortalgorithms",
+        "aliases": "nodeaddresssortalgorithm nasa nasas",
+        "command": "nodeaddresssortalgorithm",
+        "name": "nodeaddresssortalgorithm"
+      },
+      {
+        "id": "operatorspecs",
+        "aliases": "operatorspec os",
+        "command": "operatorspec",
+        "name": "operatorspec"
+      },
+      {
+        "id": "probespecs",
+        "aliases": "probespec ps",
+        "command": "probespec",
+        "name": "probespec"
+      },
+      {
+        "id": "probestatuses",
+        "aliases": "probe probes probestatus ps",
+        "command": "probe",
+        "name": "probe"
+      },
+      {
+        "id": "resolverspecs",
+        "aliases": "resolverspec rs",
+        "command": "resolverspec",
+        "name": "resolverspec"
+      },
+      {
+        "id": "resolverstatuses",
+        "aliases": "resolvers resolverstatus rs",
+        "command": "resolvers",
+        "name": "resolvers"
+      },
+      {
+        "id": "routespecs",
+        "aliases": "routespec rs",
+        "command": "routespec",
+        "name": "routespec"
+      },
+      {
+        "id": "routestatuses",
+        "aliases": "route routes routestatus rs",
+        "command": "route",
+        "name": "route"
+      },
+      {
+        "id": "timeserverspecs",
+        "aliases": "timeserverspec tss",
+        "command": "timeserverspec",
+        "name": "timeserverspec"
+      },
+      {
+        "id": "timeserverstatuses",
+        "aliases": "timeserver timeservers timeserverstatus tss",
+        "command": "timeserver",
+        "name": "timeserver"
+      }
+    ]
+  },
+  "perf": {
+    "name": "perf",
+    "commands": [
+      {
+        "id": "cpustats",
+        "aliases": "cpustat cpus",
+        "command": "cpustat",
+        "name": "cpustat"
+      },
+      {
+        "id": "memorystats",
+        "aliases": "memorystat ms",
+        "command": "memorystat",
+        "name": "memorystat"
+      }
+    ]
+  },
+  "runtime": {
+    "name": "runtime",
+    "commands": [
+      {
+        "id": "devicesstatuses",
+        "aliases": "devicesstatus ds",
+        "command": "devicesstatus",
+        "name": "devicesstatus"
+      },
+      {
+        "id": "diagnostics",
+        "aliases": "diagnostic",
+        "command": "diagnostic",
+        "name": "diagnostic"
+      },
+      {
+        "id": "eventsinkconfigs",
+        "aliases": "eventsinkconfig esc escs",
+        "command": "eventsinkconfig",
+        "name": "eventsinkconfig"
+      },
+      {
+        "id": "extensionserviceconfigs",
+        "aliases": "extensionserviceconfig esc escs",
+        "command": "extensionserviceconfig",
+        "name": "extensionserviceconfig"
+      },
+      {
+        "id": "extensionserviceconfigstatuses",
+        "aliases": "extensionserviceconfigstatus escs",
+        "command": "extensionserviceconfigstatus",
+        "name": "extensionserviceconfigstatus"
+      },
+      {
+        "id": "extensionstatuses",
+        "aliases": "extensions extensionstatus es",
+        "command": "extensions",
+        "name": "extensions"
+      },
+      {
+        "id": "kernelmodulespecs",
+        "aliases": "modules kernelmodulespec kms",
+        "command": "modules",
+        "name": "modules"
+      },
+      {
+        "id": "kernelparamdefaultspecs",
+        "aliases": "kernelparamdefaultspec kpds",
+        "command": "kernelparamdefaultspec",
+        "name": "kernelparamdefaultspec"
+      },
+      {
+        "id": "kernelparamspecs",
+        "aliases": "kernelparamspec kps",
+        "command": "kernelparamspec",
+        "name": "kernelparamspec"
+      },
+      {
+        "id": "kernelparamstatuses",
+        "aliases": "sysctls kernelparameters kernelparams kernelparamstatus kps",
+        "command": "sysctls",
+        "name": "sysctls"
+      },
+      {
+        "id": "kmsglogconfigs",
+        "aliases": "kmsglogconfig klc klcs",
+        "command": "kmsglogconfig",
+        "name": "kmsglogconfig"
+      },
+      {
+        "id": "machineresetsignals",
+        "aliases": "machineresetsignal mrs",
+        "command": "machineresetsignal",
+        "name": "machineresetsignal"
+      },
+      {
+        "id": "machinestatuses",
+        "aliases": "machinestatus ms",
+        "command": "machinestatus",
+        "name": "machinestatus"
+      },
+      {
+        "id": "maintenanceserviceconfigs",
+        "aliases": "maintenanceserviceconfig msc mscs",
+        "command": "maintenanceserviceconfig",
+        "name": "maintenanceserviceconfig"
+      },
+      {
+        "id": "maintenanceservicerequests",
+        "aliases": "maintenanceservicerequest msr msrs",
+        "command": "maintenanceservicerequest",
+        "name": "maintenanceservicerequest"
+      },
+      {
+        "id": "metakeys",
+        "aliases": "meta metakey mk mks",
+        "command": "meta",
+        "name": "meta"
+      },
+      {
+        "id": "metaloads",
+        "aliases": "metaload ml mls",
+        "command": "metaload",
+        "name": "metaload"
+      },
+      {
+        "id": "mountstatuses",
+        "aliases": "mounts",
+        "command": "mounts",
+        "name": "mounts"
+      },
+      {
+        "id": "pcidriverrebindconfigs",
+        "aliases": "pcidriverrebindconfig pcidrc pcidrcs",
+        "command": "pcidriverrebindconfig",
+        "name": "pcidriverrebindconfig"
+      },
+      {
+        "id": "pcidriverrebindstatuses",
+        "aliases": "pcidriverrebinds pcidriverrebindstatus pcidrs",
+        "command": "pcidriverrebinds",
+        "name": "pcidriverrebinds"
+      },
+      {
+        "id": "uniquemachinetokens",
+        "aliases": "uniquemachinetoken umt umts",
+        "command": "uniquemachinetoken",
+        "name": "uniquemachinetoken"
+      },
+      {
+        "id": "versions",
+        "aliases": "version",
+        "command": "version",
+        "name": "version"
+      },
+      {
+        "id": "watchdogtimerconfigs",
+        "aliases": "watchdogtimerconfig wtc wtcs",
+        "command": "watchdogtimerconfig",
+        "name": "watchdogtimerconfig"
+      },
+      {
+        "id": "watchdogtimerstatuses",
+        "aliases": "watchdogtimerstatus wts",
+        "command": "watchdogtimerstatus",
+        "name": "watchdogtimerstatus"
+      }
+    ]
+  },
+  "secrets": {
+    "name": "secrets",
+    "commands": [
+      {
+        "id": "apicertificates",
+        "aliases": "apicertificate ac acs",
+        "command": "apicertificate",
+        "name": "apicertificate"
+      },
+      {
+        "id": "certsans",
+        "aliases": "certsan csan csans",
+        "command": "certsan",
+        "name": "certsan"
+      },
+      {
+        "id": "etcdrootsecrets",
+        "aliases": "etcdrootsecret ers",
+        "command": "etcdrootsecret",
+        "name": "etcdrootsecret"
+      },
+      {
+        "id": "etcdsecrets",
+        "aliases": "etcdsecret es",
+        "command": "etcdsecret",
+        "name": "etcdsecret"
+      },
+      {
+        "id": "kubeletsecrets",
+        "aliases": "kubeletsecret ks",
+        "command": "kubeletsecret",
+        "name": "kubeletsecret"
+      },
+      {
+        "id": "kubernetesdynamiccerts",
+        "aliases": "kubernetesdynamiccert kdc kdcs",
+        "command": "kubernetesdynamiccert",
+        "name": "kubernetesdynamiccert"
+      },
+      {
+        "id": "kubernetesrootsecrets",
+        "aliases": "kubernetesrootsecret krs",
+        "command": "kubernetesrootsecret",
+        "name": "kubernetesrootsecret"
+      },
+      {
+        "id": "kubernetessecrets",
+        "aliases": "kubernetessecret ks",
+        "command": "kubernetessecret",
+        "name": "kubernetessecret"
+      },
+      {
+        "id": "maintenancerootsecrets",
+        "aliases": "maintenancerootsecret mrs",
+        "command": "maintenancerootsecret",
+        "name": "maintenancerootsecret"
+      },
+      {
+        "id": "maintenanceservicecertificates",
+        "aliases": "maintenanceservicecertificate msc mscs",
+        "command": "maintenanceservicecertificate",
+        "name": "maintenanceservicecertificate"
+      },
+      {
+        "id": "osrootsecrets",
+        "aliases": "osrootsecret osrs",
+        "command": "osrootsecret",
+        "name": "osrootsecret"
+      },
+      {
+        "id": "trustdcertificates",
+        "aliases": "trustdcertificate tc tcs",
+        "command": "trustdcertificate",
+        "name": "trustdcertificate"
+      }
+    ]
+  },
+  "siderolink": {
+    "name": "siderolink",
+    "commands": [
+      {
+        "id": "siderolinkconfigs",
+        "aliases": "siderolinkconfig sc scs",
+        "command": "siderolinkconfig",
+        "name": "siderolinkconfig"
+      },
+      {
+        "id": "siderolinkstatuses",
+        "aliases": "siderolinkstatus ss",
+        "command": "siderolinkstatus",
+        "name": "siderolinkstatus"
+      },
+      {
+        "id": "siderolinktunnels",
+        "aliases": "siderolinktunnel st sts",
+        "command": "siderolinktunnel",
+        "name": "siderolinktunnel"
+      }
+    ]
+  },
+  "talos": {
+    "name": "talos",
+    "commands": [
+      {
+        "id": "platformmetadatas",
+        "aliases": "platformmetadata pm pms",
+        "command": "platformmetadata",
+        "name": "platformmetadata"
+      },
+      {
+        "id": "securitystates",
+        "aliases": "securitystate ss",
+        "command": "securitystate",
+        "name": "securitystate"
+      }
+    ]
+  },
+  "v1alpha1": {
+    "name": "v1alpha1",
+    "commands": [
+      {
+        "id": "acquireconfigspecs",
+        "aliases": "acquireconfigspec acs",
+        "command": "acquireconfigspec",
+        "name": "acquireconfigspec"
+      },
+      {
+        "id": "acquireconfigstatuses",
+        "aliases": "acquireconfigstatus acs",
+        "command": "acquireconfigstatus",
+        "name": "acquireconfigstatus"
+      },
+      {
+        "id": "adjtimestatuses",
+        "aliases": "adjtimestatus as",
+        "command": "adjtimestatus",
+        "name": "adjtimestatus"
+      },
+      {
+        "id": "services",
+        "aliases": "svc service",
+        "command": "svc",
+        "name": "svc"
+      },
+      {
+        "id": "timestatuses",
+        "aliases": "timestatus ts",
+        "command": "timestatus",
+        "name": "timestatus"
+      }
+    ]
+  }
+}
