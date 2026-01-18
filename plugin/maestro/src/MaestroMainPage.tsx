@@ -48,8 +48,7 @@ function NodesLinks(pars) {
   );
 }
 
-const MaestroMainPage: React.FC<{ enabled: boolean }> = ({ enabled }) => {
-
+const MaestroMainPage: React.FC<{ }> = ({  }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [orderBy, setOrderBy] = useState<keyof Cluster>('id');
@@ -60,13 +59,6 @@ const MaestroMainPage: React.FC<{ enabled: boolean }> = ({ enabled }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-//     const stack = new Error('Debug stack').stack;
-//     alert(JSON.stringify(stack));
-    // Если фича отключена — ничего не делаем
-    if (!enabled) {
-      setLoading(false);
-      return;
-    }
 
     // Создаём контроллер отмены
     const controller = new AbortController();
@@ -88,7 +80,6 @@ const MaestroMainPage: React.FC<{ enabled: boolean }> = ({ enabled }) => {
 
         const clusterRows: ApiResponse = await response.json();
 //         alert('TYPE='+typeof(clusterRows)+' JSONDATA='+JSON.stringify(clusterRows, null, 2));
-//         setApiData(jsonData);
         setRows(clusterRows);
       } catch (err: any) {
         // Игнорируем ошибку отмены
@@ -112,7 +103,7 @@ const MaestroMainPage: React.FC<{ enabled: boolean }> = ({ enabled }) => {
     return () => {
       controller.abort();
     };
-  }, [enabled]); // Зависимость от enabled
+  }, []);
 
   if (loading) return <div>Loading cluster map...</div>;
   if (error) return <div>Error: {error}</div>;

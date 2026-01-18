@@ -55,7 +55,7 @@ registerRoute({
   name: 'maestro',
   exact: true,
   component: () => (
-      <MaestroMainPage enabled={true} />
+      <MaestroMainPage/>
   ),
 });
 

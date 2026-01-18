@@ -32,7 +32,12 @@ def talosctl():
         cwd='/home/kaf/.talos/',
         encoding='utf-8'
       )
-    return result.stdout
+    Result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
+    reply = json.dumps(Result, indent=2)
+    fp = open("/tmp/reply.json", 'w')
+    fp.write(reply)
+    fp.close()
+    return reply
 
     return {
         'all_params': dict(all_params),

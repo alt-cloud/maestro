@@ -17,7 +17,7 @@ import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
 
-import datasRows from './Data.json';
+// import datasRows from './Data.json';
 import columnsList from './Columns.json';
 import head from './Head.json';
 
@@ -78,7 +78,16 @@ function createRows(dataRows) {
   return rows;
 }
 
-const TalosGetInfo: React.FC<{ enabled: boolean }> = ({ enabled }) => {
+const TalosGetInfo: React.FC<{ }> = ({  }) => {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [orderBy, setOrderBy] = useState<keyof Cluster>('id');
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [rows, setRows] = useState<Cluster[]>([]);
+
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
   const location = useLocation();
   // Парсим query параметры
   const queryParams = useMemo(() => {
@@ -86,8 +95,6 @@ const TalosGetInfo: React.FC<{ enabled: boolean }> = ({ enabled }) => {
     return Object.fromEntries(params.entries());
   }, [location.search]);
 
-//   alert(JSON.stringify(data['192.168.122.33'], null, 2));
-//   alert(JSON.stringify(queryParams));
   const path = location.pathname.split('/');
   const commandSet = path[path.length-2];
   const command = path[path.length-1];
@@ -96,17 +103,62 @@ const TalosGetInfo: React.FC<{ enabled: boolean }> = ({ enabled }) => {
   const controlplane = queryParams.controlplane;
   const node = queryParams.node;
   const nodeType = queryParams.type;
-//   const node = '192.168.122.33';
-  const dataRows = datasRows[node];
-  const Rows = createRows(dataRows);
-//   alert(JSON.stringify(Rows));
-  const [rows, setRows] = useState<Cluster[]>(Rows);
-//   alert(JSON.stringify(rows));
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [orderBy, setOrderBy] = useState<keyof Cluster>('id');
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
 
+  useEffect(() => {
+    // Если фича отключена — ничего не делаем
+
+    // Создаём контроллер отмены
+    const controller = new AbortController();
+
+    const fetchData = async () => {
+      try {
+        const talosURL = "http://localhost:5000/talosctl?e="+controlplane+"&n="+node+"&cmd=get&commandSet="+commandSet+"&subCommand="+command;
+//         alert(talosURL);
+        const response = await fetch(talosURL, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          },
+          signal: controller.signal, // ← привязываем сигнал отмены
+        });
+
+        // Если запрос был отменён, response.json() не вызовется
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const clusterRows: ApiResponse = await response.json();
+        const Rows = createRows(clusterRows);
+//         alert('TYPE='+typeof(clusterRows)+' Rows='+JSON.stringify(Rows, null, 2));
+        setRows(Rows);
+      } catch (err: any) {
+        // Игнорируем ошибку отмены
+        if (err.name === 'AbortError') {
+//           alert('Fetch aborted');
+          console.debug('Fetch aborted');
+          return;
+        }
+        setError(err.message || 'Failed to load data');
+      } finally {
+        // Убираем состояние загрузки, даже если запрос отменили или упал
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    // Cleanup: отменяем запрос при размонтировании или повторном запуске эффекта
+    return () => {
+      controller.abort();
+    };
+  }, []);
+
+  if (loading) return <div>Loading cluster map...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!rows) return <div>No data received</div>;
+//   alert(rows);
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
