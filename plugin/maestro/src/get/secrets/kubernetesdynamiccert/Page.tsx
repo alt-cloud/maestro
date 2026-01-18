@@ -60,14 +60,18 @@ function createRows(dataRows) {
     const row = {};
     for (const field of columnsList['spec']) {
       if (field in dataRow['spec']) {
-        row['spec_'+field] = dataRow['spec'][field];
+        const value = dataRow['spec'][field];
+        const strValue = Array.isArray(value) ? value.join("\n") : typeof value === 'object' ? JSON.stringify(value) : value;
+        row['spec_'+field] = strValue;
       } else {
         row['spec_'+field] = '';
       }
     }
     for (const field of columnsList['meta']) {
       if (field in dataRow['metadata']) {
-        row['meta_'+field] = dataRow['metadata'][field];
+        const value = dataRow['metadata'][field];
+        const strValue = Array.isArray(value) ? value.join("\n") : typeof value === 'object' ? JSON.stringify(value) : value;
+        row['meta_'+field] = strValue;
       } else {
         row['meta_'+field] = '';
       }
