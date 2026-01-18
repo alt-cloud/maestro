@@ -17,11 +17,29 @@ def talosctl():
 
     # Преобразование в обычный словарь
     params_dict = request.args.to_dict()
+    endpoint = params_dict['e']
+    node = params_dict['n']
+    cmd = params_dict['cmd']
+    # print('CMD=', cmd)
+    if cmd == 'get':
+      commandSet = params_dict['commandSet']
+      subCommand = params_dict['subCommand']
+      runCmd = 'talosctl get ' + subCommand + ' -o json -e ' + endpoint + ' -n ' + node
+      # print('runCmd=', runCmd)
+      result = subprocess.run(runCmd,
+        shell=True,
+        stdout=subprocess.PIPE,
+        cwd='/home/kaf/.talos/',
+        encoding='utf-8'
+      )
+    return result.stdout
 
     return {
         'all_params': dict(all_params),
         'params_dict': params_dict
     }
+
+
 
 # Запрос сканирует командой nmap сети, указанные параметром nets, определеяет список IP адресов узлов (с DNS именамиб если они имеются),
 # которые слушают порты 50000 (сервис apid) и 6443 (kubeAPI).
@@ -84,7 +102,15 @@ def map():
   nodes = nodesTree(nmapOut.stdout.strip())
   print('NODES=', json.dumps(nodes, indent=4))
   # Запросить список поддерживаемых кластеров
-  talosctlOut = subprocess.run(['talosctl', 'config', 'contexts'], capture_output=True, text=True, check=True)
+  talosctlOut = subprocess.run([
+    'talosctl',
+    'config',
+    'contexts'
+    ],
+    capture_output=True,
+    text=True,
+    check=True
+  )
   # Проанализировать вывод команды talosctl и сформировать дерево поддерживаемых кластеров
   configs = configTree(talosctlOut.stdout.strip())
   print('CONFIGS=', json.dumps(configs, indent=4))
