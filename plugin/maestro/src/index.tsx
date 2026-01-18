@@ -120,10 +120,6 @@ registerSidebarEntry({
 // TALOSCTL GET TREE
 registerRoute({
   path: '/maestro/get',
-  sidebar: {
-    item: 'maestro',
-    sidebar: 'myplugin',
-  },
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_get',
@@ -141,7 +137,6 @@ import GetBlockBlockdevice from './get/block/blockdevice/Page';
 
 registerRoute({
   path: '/maestro/get/block/blockdevice',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_blockdevice',
@@ -153,7 +148,6 @@ import GetBlockBlocksymlink from './get/block/blocksymlink/Page';
 
 registerRoute({
   path: '/maestro/get/block/blocksymlink',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_blocksymlink',
@@ -165,7 +159,6 @@ import GetBlockDiscoveredvolume from './get/block/discoveredvolume/Page';
 
 registerRoute({
   path: '/maestro/get/block/discoveredvolume',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_discoveredvolume',
@@ -177,7 +170,6 @@ import GetBlockDiscoveryrefreshrequest from './get/block/discoveryrefreshrequest
 
 registerRoute({
   path: '/maestro/get/block/discoveryrefreshrequest',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_discoveryrefreshrequest',
@@ -189,7 +181,6 @@ import GetBlockDiscoveryrefreshstatus from './get/block/discoveryrefreshstatus/P
 
 registerRoute({
   path: '/maestro/get/block/discoveryrefreshstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_discoveryrefreshstatus',
@@ -201,7 +192,6 @@ import GetBlockDisk from './get/block/disk/Page';
 
 registerRoute({
   path: '/maestro/get/block/disk',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_disk',
@@ -213,7 +203,6 @@ import GetBlockMountrequest from './get/block/mountrequest/Page';
 
 registerRoute({
   path: '/maestro/get/block/mountrequest',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_mountrequest',
@@ -225,7 +214,6 @@ import GetBlockMountstatus from './get/block/mountstatus/Page';
 
 registerRoute({
   path: '/maestro/get/block/mountstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_mountstatus',
@@ -237,7 +225,6 @@ import GetBlockSystemdisk from './get/block/systemdisk/Page';
 
 registerRoute({
   path: '/maestro/get/block/systemdisk',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_systemdisk',
@@ -249,7 +236,6 @@ import GetBlockUserdiskconfigstatus from './get/block/userdiskconfigstatus/Page'
 
 registerRoute({
   path: '/maestro/get/block/userdiskconfigstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_userdiskconfigstatus',
@@ -261,7 +247,6 @@ import GetBlockVolumeconfig from './get/block/volumeconfig/Page';
 
 registerRoute({
   path: '/maestro/get/block/volumeconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_volumeconfig',
@@ -273,7 +258,6 @@ import GetBlockVolumelifecycle from './get/block/volumelifecycle/Page';
 
 registerRoute({
   path: '/maestro/get/block/volumelifecycle',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_volumelifecycle',
@@ -285,7 +269,6 @@ import GetBlockVolumemountrequest from './get/block/volumemountrequest/Page';
 
 registerRoute({
   path: '/maestro/get/block/volumemountrequest',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_volumemountrequest',
@@ -297,7 +280,6 @@ import GetBlockVolumemountstatus from './get/block/volumemountstatus/Page';
 
 registerRoute({
   path: '/maestro/get/block/volumemountstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_volumemountstatus',
@@ -309,7 +291,6 @@ import GetBlockVolumestatus from './get/block/volumestatus/Page';
 
 registerRoute({
   path: '/maestro/get/block/volumestatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_block_volumestatus',
@@ -321,7 +302,6 @@ import GetClusterAffiliate from './get/cluster/affiliate/Page';
 
 registerRoute({
   path: '/maestro/get/cluster/affiliate',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_cluster_affiliate',
@@ -333,7 +313,6 @@ import GetClusterDiscoveryconfig from './get/cluster/discoveryconfig/Page';
 
 registerRoute({
   path: '/maestro/get/cluster/discoveryconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_cluster_discoveryconfig',
@@ -345,7 +324,6 @@ import GetClusterIdentity from './get/cluster/identity/Page';
 
 registerRoute({
   path: '/maestro/get/cluster/identity',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_cluster_identity',
@@ -357,7 +335,6 @@ import GetClusterInfo from './get/cluster/info/Page';
 
 registerRoute({
   path: '/maestro/get/cluster/info',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_cluster_info',
@@ -369,7 +346,6 @@ import GetClusterKubernetesaccessconfig from './get/cluster/kubernetesaccessconf
 
 registerRoute({
   path: '/maestro/get/cluster/kubernetesaccessconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_cluster_kubernetesaccessconfig',
@@ -381,7 +357,6 @@ import GetClusterMember from './get/cluster/member/Page';
 
 registerRoute({
   path: '/maestro/get/cluster/member',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_cluster_member',
@@ -393,7 +368,6 @@ import GetConfigMachineconfig from './get/config/machineconfig/Page';
 
 registerRoute({
   path: '/maestro/get/config/machineconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_config_machineconfig',
@@ -405,7 +379,6 @@ import GetConfigMachinetype from './get/config/machinetype/Page';
 
 registerRoute({
   path: '/maestro/get/config/machinetype',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_config_machinetype',
@@ -417,7 +390,6 @@ import GetCriImagecacheconfig from './get/cri/imagecacheconfig/Page';
 
 registerRoute({
   path: '/maestro/get/cri/imagecacheconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_cri_imagecacheconfig',
@@ -429,7 +401,6 @@ import GetCriRegistryconfig from './get/cri/registryconfig/Page';
 
 registerRoute({
   path: '/maestro/get/cri/registryconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_cri_registryconfig',
@@ -441,7 +412,6 @@ import GetCriSeccompprofile from './get/cri/seccompprofile/Page';
 
 registerRoute({
   path: '/maestro/get/cri/seccompprofile',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_cri_seccompprofile',
@@ -453,7 +423,6 @@ import GetEtcdEtcdconfig from './get/etcd/etcdconfig/Page';
 
 registerRoute({
   path: '/maestro/get/etcd/etcdconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_etcd_etcdconfig',
@@ -465,7 +434,6 @@ import GetEtcdEtcdmember from './get/etcd/etcdmember/Page';
 
 registerRoute({
   path: '/maestro/get/etcd/etcdmember',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_etcd_etcdmember',
@@ -477,7 +445,6 @@ import GetEtcdEtcdspec from './get/etcd/etcdspec/Page';
 
 registerRoute({
   path: '/maestro/get/etcd/etcdspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_etcd_etcdspec',
@@ -489,7 +456,6 @@ import GetEtcdPkistatus from './get/etcd/pkistatus/Page';
 
 registerRoute({
   path: '/maestro/get/etcd/pkistatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_etcd_pkistatus',
@@ -501,7 +467,6 @@ import GetFilesEtcfilespec from './get/files/etcfilespec/Page';
 
 registerRoute({
   path: '/maestro/get/files/etcfilespec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_files_etcfilespec',
@@ -513,7 +478,6 @@ import GetFilesEtcfilestatus from './get/files/etcfilestatus/Page';
 
 registerRoute({
   path: '/maestro/get/files/etcfilestatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_files_etcfilestatus',
@@ -525,7 +489,6 @@ import GetHardwareMemorymodules from './get/hardware/memorymodules/Page';
 
 registerRoute({
   path: '/maestro/get/hardware/memorymodules',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_hardware_memorymodules',
@@ -537,7 +500,6 @@ import GetHardwareDevices from './get/hardware/devices/Page';
 
 registerRoute({
   path: '/maestro/get/hardware/devices',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_hardware_devices',
@@ -549,7 +511,6 @@ import GetHardwarePcrstatus from './get/hardware/pcrstatus/Page';
 
 registerRoute({
   path: '/maestro/get/hardware/pcrstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_hardware_pcrstatus',
@@ -561,7 +522,6 @@ import GetHardwareCpus from './get/hardware/cpus/Page';
 
 registerRoute({
   path: '/maestro/get/hardware/cpus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_hardware_cpus',
@@ -573,7 +533,6 @@ import GetHardwareSysteminformation from './get/hardware/systeminformation/Page'
 
 registerRoute({
   path: '/maestro/get/hardware/systeminformation',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_hardware_systeminformation',
@@ -585,7 +544,6 @@ import GetK8SNodeannotationspec from './get/k8s/nodeannotationspec/Page';
 
 registerRoute({
   path: '/maestro/get/k8s/nodeannotationspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_k8s_nodeannotationspec',
@@ -597,7 +555,6 @@ import GetK8SNodecordonedspec from './get/k8s/nodecordonedspec/Page';
 
 registerRoute({
   path: '/maestro/get/k8s/nodecordonedspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_k8s_nodecordonedspec',
@@ -609,7 +566,6 @@ import GetK8SNodelabelspec from './get/k8s/nodelabelspec/Page';
 
 registerRoute({
   path: '/maestro/get/k8s/nodelabelspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_k8s_nodelabelspec',
@@ -621,7 +577,6 @@ import GetK8SNodetaintspec from './get/k8s/nodetaintspec/Page';
 
 registerRoute({
   path: '/maestro/get/k8s/nodetaintspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_k8s_nodetaintspec',
@@ -633,7 +588,6 @@ import GetKubernetesAdmissioncontrolconfig from './get/kubernetes/admissioncontr
 
 registerRoute({
   path: '/maestro/get/kubernetes/admissioncontrolconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_admissioncontrolconfig',
@@ -645,7 +599,6 @@ import GetKubernetesApiserverconfig from './get/kubernetes/apiserverconfig/Page'
 
 registerRoute({
   path: '/maestro/get/kubernetes/apiserverconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_apiserverconfig',
@@ -657,7 +610,6 @@ import GetKubernetesAuditpolicyconfig from './get/kubernetes/auditpolicyconfig/P
 
 registerRoute({
   path: '/maestro/get/kubernetes/auditpolicyconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_auditpolicyconfig',
@@ -669,7 +621,6 @@ import GetKubernetesAuthorizationconfig from './get/kubernetes/authorizationconf
 
 registerRoute({
   path: '/maestro/get/kubernetes/authorizationconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_authorizationconfig',
@@ -681,7 +632,6 @@ import GetKubernetesBootstrapmanifestsconfig from './get/kubernetes/bootstrapman
 
 registerRoute({
   path: '/maestro/get/kubernetes/bootstrapmanifestsconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_bootstrapmanifestsconfig',
@@ -693,7 +643,6 @@ import GetKubernetesConfigstatus from './get/kubernetes/configstatus/Page';
 
 registerRoute({
   path: '/maestro/get/kubernetes/configstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_configstatus',
@@ -705,7 +654,6 @@ import GetKubernetesControllermanagerconfig from './get/kubernetes/controllerman
 
 registerRoute({
   path: '/maestro/get/kubernetes/controllermanagerconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_controllermanagerconfig',
@@ -717,7 +665,6 @@ import GetKubernetesEndpoint from './get/kubernetes/endpoint/Page';
 
 registerRoute({
   path: '/maestro/get/kubernetes/endpoint',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_endpoint',
@@ -729,7 +676,6 @@ import GetKubernetesExtramanifestsconfig from './get/kubernetes/extramanifestsco
 
 registerRoute({
   path: '/maestro/get/kubernetes/extramanifestsconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_extramanifestsconfig',
@@ -741,7 +687,6 @@ import GetKubernetesKubeletconfig from './get/kubernetes/kubeletconfig/Page';
 
 registerRoute({
   path: '/maestro/get/kubernetes/kubeletconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_kubeletconfig',
@@ -753,7 +698,6 @@ import GetKubernetesKubeletlifecycle from './get/kubernetes/kubeletlifecycle/Pag
 
 registerRoute({
   path: '/maestro/get/kubernetes/kubeletlifecycle',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_kubeletlifecycle',
@@ -765,7 +709,6 @@ import GetKubernetesKubeletspec from './get/kubernetes/kubeletspec/Page';
 
 registerRoute({
   path: '/maestro/get/kubernetes/kubeletspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_kubeletspec',
@@ -777,7 +720,6 @@ import GetKubernetesKubeprismconfig from './get/kubernetes/kubeprismconfig/Page'
 
 registerRoute({
   path: '/maestro/get/kubernetes/kubeprismconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_kubeprismconfig',
@@ -789,7 +731,6 @@ import GetKubernetesKubeprismendpoint from './get/kubernetes/kubeprismendpoint/P
 
 registerRoute({
   path: '/maestro/get/kubernetes/kubeprismendpoint',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_kubeprismendpoint',
@@ -801,7 +742,6 @@ import GetKubernetesKubeprismstatus from './get/kubernetes/kubeprismstatus/Page'
 
 registerRoute({
   path: '/maestro/get/kubernetes/kubeprismstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_kubeprismstatus',
@@ -813,7 +753,6 @@ import GetKubernetesManifest from './get/kubernetes/manifest/Page';
 
 registerRoute({
   path: '/maestro/get/kubernetes/manifest',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_manifest',
@@ -825,7 +764,6 @@ import GetKubernetesManifeststatus from './get/kubernetes/manifeststatus/Page';
 
 registerRoute({
   path: '/maestro/get/kubernetes/manifeststatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_manifeststatus',
@@ -837,7 +775,6 @@ import GetKubernetesNodeipconfig from './get/kubernetes/nodeipconfig/Page';
 
 registerRoute({
   path: '/maestro/get/kubernetes/nodeipconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_nodeipconfig',
@@ -849,7 +786,6 @@ import GetKubernetesNodeip from './get/kubernetes/nodeip/Page';
 
 registerRoute({
   path: '/maestro/get/kubernetes/nodeip',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_nodeip',
@@ -861,7 +797,6 @@ import GetKubernetesNodename from './get/kubernetes/nodename/Page';
 
 registerRoute({
   path: '/maestro/get/kubernetes/nodename',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_nodename',
@@ -873,7 +808,6 @@ import GetKubernetesNodestatus from './get/kubernetes/nodestatus/Page';
 
 registerRoute({
   path: '/maestro/get/kubernetes/nodestatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_nodestatus',
@@ -885,7 +819,6 @@ import GetKubernetesSchedulerconfig from './get/kubernetes/schedulerconfig/Page'
 
 registerRoute({
   path: '/maestro/get/kubernetes/schedulerconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_schedulerconfig',
@@ -897,7 +830,6 @@ import GetKubernetesSecretstatus from './get/kubernetes/secretstatus/Page';
 
 registerRoute({
   path: '/maestro/get/kubernetes/secretstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_secretstatus',
@@ -909,7 +841,6 @@ import GetKubernetesStaticpod from './get/kubernetes/staticpod/Page';
 
 registerRoute({
   path: '/maestro/get/kubernetes/staticpod',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_staticpod',
@@ -921,7 +852,6 @@ import GetKubernetesStaticpodserverstatus from './get/kubernetes/staticpodserver
 
 registerRoute({
   path: '/maestro/get/kubernetes/staticpodserverstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_staticpodserverstatus',
@@ -933,7 +863,6 @@ import GetKubernetesPodstatus from './get/kubernetes/podstatus/Page';
 
 registerRoute({
   path: '/maestro/get/kubernetes/podstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_podstatus',
@@ -945,7 +874,6 @@ import GetKubespanKubespanconfig from './get/kubespan/kubespanconfig/Page';
 
 registerRoute({
   path: '/maestro/get/kubespan/kubespanconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubespan_kubespanconfig',
@@ -957,7 +885,6 @@ import GetKubespanKubespanendpoint from './get/kubespan/kubespanendpoint/Page';
 
 registerRoute({
   path: '/maestro/get/kubespan/kubespanendpoint',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubespan_kubespanendpoint',
@@ -969,7 +896,6 @@ import GetKubespanKubespanidentity from './get/kubespan/kubespanidentity/Page';
 
 registerRoute({
   path: '/maestro/get/kubespan/kubespanidentity',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubespan_kubespanidentity',
@@ -981,7 +907,6 @@ import GetKubespanKubespanpeerspec from './get/kubespan/kubespanpeerspec/Page';
 
 registerRoute({
   path: '/maestro/get/kubespan/kubespanpeerspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubespan_kubespanpeerspec',
@@ -993,7 +918,6 @@ import GetKubespanKubespanpeerstatus from './get/kubespan/kubespanpeerstatus/Pag
 
 registerRoute({
   path: '/maestro/get/kubespan/kubespanpeerstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_kubespan_kubespanpeerstatus',
@@ -1005,7 +929,6 @@ import GetMetaNs from './get/meta/ns/Page';
 
 registerRoute({
   path: '/maestro/get/meta/ns',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_meta_ns',
@@ -1017,7 +940,6 @@ import GetMetaApi_Resources from './get/meta/api-resources/Page';
 
 registerRoute({
   path: '/maestro/get/meta/api-resources',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_meta_api-resources',
@@ -1029,7 +951,6 @@ import GetNetAddressspec from './get/net/addressspec/Page';
 
 registerRoute({
   path: '/maestro/get/net/addressspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_addressspec',
@@ -1041,7 +962,6 @@ import GetNetAddress from './get/net/address/Page';
 
 registerRoute({
   path: '/maestro/get/net/address',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_address',
@@ -1053,7 +973,6 @@ import GetNetDeviceconfigspec from './get/net/deviceconfigspec/Page';
 
 registerRoute({
   path: '/maestro/get/net/deviceconfigspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_deviceconfigspec',
@@ -1065,7 +984,6 @@ import GetNetDnsresolvecach from './get/net/dnsresolvecach/Page';
 
 registerRoute({
   path: '/maestro/get/net/dnsresolvecach',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_dnsresolvecach',
@@ -1077,7 +995,6 @@ import GetNetDnsupstream from './get/net/dnsupstream/Page';
 
 registerRoute({
   path: '/maestro/get/net/dnsupstream',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_dnsupstream',
@@ -1089,7 +1006,6 @@ import GetNetEthernetspec from './get/net/ethernetspec/Page';
 
 registerRoute({
   path: '/maestro/get/net/ethernetspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_ethernetspec',
@@ -1101,7 +1017,6 @@ import GetNetEthtool from './get/net/ethtool/Page';
 
 registerRoute({
   path: '/maestro/get/net/ethtool',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_ethtool',
@@ -1113,7 +1028,6 @@ import GetNetHardwareaddress from './get/net/hardwareaddress/Page';
 
 registerRoute({
   path: '/maestro/get/net/hardwareaddress',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_hardwareaddress',
@@ -1125,7 +1039,6 @@ import GetNetHostdnsconfig from './get/net/hostdnsconfig/Page';
 
 registerRoute({
   path: '/maestro/get/net/hostdnsconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_hostdnsconfig',
@@ -1137,7 +1050,6 @@ import GetNetHostnamespec from './get/net/hostnamespec/Page';
 
 registerRoute({
   path: '/maestro/get/net/hostnamespec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_hostnamespec',
@@ -1149,7 +1061,6 @@ import GetNetHostname from './get/net/hostname/Page';
 
 registerRoute({
   path: '/maestro/get/net/hostname',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_hostname',
@@ -1161,7 +1072,6 @@ import GetNetLinkrefresh from './get/net/linkrefresh/Page';
 
 registerRoute({
   path: '/maestro/get/net/linkrefresh',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_linkrefresh',
@@ -1173,7 +1083,6 @@ import GetNetLinkspec from './get/net/linkspec/Page';
 
 registerRoute({
   path: '/maestro/get/net/linkspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_linkspec',
@@ -1185,7 +1094,6 @@ import GetNetLink from './get/net/link/Page';
 
 registerRoute({
   path: '/maestro/get/net/link',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_link',
@@ -1197,7 +1105,6 @@ import GetNetNetstatus from './get/net/netstatus/Page';
 
 registerRoute({
   path: '/maestro/get/net/netstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_netstatus',
@@ -1209,7 +1116,6 @@ import GetNetChain from './get/net/chain/Page';
 
 registerRoute({
   path: '/maestro/get/net/chain',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_chain',
@@ -1221,7 +1127,6 @@ import GetNetNodeaddress from './get/net/nodeaddress/Page';
 
 registerRoute({
   path: '/maestro/get/net/nodeaddress',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_nodeaddress',
@@ -1233,7 +1138,6 @@ import GetNetNodeaddressfilter from './get/net/nodeaddressfilter/Page';
 
 registerRoute({
   path: '/maestro/get/net/nodeaddressfilter',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_nodeaddressfilter',
@@ -1245,7 +1149,6 @@ import GetNetNodeaddresssortalgorithm from './get/net/nodeaddresssortalgorithm/P
 
 registerRoute({
   path: '/maestro/get/net/nodeaddresssortalgorithm',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_nodeaddresssortalgorithm',
@@ -1257,7 +1160,6 @@ import GetNetOperatorspec from './get/net/operatorspec/Page';
 
 registerRoute({
   path: '/maestro/get/net/operatorspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_operatorspec',
@@ -1269,7 +1171,6 @@ import GetNetProbespec from './get/net/probespec/Page';
 
 registerRoute({
   path: '/maestro/get/net/probespec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_probespec',
@@ -1281,7 +1182,6 @@ import GetNetProbe from './get/net/probe/Page';
 
 registerRoute({
   path: '/maestro/get/net/probe',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_probe',
@@ -1293,7 +1193,6 @@ import GetNetResolverspec from './get/net/resolverspec/Page';
 
 registerRoute({
   path: '/maestro/get/net/resolverspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_resolverspec',
@@ -1305,7 +1204,6 @@ import GetNetResolvers from './get/net/resolvers/Page';
 
 registerRoute({
   path: '/maestro/get/net/resolvers',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_resolvers',
@@ -1317,7 +1215,6 @@ import GetNetRoutespec from './get/net/routespec/Page';
 
 registerRoute({
   path: '/maestro/get/net/routespec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_routespec',
@@ -1329,7 +1226,6 @@ import GetNetRoute from './get/net/route/Page';
 
 registerRoute({
   path: '/maestro/get/net/route',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_route',
@@ -1341,7 +1237,6 @@ import GetNetTimeserverspec from './get/net/timeserverspec/Page';
 
 registerRoute({
   path: '/maestro/get/net/timeserverspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_timeserverspec',
@@ -1353,7 +1248,6 @@ import GetNetTimeserver from './get/net/timeserver/Page';
 
 registerRoute({
   path: '/maestro/get/net/timeserver',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_net_timeserver',
@@ -1365,7 +1259,6 @@ import GetPerfCpustat from './get/perf/cpustat/Page';
 
 registerRoute({
   path: '/maestro/get/perf/cpustat',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_perf_cpustat',
@@ -1377,7 +1270,6 @@ import GetPerfMemorystat from './get/perf/memorystat/Page';
 
 registerRoute({
   path: '/maestro/get/perf/memorystat',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_perf_memorystat',
@@ -1389,7 +1281,6 @@ import GetRuntimeDevicesstatus from './get/runtime/devicesstatus/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/devicesstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_devicesstatus',
@@ -1401,7 +1292,6 @@ import GetRuntimeDiagnostic from './get/runtime/diagnostic/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/diagnostic',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_diagnostic',
@@ -1413,7 +1303,6 @@ import GetRuntimeEventsinkconfig from './get/runtime/eventsinkconfig/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/eventsinkconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_eventsinkconfig',
@@ -1425,7 +1314,6 @@ import GetRuntimeExtensionserviceconfig from './get/runtime/extensionserviceconf
 
 registerRoute({
   path: '/maestro/get/runtime/extensionserviceconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_extensionserviceconfig',
@@ -1437,7 +1325,6 @@ import GetRuntimeExtensionserviceconfigstatus from './get/runtime/extensionservi
 
 registerRoute({
   path: '/maestro/get/runtime/extensionserviceconfigstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_extensionserviceconfigstatus',
@@ -1449,7 +1336,6 @@ import GetRuntimeExtensions from './get/runtime/extensions/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/extensions',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_extensions',
@@ -1461,7 +1347,6 @@ import GetRuntimeModules from './get/runtime/modules/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/modules',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_modules',
@@ -1473,7 +1358,6 @@ import GetRuntimeKernelparamdefaultspec from './get/runtime/kernelparamdefaultsp
 
 registerRoute({
   path: '/maestro/get/runtime/kernelparamdefaultspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_kernelparamdefaultspec',
@@ -1485,7 +1369,6 @@ import GetRuntimeKernelparamspec from './get/runtime/kernelparamspec/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/kernelparamspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_kernelparamspec',
@@ -1497,7 +1380,6 @@ import GetRuntimeSysctls from './get/runtime/sysctls/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/sysctls',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_sysctls',
@@ -1509,7 +1391,6 @@ import GetRuntimeKmsglogconfig from './get/runtime/kmsglogconfig/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/kmsglogconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_kmsglogconfig',
@@ -1521,7 +1402,6 @@ import GetRuntimeMachineresetsignal from './get/runtime/machineresetsignal/Page'
 
 registerRoute({
   path: '/maestro/get/runtime/machineresetsignal',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_machineresetsignal',
@@ -1533,7 +1413,6 @@ import GetRuntimeMachinestatus from './get/runtime/machinestatus/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/machinestatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_machinestatus',
@@ -1545,7 +1424,6 @@ import GetRuntimeMaintenanceserviceconfig from './get/runtime/maintenanceservice
 
 registerRoute({
   path: '/maestro/get/runtime/maintenanceserviceconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_maintenanceserviceconfig',
@@ -1557,7 +1435,6 @@ import GetRuntimeMaintenanceservicerequest from './get/runtime/maintenanceservic
 
 registerRoute({
   path: '/maestro/get/runtime/maintenanceservicerequest',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_maintenanceservicerequest',
@@ -1569,7 +1446,6 @@ import GetRuntimeMeta from './get/runtime/meta/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/meta',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_meta',
@@ -1581,7 +1457,6 @@ import GetRuntimeMetaload from './get/runtime/metaload/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/metaload',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_metaload',
@@ -1593,7 +1468,6 @@ import GetRuntimeMounts from './get/runtime/mounts/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/mounts',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_mounts',
@@ -1605,7 +1479,6 @@ import GetRuntimePcidriverrebindconfig from './get/runtime/pcidriverrebindconfig
 
 registerRoute({
   path: '/maestro/get/runtime/pcidriverrebindconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_pcidriverrebindconfig',
@@ -1617,7 +1490,6 @@ import GetRuntimePcidriverrebinds from './get/runtime/pcidriverrebinds/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/pcidriverrebinds',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_pcidriverrebinds',
@@ -1629,7 +1501,6 @@ import GetRuntimeUniquemachinetoken from './get/runtime/uniquemachinetoken/Page'
 
 registerRoute({
   path: '/maestro/get/runtime/uniquemachinetoken',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_uniquemachinetoken',
@@ -1641,7 +1512,6 @@ import GetRuntimeVersion from './get/runtime/version/Page';
 
 registerRoute({
   path: '/maestro/get/runtime/version',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_version',
@@ -1653,7 +1523,6 @@ import GetRuntimeWatchdogtimerconfig from './get/runtime/watchdogtimerconfig/Pag
 
 registerRoute({
   path: '/maestro/get/runtime/watchdogtimerconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_watchdogtimerconfig',
@@ -1665,7 +1534,6 @@ import GetRuntimeWatchdogtimerstatus from './get/runtime/watchdogtimerstatus/Pag
 
 registerRoute({
   path: '/maestro/get/runtime/watchdogtimerstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_runtime_watchdogtimerstatus',
@@ -1677,7 +1545,6 @@ import GetSecretsApicertificate from './get/secrets/apicertificate/Page';
 
 registerRoute({
   path: '/maestro/get/secrets/apicertificate',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_secrets_apicertificate',
@@ -1689,7 +1556,6 @@ import GetSecretsCertsan from './get/secrets/certsan/Page';
 
 registerRoute({
   path: '/maestro/get/secrets/certsan',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_secrets_certsan',
@@ -1701,7 +1567,6 @@ import GetSecretsEtcdrootsecret from './get/secrets/etcdrootsecret/Page';
 
 registerRoute({
   path: '/maestro/get/secrets/etcdrootsecret',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_secrets_etcdrootsecret',
@@ -1713,7 +1578,6 @@ import GetSecretsEtcdsecret from './get/secrets/etcdsecret/Page';
 
 registerRoute({
   path: '/maestro/get/secrets/etcdsecret',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_secrets_etcdsecret',
@@ -1725,7 +1589,6 @@ import GetSecretsKubeletsecret from './get/secrets/kubeletsecret/Page';
 
 registerRoute({
   path: '/maestro/get/secrets/kubeletsecret',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_secrets_kubeletsecret',
@@ -1737,7 +1600,6 @@ import GetSecretsKubernetesdynamiccert from './get/secrets/kubernetesdynamiccert
 
 registerRoute({
   path: '/maestro/get/secrets/kubernetesdynamiccert',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_secrets_kubernetesdynamiccert',
@@ -1749,7 +1611,6 @@ import GetSecretsKubernetesrootsecret from './get/secrets/kubernetesrootsecret/P
 
 registerRoute({
   path: '/maestro/get/secrets/kubernetesrootsecret',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_secrets_kubernetesrootsecret',
@@ -1761,7 +1622,6 @@ import GetSecretsKubernetessecret from './get/secrets/kubernetessecret/Page';
 
 registerRoute({
   path: '/maestro/get/secrets/kubernetessecret',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_secrets_kubernetessecret',
@@ -1773,7 +1633,6 @@ import GetSecretsMaintenancerootsecret from './get/secrets/maintenancerootsecret
 
 registerRoute({
   path: '/maestro/get/secrets/maintenancerootsecret',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_secrets_maintenancerootsecret',
@@ -1785,7 +1644,6 @@ import GetSecretsMaintenanceservicecertificate from './get/secrets/maintenancese
 
 registerRoute({
   path: '/maestro/get/secrets/maintenanceservicecertificate',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_secrets_maintenanceservicecertificate',
@@ -1797,7 +1655,6 @@ import GetSecretsOsrootsecret from './get/secrets/osrootsecret/Page';
 
 registerRoute({
   path: '/maestro/get/secrets/osrootsecret',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_secrets_osrootsecret',
@@ -1809,7 +1666,6 @@ import GetSecretsTrustdcertificate from './get/secrets/trustdcertificate/Page';
 
 registerRoute({
   path: '/maestro/get/secrets/trustdcertificate',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_secrets_trustdcertificate',
@@ -1821,7 +1677,6 @@ import GetSiderolinkSiderolinkconfig from './get/siderolink/siderolinkconfig/Pag
 
 registerRoute({
   path: '/maestro/get/siderolink/siderolinkconfig',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_siderolink_siderolinkconfig',
@@ -1833,7 +1688,6 @@ import GetSiderolinkSiderolinkstatus from './get/siderolink/siderolinkstatus/Pag
 
 registerRoute({
   path: '/maestro/get/siderolink/siderolinkstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_siderolink_siderolinkstatus',
@@ -1845,7 +1699,6 @@ import GetSiderolinkSiderolinktunnel from './get/siderolink/siderolinktunnel/Pag
 
 registerRoute({
   path: '/maestro/get/siderolink/siderolinktunnel',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_siderolink_siderolinktunnel',
@@ -1857,7 +1710,6 @@ import GetTalosPlatformmetadata from './get/talos/platformmetadata/Page';
 
 registerRoute({
   path: '/maestro/get/talos/platformmetadata',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_talos_platformmetadata',
@@ -1869,7 +1721,6 @@ import GetTalosSecuritystate from './get/talos/securitystate/Page';
 
 registerRoute({
   path: '/maestro/get/talos/securitystate',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_talos_securitystate',
@@ -1881,7 +1732,6 @@ import GetV1Alpha1Acquireconfigspec from './get/v1alpha1/acquireconfigspec/Page'
 
 registerRoute({
   path: '/maestro/get/v1alpha1/acquireconfigspec',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_v1alpha1_acquireconfigspec',
@@ -1893,7 +1743,6 @@ import GetV1Alpha1Acquireconfigstatus from './get/v1alpha1/acquireconfigstatus/P
 
 registerRoute({
   path: '/maestro/get/v1alpha1/acquireconfigstatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_v1alpha1_acquireconfigstatus',
@@ -1905,7 +1754,6 @@ import GetV1Alpha1Adjtimestatus from './get/v1alpha1/adjtimestatus/Page';
 
 registerRoute({
   path: '/maestro/get/v1alpha1/adjtimestatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_v1alpha1_adjtimestatus',
@@ -1917,7 +1765,6 @@ import GetV1Alpha1Svc from './get/v1alpha1/svc/Page';
 
 registerRoute({
   path: '/maestro/get/v1alpha1/svc',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_v1alpha1_svc',
@@ -1929,7 +1776,6 @@ import GetV1Alpha1Timestatus from './get/v1alpha1/timestatus/Page';
 
 registerRoute({
   path: '/maestro/get/v1alpha1/timestatus',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_v1alpha1_timestatus',

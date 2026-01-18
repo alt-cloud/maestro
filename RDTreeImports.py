@@ -13,7 +13,6 @@ with open("RDTree.yaml", 'r') as stream:
 registerRouteTemplate = '''
 registerRoute({
   path: '/maestro/get/%s/%s',
-  sidebar: {item: 'maestro', sidebar: 'myplugin'},
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_%s_%s',
@@ -21,6 +20,7 @@ registerRoute({
   component: () => (<%s/>)
 });
 '''
+  # sidebar: {item: 'maestro', sidebar: 'myplugin'},
 
 for commandSetName in data:
   # print(json.dumps(data, indent=2))

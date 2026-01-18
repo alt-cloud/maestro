@@ -14,7 +14,6 @@ function showRDTree() {
   }, [location.search]);
 //   alert(JSON.stringify(queryParams));
   const cluster = queryParams.cluster;
-//   alert('CLUSTER=' + cluster);
   const controlplane = queryParams.controlplane;
   const node = queryParams.node;
   const nodeType = queryParams.type;
@@ -23,7 +22,10 @@ function showRDTree() {
 
   return (
     <SectionBox title="Talosctl get page tree" textAligvaluen="center" paddingTop={2}>
-      <Typography><strong>Cluster:</strong> {cluster} <strong>Endpoint:</strong> {controlplane} <strong>Node:</strong> {node} <strong>Type:</strong> {nodeType}</Typography>
+      <Typography><Link to="/maestro">Clusters</Link
+        >&nbsp;/&nbsp;<Link to={`/maestro?cluster=${cluster}`}>{cluster}</Link
+        > &nbsp;/&nbsp;<Link to={`/maestro/?cluster=${cluster}&type=${nodeType}`}>{nodeType}</Link
+        >&nbsp;/&nbsp;{node}</Typography>
       <ul>
         {Object.entries(RDTree).map(([key, value]) => (
           <li key={key}>
