@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
 
+import DownloadZipButton from './support/button';
+
 const MaestroNodePage: React.FC<{ }> = ({  }) => {
   const location = useLocation();
   const queryParams = useMemo(() => {
@@ -26,6 +28,9 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
     <ul>
       <li>
         <Link to={`/maestro/node/get?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>get</Link>
+      </li>
+      <li>
+        <DownloadZipButton controlplane={controlplane} node={node} />
       </li>
     </ul>
   </SectionBox>

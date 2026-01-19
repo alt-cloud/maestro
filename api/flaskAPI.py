@@ -1,5 +1,6 @@
 #!/bin/python3
 from flask import Flask, request, jsonify
+from flask import send_file
 import subprocess
 import shlex
 import os
@@ -20,7 +21,7 @@ def talosctl():
     endpoint = params_dict['e']
     node = params_dict['n']
     cmd = params_dict['cmd']
-    # print('CMD=', cmd)
+    print('CMD=', cmd)
     if cmd == 'get':
       commandSet = params_dict['commandSet']
       subCommand = params_dict['subCommand']
@@ -32,17 +33,39 @@ def talosctl():
         cwd='/home/kaf/.talos/',
         encoding='utf-8'
       )
-    result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
-    if len(result) > 0 and isinstance(result[0]['spec'], str):
-      for index, row in enumerate(result):
-        spec = {}
-        spec['spec'] = row['spec']
-        result[index]['spec'] = spec
-    reply = json.dumps(result, indent=2)
-    fp = open("/tmp/reply.json", 'w')
-    fp.write(reply)
-    fp.close()
-    return reply
+      result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
+      if len(result) > 0 and isinstance(result[0]['spec'], str):
+        for index, row in enumerate(result):
+          spec = {}
+          spec['spec'] = row['spec']
+          result[index]['spec'] = spec
+      reply = json.dumps(result, indent=2)
+      fp = open("/tmp/reply.json", 'w')
+      fp.write(reply)
+      fp.close()
+      return reply
+    elif cmd == 'support':
+      tmpDir = '/tmp/talossupport_%d' % os.getpid()
+      if not os.path.isdir(tmpDir):
+        os.mkdir(tmpDir)
+      supportFile = 'support_' + node.replace('.', '_') + '.zip'
+      SupportFile = tmpDir + '/' + supportFile
+      if os.path.exists(SupportFile):
+        os.remove(SupportFile)
+      runCmd = 'talosctl support -O ' + SupportFile + ' -e ' + endpoint + ' -n ' + node
+      print('runCmd=', runCmd)
+      result = subprocess.run(runCmd,
+        shell=True,
+        stdout=subprocess.PIPE,
+        cwd='/home/kaf/.talos/',
+        encoding='utf-8'
+      )
+      return send_file(
+          SupportFile,
+          mimetype='application/zip',
+          as_attachment=True,
+          download_name=supportFile
+          )
 
     return {
         'all_params': dict(all_params),
