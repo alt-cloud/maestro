@@ -13,6 +13,8 @@ import {
   TableSortLabel
 } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useMemo } from 'react';
 
 interface Cluster {
   id: number;
@@ -57,6 +59,21 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const location = useLocation();
+  const queryParams = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return Object.fromEntries(params.entries());
+  }, [location.search]);
+//   alert(JSON.stringify(queryParams));
+
+//   var breadcrumbs = '';
+  const cluster = queryParams.cluster;
+//   breadcrumbs += (typeof cluster == 'undefined') ? 'Clusters' : "<a href='/maestro'>Clusters</a>";
+  const nodeType = queryParams.type;
+//   alert('cluster=' + cluster + ' nodeType=' + typeof nodeType);
+//   if ( typeof nodeType == 'undefined' )
+//     alert('UNDEFINED');
 
   useEffect(() => {
 
@@ -109,6 +126,18 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
   if (error) return <div>Error: {error}</div>;
   if (!rows) return <div>No data received</div>;
 
+//   alert(JSON.stringify(rows, null, 2))
+  var Rows;
+  if ( typeof cluster != 'undefined' ) {
+    Rows = [];
+    for (var row of rows) {
+      if (row.id == cluster) {
+        Rows.push(row);
+      }
+    }
+  } else {
+    Rows = rows;
+  }
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -124,7 +153,7 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
     setOrderBy(property);
   };
 
-  const sortedRows = [...rows].sort((a, b) => {
+  const sortedRows = [...Rows].sort((a, b) => {
     if (a[orderBy] < b[orderBy]) return order === 'asc' ? -1 : 1;
     if (a[orderBy] > b[orderBy]) return order === 'asc' ? 1 : -1;
     return 0;
@@ -132,10 +161,13 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
 
   const paginatedRows = sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 //   alert("paginatedRows="+strigify(paginatedRows));
+//     {(typeof cluster == 'undefined') ? (<span></span>) : {cluster}}
 
   return (
-  <SectionBox title="MAESTRO" textAlign="left" paddingTop={2}>
-    <Typography fontSize="24px" fontWeight="bold">Maestro section</Typography>
+  <SectionBox title="CLUSTERS" textAlign="left" paddingTop={2}>
+    <Typography>
+    <Link to="/maestro">Clusters</Link>
+    </Typography>
     <Paper>
       <TableContainer>
         <Table>

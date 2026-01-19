@@ -84,7 +84,7 @@ def talosctl():
 # - имя текущего активного кластер contaxt
 #
 # Проаеряется наличие узлов, полученных командой nmap в списке кластеров
-# Если узел не входит ни в один из кластеров, он добавляется в кластер NULL
+# Если узел не входит ни в один из кластеров, он добавляется в кластер _LOST
 # с IP-адресом или DNS именем в элемент nodes и если узел просушиавает порт 6443 в элемент endpoints
 #
 # Полученный  спсиок кластеров возвращается в ответ на запрос в формате
@@ -116,9 +116,9 @@ def map():
     "workers": []
   },
   {
-    "id": "NULL",
+    "id": "_LOST",
     "currentContext": "",
-    "clusterName": "NULL",
+    "clusterName": "_LOST",
     "controlplanes": [],
     "workers": [
       "192.168.122.127"
@@ -236,10 +236,10 @@ def nodeClusterName(configs, node):
   return ''
 
 # Функции передается результат функции configTree (configs) и результат функции nodesTree (nodes)
-# Узлы (nodes), отсутствующие в configTree добавляются в виртуальный кластер NULL
+# Узлы (nodes), отсутствующие в configTree добавляются в виртуальный кластер _LOST
 def addLostNodesToConfigTree(configs, nodes):
   ret = configs
-  unknownClusterName= 'NULL'
+  unknownClusterName= '_LOST'
   for ip in nodes:
     node = nodes[ip]
     nameName = node['dns'] if len(node['dns']) > 0  else node['ip']
