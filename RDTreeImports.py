@@ -12,7 +12,7 @@ with open("RDTree.yaml", 'r') as stream:
 
 registerRouteTemplate = '''
 registerRoute({
-  path: '/maestro/get/%s/%s',
+  path: '/maestro/node/get/%s/%s',
   useClusterURL: false,
   noAuthRequired: true,
   name: 'maestro_get_%s_%s',
@@ -32,6 +32,6 @@ for commandSetName in data:
     commandName_ = commandName.replace('-','_')
     # print("\t%s" % commandName)
     importName = "Get" + CommandSetName.title() + commandName_.title()
-    print("import %s from './get/%s/%s/Page';" % (importName, CommandSetName, commandName))
+    print("import %s from './node/get/%s/%s/Page';" % (importName, CommandSetName, commandName))
     print(registerRouteTemplate % (CommandSetName, commandName, CommandSetName, commandName, importName))
 

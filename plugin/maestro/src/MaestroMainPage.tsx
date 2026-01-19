@@ -42,7 +42,7 @@ function NodesLinks(pars) {
   return (
     <TableCell sx={{ verticalAlign: 'top', whiteSpace: 'pre-line' }}>
       {pars.nodes.map((node, index) => (
-        <><Link key={node} to={`/maestro/get?cluster=${pars.clusterName}&controlplane=${controlplane}&node=${node}&type=${pars.type}`} >{node}</Link><br /></>
+        <><Link key={node} to={`/maestro/node?cluster=${pars.clusterName}&controlplane=${controlplane}&node=${node}&type=${pars.type}`} >{node}</Link><br /></>
       ))}
     </TableCell>
   );

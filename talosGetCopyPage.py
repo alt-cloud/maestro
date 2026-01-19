@@ -29,7 +29,7 @@ for commandSetName in data:
   for commandInfo in commandSet['commands']:
     commandName = commandInfo['name']
     command = commandInfo['command']
-    path= 'plugin/maestro/src/get/' + CommandSetName + '/' + command
+    path= 'plugin/maestro/src/node/get/' + CommandSetName + '/' + command
     print(path)
     os.makedirs(path, exist_ok=True)
     fromPage = path + '/../../Page.tsx'
