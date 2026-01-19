@@ -61,7 +61,16 @@ function createRows(dataRows) {
     for (const field of columnsList['spec']) {
       if (field in dataRow['spec']) {
         const value = dataRow['spec'][field];
-        const strValue = Array.isArray(value) ? value.join("\n") : typeof value === 'object' ? JSON.stringify(value) : value;
+        var strValue = '';
+        if (Array.isArray(value)) {
+          if (value.length > 0 && typeof value[0] === 'object')
+            strValue = JSON.stringify(value, null, 2);
+          else
+            strValue = value.join("\n");
+        } else if (typeof value === 'object')
+          strValue = JSON.stringify(value, null, 2);
+        else
+          strValue = value;
         row['spec_'+field] = strValue;
       } else {
         row['spec_'+field] = '';
@@ -70,7 +79,16 @@ function createRows(dataRows) {
     for (const field of columnsList['meta']) {
       if (field in dataRow['metadata']) {
         const value = dataRow['metadata'][field];
-        const strValue = Array.isArray(value) ? value.join("\n") : typeof value === 'object' ? JSON.stringify(value) : value;
+        var strValue = '';
+        if (Array.isArray(value)) {
+          if (value.length > 0 && typeof value[0] === 'object')
+            strValue = JSON.stringify(value, null, 2);
+          else
+            strValue = value.join("\n");
+        } else if (typeof value === 'object')
+           strValue = JSON.stringify(value, null, 2);
+        else
+          strValue = value;
         row['meta_'+field] = strValue;
       } else {
         row['meta_'+field] = '';
