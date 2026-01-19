@@ -25,15 +25,20 @@ def talosctl():
       commandSet = params_dict['commandSet']
       subCommand = params_dict['subCommand']
       runCmd = 'talosctl get ' + subCommand + ' -o json -e ' + endpoint + ' -n ' + node
-      # print('runCmd=', runCmd)
+      print('runCmd=', runCmd)
       result = subprocess.run(runCmd,
         shell=True,
         stdout=subprocess.PIPE,
         cwd='/home/kaf/.talos/',
         encoding='utf-8'
       )
-    Result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
-    reply = json.dumps(Result, indent=2)
+    result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
+    if len(result) > 0 and isinstance(result[0]['spec'], str):
+      for index, row in enumerate(result):
+        spec = {}
+        spec['spec'] = row['spec']
+        result[index]['spec'] = spec
+    reply = json.dumps(result, indent=2)
     fp = open("/tmp/reply.json", 'w')
     fp.write(reply)
     fp.close()
