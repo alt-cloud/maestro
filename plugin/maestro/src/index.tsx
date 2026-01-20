@@ -133,6 +133,39 @@ registerSidebarEntry({
 //   sidebar: 'myplugin',
 // });
 
+// TALOSCTL CONTAINERS
+import Containers from './node/containers/cmdPage';
+registerRoute({
+  path: '/maestro/node/containers',
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_node_containers',
+//   id: 'maestro_get',
+  exact: true,
+  component: () => (<Containers/>)});
+
+// TALOSCTL IMAGE DEFAULT
+import ImageDefault from './node/image/default/cmdPage';
+registerRoute({
+  path: '/maestro/node/image/default',
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_node_image_default',
+//   id: 'maestro_get',
+  exact: true,
+  component: () => (<ImageDefault/>)});
+
+// TALOSCTL IMAGE LIST
+import ImageList from './node/image/list/cmdPage';
+registerRoute({
+  path: '/maestro/node/image/list',
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_node_image_list',
+//   id: 'maestro_get',
+  exact: true,
+  component: () => (<ImageList/>)});
+
 // TALOSCTL GET TREE
 registerRoute({
   path: '/maestro/node/get',

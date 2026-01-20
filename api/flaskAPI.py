@@ -11,6 +11,42 @@ app = Flask(__name__)
 # CORS(app, origins=["http://localhost:3000"])
 CORS(app, origins=["*"])
 
+
+def tableToJson(str):
+  nHead = str.find("\n")
+  head = str[0:nHead]
+  columns = head.split()
+  if len(columns) == 1:
+    head = 'Id'
+    body = str.split("\n")
+  else:
+    body = str[nHead+1:].split("\n")
+  columns = head.split()
+  shifts = {}
+  prevColumn = None
+  for column in columns:
+    shifts[column] = {}
+    start = head.find(column)
+    shifts[column]['start'] = start
+    if prevColumn:
+      shifts[prevColumn]['end'] = start
+    prevColumn = column
+  shifts[column]['end'] = -1
+  rows = []
+  for row in body:
+    if len(row) == 0:
+      break
+    vals = {}
+    for column in shifts:
+      start = shifts[column]['start']
+      end   = shifts[column]['end']
+      if end < 0:
+        vals[column.title()] = row[start:].strip()
+      else:
+        vals[column.title()] = row[start:end].strip()
+    rows.append(vals)
+  return json.dumps(rows, indent=2)
+
 @app.route('/talosctl')
 def talosctl():
     # Получение всех GET параметров
@@ -40,6 +76,20 @@ def talosctl():
           spec['spec'] = row['spec']
           result[index]['spec'] = spec
       reply = json.dumps(result, indent=2)
+      return reply
+    elif cmd == 'containers' or \
+        cmd[0:6] == 'image/' \
+        :
+      cmd = cmd.replace('/', ' ')
+      runCmd = 'talosctl ' + cmd + ' -e ' + endpoint + ' -n ' + node
+      print('runCmd=', runCmd)
+      result = subprocess.run(runCmd,
+        shell=True,
+        stdout=subprocess.PIPE,
+        cwd='/home/kaf/.talos/',
+        encoding='utf-8'
+      )
+      reply = tableToJson(result.stdout)
       fp = open("/tmp/reply.json", 'w')
       fp.write(reply)
       fp.close()

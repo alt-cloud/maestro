@@ -30,7 +30,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         <Link to={`/maestro/node/get?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>get</Link>
       </li>
       <li>
-        containers
+        <Link to={`/maestro/node/containers?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>containers</Link>
       </li>
       <li>
         dashboard
@@ -55,6 +55,14 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
       </li>
       <li>
         image
+        <ul>
+          <li>
+            <Link to={`/maestro/node/image/default?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>default</Link>
+          </li>
+          <li>
+            <Link to={`/maestro/node/image/list?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>list</Link>
+          </li>
+        </ul>
       </li>
       <li>
         inspect dependencies
