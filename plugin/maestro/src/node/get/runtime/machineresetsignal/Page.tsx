@@ -218,6 +218,10 @@ const TalosGetInfo: React.FC<{ }> = ({  }) => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell fontWeight={ 'bold' } colSpan={columnsList['spec'].length} key='spec'>SPEC</TableCell>
+              <TableCell fontWeight={ 'bold' } colSpan={columnsList['meta'].length} key='metadata'>METADATA</TableCell>
+            </TableRow>
+            <TableRow>
               {columns.map(column => (
                 <TableCell key={column.id}>
                   {column.sortable ? (
@@ -226,10 +230,10 @@ const TalosGetInfo: React.FC<{ }> = ({  }) => {
                       direction={orderBy === column.id ? order : 'asc'}
                       onClick={() => handleSort(column.id)}
                     >
-                      {column.label}
+                      {column.label.substring(5)}
                     </TableSortLabel>
                   ) : (
-                    column.label
+                    column.label.substring(5)
                   )}
                 </TableCell>
               ))}
