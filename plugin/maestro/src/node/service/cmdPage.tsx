@@ -32,25 +32,6 @@ interface Column {
   sortable?: boolean;
 }
 
-// Create columns list from file Columns.json
-// First spec fields
-// After meta fields
-// function createColumns(): Column[] {
-//   const columns: Column[] = [];
-//   for (const field of columnsList['spec']) {
-//     const column: Column = {id: 'spec_'+field, label: 'spec.'+field, sortable: true };
-//     columns.push(column);
-//   }
-//   for (const field of columnsList['meta']) {
-//     const column: Column = {id: 'meta_'+field, label: 'meta.'+field, sortable: true };
-//     columns.push(column);
-//   }
-//
-//   return columns;
-// }
-
-// alert(JSON.stringify(columns));
-
 function createRows(dataRows) {
 //   alert(JSON.stringify(dataRows));
   const columns: Column[] = [];
@@ -65,6 +46,33 @@ function createRows(dataRows) {
     }
   }
   return [ columns, dataRows ]
+}
+
+interface ServiceCellProps {
+  columnId: string;
+  value: string;
+  cluster: string;
+  controlplane: string;
+  node: string;
+  nodeType: string;
+}
+
+function ServiceCell({ columnId, value, cluster, controlplane, node, nodeType}: ServiceCellProps) {
+  const renderServiceCell = () => {
+    if (columnId.toLowerCase() == 'service') {
+//     alert(columnId + '=' + value  + '=' + cluster);
+      return (
+      <TableCell key={columnId}>
+        <Link to={`/maestro/node/service/logs?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}&service=${value}`}>{value}</Link>
+      </TableCell>
+      );
+    } else {
+      return (
+      <TableCell key={columnId}>{value}</TableCell>
+      );
+    }
+  }
+  return (renderServiceCell());
 }
 
 const TalosCmdInfo: React.FC<{ }> = ({  }) => {
@@ -86,6 +94,7 @@ const TalosCmdInfo: React.FC<{ }> = ({  }) => {
   }, [location.search]);
 
   const path = location.pathname.split('/');
+//   alert('PATH='+path);
   const indexNode = path.indexOf('node')
   const commands = path.slice(indexNode+1)
   const commandPath = commands.join('/')
@@ -214,7 +223,14 @@ const TalosCmdInfo: React.FC<{ }> = ({  }) => {
             {paginatedRows.map(row => (
               <TableRow key={row.id}>
               {columns.map(column => (
-                <TableCell key={column.id}>{row[column.id]}</TableCell>
+                <ServiceCell
+                    columnId={column.id}
+                    value={row[column.id]}
+                    cluster={cluster}
+                    controlplane={controlplane}
+                    node={node}
+                    nodeType={nodeType}
+                    />
               ))}
               </TableRow>
             ))}

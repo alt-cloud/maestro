@@ -234,7 +234,7 @@ registerRoute({
   component: () => (<CmdPage/>)});
 
 // TALOSCTL SERVICE
-// import Service from './node/service/cmdPage';
+import ServiceCmdPage from './node/service/cmdPage';
 registerRoute({
   path: '/maestro/node/service',
   useClusterURL: false,
@@ -242,7 +242,7 @@ registerRoute({
   name: 'maestro_node_service',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<CmdPage/>)});
+  component: () => (<ServiceCmdPage/>)});
 
 // TALOSCTL STATS
 // import Stats from './node/stats/cmdPage';
