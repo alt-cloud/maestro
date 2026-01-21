@@ -24,26 +24,43 @@ def tableToJson(str):
   columns = head.split()
   shifts = {}
   prevColumn = None
+  shift = 0
   for column in columns:
-    shifts[column] = {}
-    start = head.find(column)
-    shifts[column]['start'] = start
+    columnName = column.title()
+    shifts[columnName] = {}
+    start = head[shift:].find(column) + shift
+    # print ('SHIFT=%d TAIL=%s' % (shift, head[shift:]))
     if prevColumn:
-      shifts[prevColumn]['end'] = start
-    prevColumn = column
-  shifts[column]['end'] = -1
+      if start - shifts[prevColumn]['start'] - len(prevColumn) == 1:
+        newColumn = prevColumn + columnName
+        shifts[newColumn] = {}
+        shifts[newColumn]['start'] = shifts[prevColumn]['start']
+        del shifts[columnName]
+        del shifts[prevColumn]
+        prevColumn = newColumn
+      else:
+        shifts[prevColumn]['end'] = start
+        shifts[columnName]['start'] = start
+        prevColumn = columnName
+    else:
+      prevColumn = columnName
+      shifts[columnName]['start'] = start
+    # print('prevColumn=', prevColumn)
+    shift = start
+  shifts[columnName]['end'] = -1
+  # print(shifts)
   rows = []
   for row in body:
     if len(row) == 0:
       break
     vals = {}
-    for column in shifts:
-      start = shifts[column]['start']
-      end   = shifts[column]['end']
+    for columnName in shifts:
+      start = shifts[columnName]['start']
+      end   = shifts[columnName]['end']
       if end < 0:
-        vals[column.title()] = row[start:].strip()
+        vals[columnName] = row[start:].strip()
       else:
-        vals[column.title()] = row[start:end].strip()
+        vals[columnName] = row[start:end].strip()
     rows.append(vals)
   return json.dumps(rows, indent=2)
 
