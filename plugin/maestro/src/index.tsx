@@ -144,6 +144,28 @@ registerRoute({
   exact: true,
   component: () => (<Containers/>)});
 
+// TALOSCTL ETCD MEMBERS
+import EtcdMembers from './node/etcd/members/cmdPage';
+registerRoute({
+  path: '/maestro/node/etcd/members',
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_node_etcd_members',
+//   id: 'maestro_get',
+  exact: true,
+  component: () => (<EtcdMembers/>)});
+
+// TALOSCTL ETCD MEMBERS
+import EtcdStatus from './node/etcd/status/cmdPage';
+registerRoute({
+  path: '/maestro/node/etcd/status',
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_node_etcd_status',
+//   id: 'maestro_get',
+  exact: true,
+  component: () => (<EtcdStatus/>)});
+
 // TALOSCTL MEMORY
 import Memory from './node/memory/cmdPage';
 registerRoute({

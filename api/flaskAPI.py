@@ -106,6 +106,7 @@ def talosctl():
         cmd == 'time' or \
         cmd == 'usage' or \
         cmd == 'processes' or \
+        cmd[0:5] == 'etcd/' or \
         cmd[0:6] == 'image/' \
         :
       cmd = cmd.replace('/', ' ')

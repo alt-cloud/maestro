@@ -73,7 +73,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
             leave
           </li>
           <li>
-            members
+            <Link to={`/maestro/node/etcd/members?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>members</Link>
           </li>
           <li>
             remove-member
@@ -82,7 +82,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
             snapshot
           </li>
           <li>
-            status
+            <Link to={`/maestro/node/etcd/status?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>status</Link>
           </li>
         </ul>
       </li>
