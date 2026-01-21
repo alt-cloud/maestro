@@ -29,15 +29,18 @@ def tableToJson(str):
     columnName = column.title()
     shifts[columnName] = {}
     start = head[shift:].find(column) + shift
-    # print ('SHIFT=%d TAIL=%s' % (shift, head[shift:]))
+    # print ('SHIFT=%d TAIL=%s  ' % (shift, head[shift:, columnName, ]))
+    # print("columnName=%s prevColumn=%s" % (columnName, prevColumn))
+    # print(shifts)
     if prevColumn:
       if start - shifts[prevColumn]['start'] - len(prevColumn) == 1:
-        newColumn = prevColumn + columnName
-        shifts[newColumn] = {}
-        shifts[newColumn]['start'] = shifts[prevColumn]['start']
+        mergedColumnName = prevColumn + columnName
+        shifts[mergedColumnName] = {}
+        shifts[mergedColumnName]['start'] = shifts[prevColumn]['start']
         del shifts[columnName]
         del shifts[prevColumn]
-        prevColumn = newColumn
+        columnName = mergedColumnName
+        prevColumn = columnName
       else:
         shifts[prevColumn]['end'] = start
         shifts[columnName]['start'] = start
@@ -74,7 +77,7 @@ def talosctl():
     endpoint = params_dict['e']
     node = params_dict['n']
     cmd = params_dict['cmd']
-    print('CMD=', cmd)
+    print('CMD="%s"'% cmd)
     if cmd == 'get':
       commandSet = params_dict['commandSet']
       subCommand = params_dict['subCommand']
@@ -95,6 +98,14 @@ def talosctl():
       reply = json.dumps(result, indent=2)
       return reply
     elif cmd == 'containers' or \
+        cmd == 'netstat' or \
+        cmd == 'memory' or \
+        cmd == 'mounts' or \
+        cmd == 'service' or \
+        cmd == 'stats' or \
+        cmd == 'time' or \
+        cmd == 'usage' or \
+        cmd == 'processes' or \
         cmd[0:6] == 'image/' \
         :
       cmd = cmd.replace('/', ' ')

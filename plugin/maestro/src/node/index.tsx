@@ -43,12 +43,91 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
       </li>
       <li>
         etcd
+        <ul>
+          <li>
+            alarm
+            <ul>
+              <li>
+                disarm
+              </li>
+              <li>
+                list
+              </li>
+            </ul>
+          </li>
+          <li>
+            downgrade
+            <ul>
+              <li>
+                cancel
+              </li>
+              <li>
+                enable
+              </li>
+              <li>
+                validate
+              </li>
+            </ul>
+          </li>
+          <li>
+            leave
+          </li>
+          <li>
+            members
+          </li>
+          <li>
+            remove-member
+          </li>
+          <li>
+            snapshot
+          </li>
+          <li>
+            status
+          </li>
+        </ul>
       </li>
       <li>
         events
       </li>
       <li>
         gen
+        <ul>
+          <li>
+            ca
+          </li>
+          <li>
+            config
+          </li>
+          <li>
+            crt
+          </li>
+          <li>
+            csr
+          </li>
+          <li>
+            key
+          </li>
+          <li>
+            keypair
+          </li>
+          <li>
+            secrets
+          </li>
+          <li>
+            secureboot
+            <ul>
+              <li>
+                database
+              </li>
+              <li>
+                pcr
+              </li>
+              <li>
+                uki
+              </li>
+            </ul>
+          </li>
+        </ul>
       </li>
       <li>
         health
@@ -57,15 +136,34 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         image
         <ul>
           <li>
+            cache-create
+          </li>
+          <li>
             <Link to={`/maestro/node/image/default?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>default</Link>
           </li>
           <li>
             <Link to={`/maestro/node/image/list?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>list</Link>
           </li>
+          <li>
+            pull
+          </li>
         </ul>
       </li>
       <li>
-        inspect dependencies
+        inject
+          <ul>
+            <li>
+            serviceaccount
+            </li>
+          </ul>
+      </li>
+      <li>
+        inspect
+        <ul>
+          <li>
+          dependencies
+          </li>
+        </ul>
       </li>
       <li>
         kubeconfig
@@ -77,16 +175,35 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         logs
       </li>
       <li>
-        memory
+        machineconfig
+        <ul>
+          <li>
+            gen
+          </li>
+          <li>
+            patch
+          </li>
+        </ul>
+      </li>
+      <li>
+        <Link to={`/maestro/node/memory?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>memory</Link>
       </li>
       <li>
        meta
+       <ul>
+        <li>
+          delete
+        </li>
+        <li>
+          write
+        </li>
+       </ul>
       </li>
       <li>
-        mounts
+        <Link to={`/maestro/node/mounts?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>mounts</Link>
       </li>
       <li>
-        netstat
+        <Link to={`/maestro/node/netstat?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>netstat</Link>
       </li>
       <li>
         patch
@@ -95,7 +212,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         pcap
       </li>
       <li>
-        processes
+        <Link to={`/maestro/node/processes?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>processes</Link>
       </li>
       <li>
         read
@@ -116,19 +233,19 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         rotate-ca
       </li>
       <li>
-        service
+        <Link to={`/maestro/node/service?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>service</Link>
       </li>
       <li>
         shutdown
       </li>
       <li>
-        stats
+        <Link to={`/maestro/node/stats?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>stats</Link>
       </li>
       <li>
         <DownloadZipButton controlplane={controlplane} node={node} />
       </li>
       <li>
-        time
+        <Link to={`/maestro/node/time?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>time</Link>
       </li>
       <li>
         upgrade
@@ -137,7 +254,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         upgrade-k8s
       </li>
       <li>
-        usage
+        <Link to={`/maestro/node/usage?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>usage</Link>
       </li>
       <li>
         validate
@@ -147,6 +264,11 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
       </li>
       <li>
         wipe
+        <ul>
+          <li>
+            disk
+          </li>
+        </ul>
       </li>
     </ul>
   </SectionBox>
