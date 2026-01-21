@@ -18,8 +18,8 @@ import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
 
 // import datasRows from './Data.json';
-import columnsList from './Columns.json';
-import head from './Head.json';
+// import columnsList from './Columns.json';
+// import head from './Head.json';
 
 interface Cluster {
   id: number;
@@ -35,7 +35,38 @@ interface Column {
 // Create columns list from file Columns.json
 // First spec fields
 // After meta fields
-function createColumns(): Column[] {
+// function createColumns(): Column[] {
+//   const columns: Column[] = [];
+//   for (const field of columnsList['spec']) {
+//     const column: Column = {id: 'spec_'+field, label: 'spec.'+field, sortable: true };
+//     columns.push(column);
+//   }
+//   for (const field of columnsList['meta']) {
+//     const column: Column = {id: 'meta_'+field, label: 'meta.'+field, sortable: true };
+//     columns.push(column);
+//   }
+//
+//   return columns;
+// }
+
+function createColumnsList(clusterRows): Column[] {
+  var meta = [];
+  var spec = [];
+  for (const clusterRow of clusterRows) {
+    var metaKeys = Object.keys(clusterRow['metadata']);
+    meta = [...new Set([...meta, ...metaKeys])];
+    var specKeys = Object.keys(clusterRow['spec']);
+    spec = [...new Set([...spec, ...specKeys])];
+  }
+  var columnsList = {}
+  columnsList['meta'] = meta;
+  columnsList['spec'] = spec;
+//   alert('columnsList=' + JSON.stringify(columnsList, null, 2))
+  return columnsList;
+}
+
+function createColumns(columnsList) {
+//   alert('columnsList=' + JSON.stringify(columnsList, null, 2))
   const columns: Column[] = [];
   for (const field of columnsList['spec']) {
     const column: Column = {id: 'spec_'+field, label: 'spec.'+field, sortable: true };
@@ -45,14 +76,14 @@ function createColumns(): Column[] {
     const column: Column = {id: 'meta_'+field, label: 'meta.'+field, sortable: true };
     columns.push(column);
   }
-
+//   alert('columns=' + JSON.stringify(columns, null, 2))
   return columns;
 }
 
-const columns = createColumns();
+// const columns = createColumns();
 // alert(JSON.stringify(columns));
 
-function createRows(dataRows) {
+function createRows(columnsList, dataRows) {
 //   alert(JSON.stringify(dataRows));
   const rows = [];
   for (const dataRow of dataRows) {
@@ -106,6 +137,9 @@ const TalosGetInfo: React.FC<{ }> = ({  }) => {
   const [orderBy, setOrderBy] = useState<keyof Cluster>('id');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [rows, setRows] = useState<Cluster[]>([]);
+  const [columns, setColumns] = useState<Cluster[]>([]);
+  const [columnsList, setColumnsList] = useState<Cluster[]>([]);
+
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -120,6 +154,9 @@ const TalosGetInfo: React.FC<{ }> = ({  }) => {
   const path = location.pathname.split('/');
   const commandSet = path[path.length-2];
   const command = path[path.length-1];
+  const commands = path.slice(-2)
+  const commandPath = commands.join('/')
+  const fullCommand = commands.join(' ')
 //   alert('PATH='+path+' commandSet='+commandSet+' command='+command);
   const cluster = queryParams.cluster;
   const controlplane = queryParams.controlplane;
@@ -150,7 +187,14 @@ const TalosGetInfo: React.FC<{ }> = ({  }) => {
         }
 
         const clusterRows: ApiResponse = await response.json();
-        const Rows = createRows(clusterRows);
+//         alert(JSON.stringify(clusterRows, null, 2));
+        const columnsList = createColumnsList(clusterRows);
+//         alert('columnsList=' + JSON.stringify(columnsList, null, 2));
+        setColumnsList(columnsList);
+        const Columns = createColumns(columnsList);
+        setColumns(Columns);
+//         alert('Columns=' + JSON.stringify(Columns, null, 2));
+        const Rows = createRows(columnsList, clusterRows);
 //         alert('TYPE='+typeof(clusterRows)+' Rows='+JSON.stringify(Rows, null, 2));
         setRows(Rows);
       } catch (err: any) {
@@ -180,7 +224,7 @@ const TalosGetInfo: React.FC<{ }> = ({  }) => {
   if (loading) return <div>Loading cluster map...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!rows) return <div>No data received</div>;
-//   alert(rows);
+//   alert(JSON.stringify(rows, null, 2));
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
