@@ -134,7 +134,8 @@ registerSidebarEntry({
 // });
 
 // TALOSCTL CONTAINERS
-import Containers from './node/containers/cmdPage';
+import CmdPage from './node/cmdPage';
+
 registerRoute({
   path: '/maestro/node/containers',
   useClusterURL: false,
@@ -142,10 +143,10 @@ registerRoute({
   name: 'maestro_node_containers',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<Containers/>)});
+  component: () => (<CmdPage/>)});
 
 // TALOSCTL ETCD MEMBERS
-import EtcdMembers from './node/etcd/members/cmdPage';
+// import EtcdMembers from './node/etcd/members/cmdPage';
 registerRoute({
   path: '/maestro/node/etcd/members',
   useClusterURL: false,
@@ -153,10 +154,10 @@ registerRoute({
   name: 'maestro_node_etcd_members',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<EtcdMembers/>)});
+  component: () => (<CmdPage/>)});
 
 // TALOSCTL ETCD MEMBERS
-import EtcdStatus from './node/etcd/status/cmdPage';
+// import EtcdStatus from './node/etcd/status/cmdPage';
 registerRoute({
   path: '/maestro/node/etcd/status',
   useClusterURL: false,
@@ -164,10 +165,10 @@ registerRoute({
   name: 'maestro_node_etcd_status',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<EtcdStatus/>)});
+  component: () => (<CmdPage/>)});
 
 // TALOSCTL MEMORY
-import Memory from './node/memory/cmdPage';
+// import Memory from './node/memory/cmdPage';
 registerRoute({
   path: '/maestro/node/memory',
   useClusterURL: false,
@@ -175,10 +176,10 @@ registerRoute({
   name: 'maestro_node_memory',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<Memory/>)});
+  component: () => (<CmdPage/>)});
 
 // TALOSCTL MOUNTS
-import Mounts from './node/mounts/cmdPage';
+// import Mounts from './node/mounts/cmdPage';
 registerRoute({
   path: '/maestro/node/mounts',
   useClusterURL: false,
@@ -186,10 +187,10 @@ registerRoute({
   name: 'maestro_node_mounts',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<Mounts/>)});
+  component: () => (<CmdPage/>)});
 
 // TALOSCTL NETSTAT
-import Netstat from './node/netstat/cmdPage';
+// import Netstat from './node/netstat/cmdPage';
 registerRoute({
   path: '/maestro/node/netstat',
   useClusterURL: false,
@@ -197,10 +198,10 @@ registerRoute({
   name: 'maestro_node_netstat',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<Netstat/>)});
+  component: () => (<CmdPage/>)});
 
 // TALOSCTL IMAGE DEFAULT
-import ImageDefault from './node/image/default/cmdPage';
+// import ImageDefault from './node/image/default/cmdPage';
 registerRoute({
   path: '/maestro/node/image/default',
   useClusterURL: false,
@@ -208,10 +209,10 @@ registerRoute({
   name: 'maestro_node_image_default',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<ImageDefault/>)});
+  component: () => (<CmdPage/>)});
 
 // TALOSCTL IMAGE LIST
-import ImageList from './node/image/list/cmdPage';
+// import ImageList from './node/image/list/cmdPage';
 registerRoute({
   path: '/maestro/node/image/list',
   useClusterURL: false,
@@ -219,10 +220,10 @@ registerRoute({
   name: 'maestro_node_image_list',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<ImageList/>)});
+  component: () => (<CmdPage/>)});
 
 // TALOSCTL IMAGE LIST
-import Processes from './node/processes/cmdPage';
+// import Processes from './node/processes/cmdPage';
 registerRoute({
   path: '/maestro/node/processes',
   useClusterURL: false,
@@ -230,10 +231,10 @@ registerRoute({
   name: 'maestro_node_processes',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<Processes/>)});
+  component: () => (<CmdPage/>)});
 
 // TALOSCTL SERVICE
-import Service from './node/service/cmdPage';
+// import Service from './node/service/cmdPage';
 registerRoute({
   path: '/maestro/node/service',
   useClusterURL: false,
@@ -241,10 +242,10 @@ registerRoute({
   name: 'maestro_node_service',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<Service/>)});
+  component: () => (<CmdPage/>)});
 
 // TALOSCTL STATS
-import Stats from './node/stats/cmdPage';
+// import Stats from './node/stats/cmdPage';
 registerRoute({
   path: '/maestro/node/stats',
   useClusterURL: false,
@@ -252,10 +253,10 @@ registerRoute({
   name: 'maestro_node_stats',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<Stats/>)});
+  component: () => (<CmdPage/>)});
 
 // TALOSCTL TIME
-import Time from './node/time/cmdPage';
+// import Time from './node/time/cmdPage';
 registerRoute({
   path: '/maestro/node/time',
   useClusterURL: false,
@@ -263,10 +264,10 @@ registerRoute({
   name: 'maestro_node_time',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<Time/>)});
+  component: () => (<CmdPage/>)});
 
 // TALOSCTL STATS
-import Usage from './node/usage/cmdPage';
+// import Usage from './node/usage/cmdPage';
 registerRoute({
   path: '/maestro/node/usage',
   useClusterURL: false,
@@ -274,7 +275,7 @@ registerRoute({
   name: 'maestro_node_usage',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<Usage/>)});
+  component: () => (<CmdPage/>)});
 
 // TALOSCTL GET TREE
 registerRoute({
@@ -294,7 +295,7 @@ import GetTree from './node/get/index';
 
 // import getRoutes from './node/get/routes';
 // import getRoutes from './getRoutes';
-import GetBlockBlockdevice from './node/get/block/blockdevice/Page';
+import GetPage from './node/get/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/blockdevice',
@@ -302,10 +303,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_blockdevice',
   exact: true,
-  component: () => (<GetBlockBlockdevice/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockBlocksymlink from './node/get/block/blocksymlink/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/blocksymlink',
@@ -313,10 +312,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_blocksymlink',
   exact: true,
-  component: () => (<GetBlockBlocksymlink/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockDiscoveredvolume from './node/get/block/discoveredvolume/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/discoveredvolume',
@@ -324,10 +321,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_discoveredvolume',
   exact: true,
-  component: () => (<GetBlockDiscoveredvolume/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockDiscoveryrefreshrequest from './node/get/block/discoveryrefreshrequest/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/discoveryrefreshrequest',
@@ -335,10 +330,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_discoveryrefreshrequest',
   exact: true,
-  component: () => (<GetBlockDiscoveryrefreshrequest/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockDiscoveryrefreshstatus from './node/get/block/discoveryrefreshstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/discoveryrefreshstatus',
@@ -346,10 +339,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_discoveryrefreshstatus',
   exact: true,
-  component: () => (<GetBlockDiscoveryrefreshstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockDisk from './node/get/block/disk/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/disk',
@@ -357,10 +348,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_disk',
   exact: true,
-  component: () => (<GetBlockDisk/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockMountrequest from './node/get/block/mountrequest/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/mountrequest',
@@ -368,10 +357,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_mountrequest',
   exact: true,
-  component: () => (<GetBlockMountrequest/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockMountstatus from './node/get/block/mountstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/mountstatus',
@@ -379,10 +366,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_mountstatus',
   exact: true,
-  component: () => (<GetBlockMountstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockSystemdisk from './node/get/block/systemdisk/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/systemdisk',
@@ -390,10 +375,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_systemdisk',
   exact: true,
-  component: () => (<GetBlockSystemdisk/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockUserdiskconfigstatus from './node/get/block/userdiskconfigstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/userdiskconfigstatus',
@@ -401,10 +384,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_userdiskconfigstatus',
   exact: true,
-  component: () => (<GetBlockUserdiskconfigstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockVolumeconfig from './node/get/block/volumeconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/volumeconfig',
@@ -412,10 +393,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_volumeconfig',
   exact: true,
-  component: () => (<GetBlockVolumeconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockVolumelifecycle from './node/get/block/volumelifecycle/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/volumelifecycle',
@@ -423,10 +402,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_volumelifecycle',
   exact: true,
-  component: () => (<GetBlockVolumelifecycle/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockVolumemountrequest from './node/get/block/volumemountrequest/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/volumemountrequest',
@@ -434,10 +411,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_volumemountrequest',
   exact: true,
-  component: () => (<GetBlockVolumemountrequest/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockVolumemountstatus from './node/get/block/volumemountstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/volumemountstatus',
@@ -445,10 +420,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_volumemountstatus',
   exact: true,
-  component: () => (<GetBlockVolumemountstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetBlockVolumestatus from './node/get/block/volumestatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/block/volumestatus',
@@ -456,10 +429,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_block_volumestatus',
   exact: true,
-  component: () => (<GetBlockVolumestatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetClusterAffiliate from './node/get/cluster/affiliate/Page';
 
 registerRoute({
   path: '/maestro/node/get/cluster/affiliate',
@@ -467,10 +438,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_cluster_affiliate',
   exact: true,
-  component: () => (<GetClusterAffiliate/>)
+  component: () => (<GetPage/>)
 });
-
-import GetClusterDiscoveryconfig from './node/get/cluster/discoveryconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/cluster/discoveryconfig',
@@ -478,10 +447,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_cluster_discoveryconfig',
   exact: true,
-  component: () => (<GetClusterDiscoveryconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetClusterIdentity from './node/get/cluster/identity/Page';
 
 registerRoute({
   path: '/maestro/node/get/cluster/identity',
@@ -489,10 +456,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_cluster_identity',
   exact: true,
-  component: () => (<GetClusterIdentity/>)
+  component: () => (<GetPage/>)
 });
-
-import GetClusterInfo from './node/get/cluster/info/Page';
 
 registerRoute({
   path: '/maestro/node/get/cluster/info',
@@ -500,10 +465,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_cluster_info',
   exact: true,
-  component: () => (<GetClusterInfo/>)
+  component: () => (<GetPage/>)
 });
-
-import GetClusterKubernetesaccessconfig from './node/get/cluster/kubernetesaccessconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/cluster/kubernetesaccessconfig',
@@ -511,10 +474,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_cluster_kubernetesaccessconfig',
   exact: true,
-  component: () => (<GetClusterKubernetesaccessconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetClusterMember from './node/get/cluster/member/Page';
 
 registerRoute({
   path: '/maestro/node/get/cluster/member',
@@ -522,10 +483,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_cluster_member',
   exact: true,
-  component: () => (<GetClusterMember/>)
+  component: () => (<GetPage/>)
 });
-
-import GetConfigMachineconfig from './node/get/config/machineconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/config/machineconfig',
@@ -533,10 +492,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_config_machineconfig',
   exact: true,
-  component: () => (<GetConfigMachineconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetConfigMachinetype from './node/get/config/machinetype/Page';
 
 registerRoute({
   path: '/maestro/node/get/config/machinetype',
@@ -544,10 +501,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_config_machinetype',
   exact: true,
-  component: () => (<GetConfigMachinetype/>)
+  component: () => (<GetPage/>)
 });
-
-import GetCriImagecacheconfig from './node/get/cri/imagecacheconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/cri/imagecacheconfig',
@@ -555,10 +510,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_cri_imagecacheconfig',
   exact: true,
-  component: () => (<GetCriImagecacheconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetCriRegistryconfig from './node/get/cri/registryconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/cri/registryconfig',
@@ -566,10 +519,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_cri_registryconfig',
   exact: true,
-  component: () => (<GetCriRegistryconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetCriSeccompprofile from './node/get/cri/seccompprofile/Page';
 
 registerRoute({
   path: '/maestro/node/get/cri/seccompprofile',
@@ -577,10 +528,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_cri_seccompprofile',
   exact: true,
-  component: () => (<GetCriSeccompprofile/>)
+  component: () => (<GetPage/>)
 });
-
-import GetEtcdEtcdconfig from './node/get/etcd/etcdconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/etcd/etcdconfig',
@@ -588,10 +537,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_etcd_etcdconfig',
   exact: true,
-  component: () => (<GetEtcdEtcdconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetEtcdEtcdmember from './node/get/etcd/etcdmember/Page';
 
 registerRoute({
   path: '/maestro/node/get/etcd/etcdmember',
@@ -599,10 +546,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_etcd_etcdmember',
   exact: true,
-  component: () => (<GetEtcdEtcdmember/>)
+  component: () => (<GetPage/>)
 });
-
-import GetEtcdEtcdspec from './node/get/etcd/etcdspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/etcd/etcdspec',
@@ -610,10 +555,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_etcd_etcdspec',
   exact: true,
-  component: () => (<GetEtcdEtcdspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetEtcdPkistatus from './node/get/etcd/pkistatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/etcd/pkistatus',
@@ -621,10 +564,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_etcd_pkistatus',
   exact: true,
-  component: () => (<GetEtcdPkistatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetFilesEtcfilespec from './node/get/files/etcfilespec/Page';
 
 registerRoute({
   path: '/maestro/node/get/files/etcfilespec',
@@ -632,10 +573,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_files_etcfilespec',
   exact: true,
-  component: () => (<GetFilesEtcfilespec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetFilesEtcfilestatus from './node/get/files/etcfilestatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/files/etcfilestatus',
@@ -643,10 +582,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_files_etcfilestatus',
   exact: true,
-  component: () => (<GetFilesEtcfilestatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetHardwareMemorymodules from './node/get/hardware/memorymodules/Page';
 
 registerRoute({
   path: '/maestro/node/get/hardware/memorymodules',
@@ -654,10 +591,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_hardware_memorymodules',
   exact: true,
-  component: () => (<GetHardwareMemorymodules/>)
+  component: () => (<GetPage/>)
 });
-
-import GetHardwareDevices from './node/get/hardware/devices/Page';
 
 registerRoute({
   path: '/maestro/node/get/hardware/devices',
@@ -665,10 +600,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_hardware_devices',
   exact: true,
-  component: () => (<GetHardwareDevices/>)
+  component: () => (<GetPage/>)
 });
-
-import GetHardwarePcrstatus from './node/get/hardware/pcrstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/hardware/pcrstatus',
@@ -676,10 +609,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_hardware_pcrstatus',
   exact: true,
-  component: () => (<GetHardwarePcrstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetHardwareCpus from './node/get/hardware/cpus/Page';
 
 registerRoute({
   path: '/maestro/node/get/hardware/cpus',
@@ -687,10 +618,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_hardware_cpus',
   exact: true,
-  component: () => (<GetHardwareCpus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetHardwareSysteminformation from './node/get/hardware/systeminformation/Page';
 
 registerRoute({
   path: '/maestro/node/get/hardware/systeminformation',
@@ -698,10 +627,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_hardware_systeminformation',
   exact: true,
-  component: () => (<GetHardwareSysteminformation/>)
+  component: () => (<GetPage/>)
 });
-
-import GetK8SNodeannotationspec from './node/get/k8s/nodeannotationspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/k8s/nodeannotationspec',
@@ -709,10 +636,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_k8s_nodeannotationspec',
   exact: true,
-  component: () => (<GetK8SNodeannotationspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetK8SNodecordonedspec from './node/get/k8s/nodecordonedspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/k8s/nodecordonedspec',
@@ -720,10 +645,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_k8s_nodecordonedspec',
   exact: true,
-  component: () => (<GetK8SNodecordonedspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetK8SNodelabelspec from './node/get/k8s/nodelabelspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/k8s/nodelabelspec',
@@ -731,10 +654,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_k8s_nodelabelspec',
   exact: true,
-  component: () => (<GetK8SNodelabelspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetK8SNodetaintspec from './node/get/k8s/nodetaintspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/k8s/nodetaintspec',
@@ -742,10 +663,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_k8s_nodetaintspec',
   exact: true,
-  component: () => (<GetK8SNodetaintspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesAdmissioncontrolconfig from './node/get/kubernetes/admissioncontrolconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/admissioncontrolconfig',
@@ -753,10 +672,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_admissioncontrolconfig',
   exact: true,
-  component: () => (<GetKubernetesAdmissioncontrolconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesApiserverconfig from './node/get/kubernetes/apiserverconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/apiserverconfig',
@@ -764,10 +681,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_apiserverconfig',
   exact: true,
-  component: () => (<GetKubernetesApiserverconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesAuditpolicyconfig from './node/get/kubernetes/auditpolicyconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/auditpolicyconfig',
@@ -775,10 +690,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_auditpolicyconfig',
   exact: true,
-  component: () => (<GetKubernetesAuditpolicyconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesAuthorizationconfig from './node/get/kubernetes/authorizationconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/authorizationconfig',
@@ -786,10 +699,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_authorizationconfig',
   exact: true,
-  component: () => (<GetKubernetesAuthorizationconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesBootstrapmanifestsconfig from './node/get/kubernetes/bootstrapmanifestsconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/bootstrapmanifestsconfig',
@@ -797,10 +708,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_bootstrapmanifestsconfig',
   exact: true,
-  component: () => (<GetKubernetesBootstrapmanifestsconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesConfigstatus from './node/get/kubernetes/configstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/configstatus',
@@ -808,10 +717,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_configstatus',
   exact: true,
-  component: () => (<GetKubernetesConfigstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesControllermanagerconfig from './node/get/kubernetes/controllermanagerconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/controllermanagerconfig',
@@ -819,10 +726,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_controllermanagerconfig',
   exact: true,
-  component: () => (<GetKubernetesControllermanagerconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesEndpoint from './node/get/kubernetes/endpoint/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/endpoint',
@@ -830,10 +735,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_endpoint',
   exact: true,
-  component: () => (<GetKubernetesEndpoint/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesExtramanifestsconfig from './node/get/kubernetes/extramanifestsconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/extramanifestsconfig',
@@ -841,10 +744,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_extramanifestsconfig',
   exact: true,
-  component: () => (<GetKubernetesExtramanifestsconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesKubeletconfig from './node/get/kubernetes/kubeletconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/kubeletconfig',
@@ -852,10 +753,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_kubeletconfig',
   exact: true,
-  component: () => (<GetKubernetesKubeletconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesKubeletlifecycle from './node/get/kubernetes/kubeletlifecycle/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/kubeletlifecycle',
@@ -863,10 +762,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_kubeletlifecycle',
   exact: true,
-  component: () => (<GetKubernetesKubeletlifecycle/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesKubeletspec from './node/get/kubernetes/kubeletspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/kubeletspec',
@@ -874,10 +771,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_kubeletspec',
   exact: true,
-  component: () => (<GetKubernetesKubeletspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesKubeprismconfig from './node/get/kubernetes/kubeprismconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/kubeprismconfig',
@@ -885,10 +780,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_kubeprismconfig',
   exact: true,
-  component: () => (<GetKubernetesKubeprismconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesKubeprismendpoint from './node/get/kubernetes/kubeprismendpoint/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/kubeprismendpoint',
@@ -896,10 +789,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_kubeprismendpoint',
   exact: true,
-  component: () => (<GetKubernetesKubeprismendpoint/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesKubeprismstatus from './node/get/kubernetes/kubeprismstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/kubeprismstatus',
@@ -907,10 +798,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_kubeprismstatus',
   exact: true,
-  component: () => (<GetKubernetesKubeprismstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesManifest from './node/get/kubernetes/manifest/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/manifest',
@@ -918,10 +807,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_manifest',
   exact: true,
-  component: () => (<GetKubernetesManifest/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesManifeststatus from './node/get/kubernetes/manifeststatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/manifeststatus',
@@ -929,10 +816,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_manifeststatus',
   exact: true,
-  component: () => (<GetKubernetesManifeststatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesNodeipconfig from './node/get/kubernetes/nodeipconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/nodeipconfig',
@@ -940,10 +825,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_nodeipconfig',
   exact: true,
-  component: () => (<GetKubernetesNodeipconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesNodeip from './node/get/kubernetes/nodeip/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/nodeip',
@@ -951,10 +834,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_nodeip',
   exact: true,
-  component: () => (<GetKubernetesNodeip/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesNodename from './node/get/kubernetes/nodename/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/nodename',
@@ -962,10 +843,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_nodename',
   exact: true,
-  component: () => (<GetKubernetesNodename/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesNodestatus from './node/get/kubernetes/nodestatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/nodestatus',
@@ -973,10 +852,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_nodestatus',
   exact: true,
-  component: () => (<GetKubernetesNodestatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesSchedulerconfig from './node/get/kubernetes/schedulerconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/schedulerconfig',
@@ -984,10 +861,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_schedulerconfig',
   exact: true,
-  component: () => (<GetKubernetesSchedulerconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesSecretstatus from './node/get/kubernetes/secretstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/secretstatus',
@@ -995,10 +870,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_secretstatus',
   exact: true,
-  component: () => (<GetKubernetesSecretstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesStaticpod from './node/get/kubernetes/staticpod/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/staticpod',
@@ -1006,10 +879,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_staticpod',
   exact: true,
-  component: () => (<GetKubernetesStaticpod/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesStaticpodserverstatus from './node/get/kubernetes/staticpodserverstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/staticpodserverstatus',
@@ -1017,10 +888,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_staticpodserverstatus',
   exact: true,
-  component: () => (<GetKubernetesStaticpodserverstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubernetesPodstatus from './node/get/kubernetes/podstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubernetes/podstatus',
@@ -1028,10 +897,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubernetes_podstatus',
   exact: true,
-  component: () => (<GetKubernetesPodstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubespanKubespanconfig from './node/get/kubespan/kubespanconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubespan/kubespanconfig',
@@ -1039,10 +906,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubespan_kubespanconfig',
   exact: true,
-  component: () => (<GetKubespanKubespanconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubespanKubespanendpoint from './node/get/kubespan/kubespanendpoint/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubespan/kubespanendpoint',
@@ -1050,10 +915,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubespan_kubespanendpoint',
   exact: true,
-  component: () => (<GetKubespanKubespanendpoint/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubespanKubespanidentity from './node/get/kubespan/kubespanidentity/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubespan/kubespanidentity',
@@ -1061,10 +924,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubespan_kubespanidentity',
   exact: true,
-  component: () => (<GetKubespanKubespanidentity/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubespanKubespanpeerspec from './node/get/kubespan/kubespanpeerspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubespan/kubespanpeerspec',
@@ -1072,10 +933,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubespan_kubespanpeerspec',
   exact: true,
-  component: () => (<GetKubespanKubespanpeerspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetKubespanKubespanpeerstatus from './node/get/kubespan/kubespanpeerstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/kubespan/kubespanpeerstatus',
@@ -1083,10 +942,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_kubespan_kubespanpeerstatus',
   exact: true,
-  component: () => (<GetKubespanKubespanpeerstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetMetaNs from './node/get/meta/ns/Page';
 
 registerRoute({
   path: '/maestro/node/get/meta/ns',
@@ -1094,10 +951,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_meta_ns',
   exact: true,
-  component: () => (<GetMetaNs/>)
+  component: () => (<GetPage/>)
 });
-
-import GetMetaApi_Resources from './node/get/meta/api-resources/Page';
 
 registerRoute({
   path: '/maestro/node/get/meta/api-resources',
@@ -1105,10 +960,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_meta_api-resources',
   exact: true,
-  component: () => (<GetMetaApi_Resources/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetAddressspec from './node/get/net/addressspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/addressspec',
@@ -1116,10 +969,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_addressspec',
   exact: true,
-  component: () => (<GetNetAddressspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetAddress from './node/get/net/address/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/address',
@@ -1127,10 +978,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_address',
   exact: true,
-  component: () => (<GetNetAddress/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetDeviceconfigspec from './node/get/net/deviceconfigspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/deviceconfigspec',
@@ -1138,10 +987,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_deviceconfigspec',
   exact: true,
-  component: () => (<GetNetDeviceconfigspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetDnsresolvecach from './node/get/net/dnsresolvecach/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/dnsresolvecach',
@@ -1149,10 +996,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_dnsresolvecach',
   exact: true,
-  component: () => (<GetNetDnsresolvecach/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetDnsupstream from './node/get/net/dnsupstream/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/dnsupstream',
@@ -1160,10 +1005,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_dnsupstream',
   exact: true,
-  component: () => (<GetNetDnsupstream/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetEthernetspec from './node/get/net/ethernetspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/ethernetspec',
@@ -1171,10 +1014,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_ethernetspec',
   exact: true,
-  component: () => (<GetNetEthernetspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetEthtool from './node/get/net/ethtool/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/ethtool',
@@ -1182,10 +1023,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_ethtool',
   exact: true,
-  component: () => (<GetNetEthtool/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetHardwareaddress from './node/get/net/hardwareaddress/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/hardwareaddress',
@@ -1193,10 +1032,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_hardwareaddress',
   exact: true,
-  component: () => (<GetNetHardwareaddress/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetHostdnsconfig from './node/get/net/hostdnsconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/hostdnsconfig',
@@ -1204,10 +1041,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_hostdnsconfig',
   exact: true,
-  component: () => (<GetNetHostdnsconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetHostnamespec from './node/get/net/hostnamespec/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/hostnamespec',
@@ -1215,10 +1050,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_hostnamespec',
   exact: true,
-  component: () => (<GetNetHostnamespec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetHostname from './node/get/net/hostname/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/hostname',
@@ -1226,10 +1059,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_hostname',
   exact: true,
-  component: () => (<GetNetHostname/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetLinkrefresh from './node/get/net/linkrefresh/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/linkrefresh',
@@ -1237,10 +1068,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_linkrefresh',
   exact: true,
-  component: () => (<GetNetLinkrefresh/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetLinkspec from './node/get/net/linkspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/linkspec',
@@ -1248,10 +1077,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_linkspec',
   exact: true,
-  component: () => (<GetNetLinkspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetLink from './node/get/net/link/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/link',
@@ -1259,10 +1086,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_link',
   exact: true,
-  component: () => (<GetNetLink/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetNetstatus from './node/get/net/netstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/netstatus',
@@ -1270,10 +1095,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_netstatus',
   exact: true,
-  component: () => (<GetNetNetstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetChain from './node/get/net/chain/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/chain',
@@ -1281,10 +1104,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_chain',
   exact: true,
-  component: () => (<GetNetChain/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetNodeaddress from './node/get/net/nodeaddress/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/nodeaddress',
@@ -1292,10 +1113,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_nodeaddress',
   exact: true,
-  component: () => (<GetNetNodeaddress/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetNodeaddressfilter from './node/get/net/nodeaddressfilter/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/nodeaddressfilter',
@@ -1303,10 +1122,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_nodeaddressfilter',
   exact: true,
-  component: () => (<GetNetNodeaddressfilter/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetNodeaddresssortalgorithm from './node/get/net/nodeaddresssortalgorithm/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/nodeaddresssortalgorithm',
@@ -1314,10 +1131,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_nodeaddresssortalgorithm',
   exact: true,
-  component: () => (<GetNetNodeaddresssortalgorithm/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetOperatorspec from './node/get/net/operatorspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/operatorspec',
@@ -1325,10 +1140,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_operatorspec',
   exact: true,
-  component: () => (<GetNetOperatorspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetProbespec from './node/get/net/probespec/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/probespec',
@@ -1336,10 +1149,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_probespec',
   exact: true,
-  component: () => (<GetNetProbespec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetProbe from './node/get/net/probe/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/probe',
@@ -1347,10 +1158,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_probe',
   exact: true,
-  component: () => (<GetNetProbe/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetResolverspec from './node/get/net/resolverspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/resolverspec',
@@ -1358,10 +1167,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_resolverspec',
   exact: true,
-  component: () => (<GetNetResolverspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetResolvers from './node/get/net/resolvers/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/resolvers',
@@ -1369,10 +1176,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_resolvers',
   exact: true,
-  component: () => (<GetNetResolvers/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetRoutespec from './node/get/net/routespec/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/routespec',
@@ -1380,10 +1185,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_routespec',
   exact: true,
-  component: () => (<GetNetRoutespec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetRoute from './node/get/net/route/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/route',
@@ -1391,10 +1194,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_route',
   exact: true,
-  component: () => (<GetNetRoute/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetTimeserverspec from './node/get/net/timeserverspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/timeserverspec',
@@ -1402,10 +1203,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_timeserverspec',
   exact: true,
-  component: () => (<GetNetTimeserverspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetNetTimeserver from './node/get/net/timeserver/Page';
 
 registerRoute({
   path: '/maestro/node/get/net/timeserver',
@@ -1413,10 +1212,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_net_timeserver',
   exact: true,
-  component: () => (<GetNetTimeserver/>)
+  component: () => (<GetPage/>)
 });
-
-import GetPerfCpustat from './node/get/perf/cpustat/Page';
 
 registerRoute({
   path: '/maestro/node/get/perf/cpustat',
@@ -1424,10 +1221,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_perf_cpustat',
   exact: true,
-  component: () => (<GetPerfCpustat/>)
+  component: () => (<GetPage/>)
 });
-
-import GetPerfMemorystat from './node/get/perf/memorystat/Page';
 
 registerRoute({
   path: '/maestro/node/get/perf/memorystat',
@@ -1435,10 +1230,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_perf_memorystat',
   exact: true,
-  component: () => (<GetPerfMemorystat/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeDevicesstatus from './node/get/runtime/devicesstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/devicesstatus',
@@ -1446,10 +1239,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_devicesstatus',
   exact: true,
-  component: () => (<GetRuntimeDevicesstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeDiagnostic from './node/get/runtime/diagnostic/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/diagnostic',
@@ -1457,10 +1248,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_diagnostic',
   exact: true,
-  component: () => (<GetRuntimeDiagnostic/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeEventsinkconfig from './node/get/runtime/eventsinkconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/eventsinkconfig',
@@ -1468,10 +1257,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_eventsinkconfig',
   exact: true,
-  component: () => (<GetRuntimeEventsinkconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeExtensionserviceconfig from './node/get/runtime/extensionserviceconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/extensionserviceconfig',
@@ -1479,10 +1266,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_extensionserviceconfig',
   exact: true,
-  component: () => (<GetRuntimeExtensionserviceconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeExtensionserviceconfigstatus from './node/get/runtime/extensionserviceconfigstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/extensionserviceconfigstatus',
@@ -1490,10 +1275,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_extensionserviceconfigstatus',
   exact: true,
-  component: () => (<GetRuntimeExtensionserviceconfigstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeExtensions from './node/get/runtime/extensions/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/extensions',
@@ -1501,10 +1284,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_extensions',
   exact: true,
-  component: () => (<GetRuntimeExtensions/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeModules from './node/get/runtime/modules/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/modules',
@@ -1512,10 +1293,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_modules',
   exact: true,
-  component: () => (<GetRuntimeModules/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeKernelparamdefaultspec from './node/get/runtime/kernelparamdefaultspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/kernelparamdefaultspec',
@@ -1523,10 +1302,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_kernelparamdefaultspec',
   exact: true,
-  component: () => (<GetRuntimeKernelparamdefaultspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeKernelparamspec from './node/get/runtime/kernelparamspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/kernelparamspec',
@@ -1534,10 +1311,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_kernelparamspec',
   exact: true,
-  component: () => (<GetRuntimeKernelparamspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeSysctls from './node/get/runtime/sysctls/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/sysctls',
@@ -1545,10 +1320,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_sysctls',
   exact: true,
-  component: () => (<GetRuntimeSysctls/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeKmsglogconfig from './node/get/runtime/kmsglogconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/kmsglogconfig',
@@ -1556,10 +1329,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_kmsglogconfig',
   exact: true,
-  component: () => (<GetRuntimeKmsglogconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeMachineresetsignal from './node/get/runtime/machineresetsignal/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/machineresetsignal',
@@ -1567,10 +1338,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_machineresetsignal',
   exact: true,
-  component: () => (<GetRuntimeMachineresetsignal/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeMachinestatus from './node/get/runtime/machinestatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/machinestatus',
@@ -1578,10 +1347,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_machinestatus',
   exact: true,
-  component: () => (<GetRuntimeMachinestatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeMaintenanceserviceconfig from './node/get/runtime/maintenanceserviceconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/maintenanceserviceconfig',
@@ -1589,10 +1356,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_maintenanceserviceconfig',
   exact: true,
-  component: () => (<GetRuntimeMaintenanceserviceconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeMaintenanceservicerequest from './node/get/runtime/maintenanceservicerequest/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/maintenanceservicerequest',
@@ -1600,10 +1365,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_maintenanceservicerequest',
   exact: true,
-  component: () => (<GetRuntimeMaintenanceservicerequest/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeMeta from './node/get/runtime/meta/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/meta',
@@ -1611,10 +1374,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_meta',
   exact: true,
-  component: () => (<GetRuntimeMeta/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeMetaload from './node/get/runtime/metaload/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/metaload',
@@ -1622,10 +1383,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_metaload',
   exact: true,
-  component: () => (<GetRuntimeMetaload/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeMounts from './node/get/runtime/mounts/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/mounts',
@@ -1633,10 +1392,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_mounts',
   exact: true,
-  component: () => (<GetRuntimeMounts/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimePcidriverrebindconfig from './node/get/runtime/pcidriverrebindconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/pcidriverrebindconfig',
@@ -1644,10 +1401,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_pcidriverrebindconfig',
   exact: true,
-  component: () => (<GetRuntimePcidriverrebindconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimePcidriverrebinds from './node/get/runtime/pcidriverrebinds/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/pcidriverrebinds',
@@ -1655,10 +1410,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_pcidriverrebinds',
   exact: true,
-  component: () => (<GetRuntimePcidriverrebinds/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeUniquemachinetoken from './node/get/runtime/uniquemachinetoken/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/uniquemachinetoken',
@@ -1666,10 +1419,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_uniquemachinetoken',
   exact: true,
-  component: () => (<GetRuntimeUniquemachinetoken/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeVersion from './node/get/runtime/version/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/version',
@@ -1677,10 +1428,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_version',
   exact: true,
-  component: () => (<GetRuntimeVersion/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeWatchdogtimerconfig from './node/get/runtime/watchdogtimerconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/watchdogtimerconfig',
@@ -1688,10 +1437,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_watchdogtimerconfig',
   exact: true,
-  component: () => (<GetRuntimeWatchdogtimerconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetRuntimeWatchdogtimerstatus from './node/get/runtime/watchdogtimerstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/runtime/watchdogtimerstatus',
@@ -1699,10 +1446,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_runtime_watchdogtimerstatus',
   exact: true,
-  component: () => (<GetRuntimeWatchdogtimerstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSecretsApicertificate from './node/get/secrets/apicertificate/Page';
 
 registerRoute({
   path: '/maestro/node/get/secrets/apicertificate',
@@ -1710,10 +1455,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_secrets_apicertificate',
   exact: true,
-  component: () => (<GetSecretsApicertificate/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSecretsCertsan from './node/get/secrets/certsan/Page';
 
 registerRoute({
   path: '/maestro/node/get/secrets/certsan',
@@ -1721,10 +1464,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_secrets_certsan',
   exact: true,
-  component: () => (<GetSecretsCertsan/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSecretsEtcdrootsecret from './node/get/secrets/etcdrootsecret/Page';
 
 registerRoute({
   path: '/maestro/node/get/secrets/etcdrootsecret',
@@ -1732,10 +1473,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_secrets_etcdrootsecret',
   exact: true,
-  component: () => (<GetSecretsEtcdrootsecret/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSecretsEtcdsecret from './node/get/secrets/etcdsecret/Page';
 
 registerRoute({
   path: '/maestro/node/get/secrets/etcdsecret',
@@ -1743,10 +1482,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_secrets_etcdsecret',
   exact: true,
-  component: () => (<GetSecretsEtcdsecret/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSecretsKubeletsecret from './node/get/secrets/kubeletsecret/Page';
 
 registerRoute({
   path: '/maestro/node/get/secrets/kubeletsecret',
@@ -1754,10 +1491,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_secrets_kubeletsecret',
   exact: true,
-  component: () => (<GetSecretsKubeletsecret/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSecretsKubernetesdynamiccert from './node/get/secrets/kubernetesdynamiccert/Page';
 
 registerRoute({
   path: '/maestro/node/get/secrets/kubernetesdynamiccert',
@@ -1765,10 +1500,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_secrets_kubernetesdynamiccert',
   exact: true,
-  component: () => (<GetSecretsKubernetesdynamiccert/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSecretsKubernetesrootsecret from './node/get/secrets/kubernetesrootsecret/Page';
 
 registerRoute({
   path: '/maestro/node/get/secrets/kubernetesrootsecret',
@@ -1776,10 +1509,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_secrets_kubernetesrootsecret',
   exact: true,
-  component: () => (<GetSecretsKubernetesrootsecret/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSecretsKubernetessecret from './node/get/secrets/kubernetessecret/Page';
 
 registerRoute({
   path: '/maestro/node/get/secrets/kubernetessecret',
@@ -1787,10 +1518,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_secrets_kubernetessecret',
   exact: true,
-  component: () => (<GetSecretsKubernetessecret/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSecretsMaintenancerootsecret from './node/get/secrets/maintenancerootsecret/Page';
 
 registerRoute({
   path: '/maestro/node/get/secrets/maintenancerootsecret',
@@ -1798,10 +1527,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_secrets_maintenancerootsecret',
   exact: true,
-  component: () => (<GetSecretsMaintenancerootsecret/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSecretsMaintenanceservicecertificate from './node/get/secrets/maintenanceservicecertificate/Page';
 
 registerRoute({
   path: '/maestro/node/get/secrets/maintenanceservicecertificate',
@@ -1809,10 +1536,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_secrets_maintenanceservicecertificate',
   exact: true,
-  component: () => (<GetSecretsMaintenanceservicecertificate/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSecretsOsrootsecret from './node/get/secrets/osrootsecret/Page';
 
 registerRoute({
   path: '/maestro/node/get/secrets/osrootsecret',
@@ -1820,10 +1545,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_secrets_osrootsecret',
   exact: true,
-  component: () => (<GetSecretsOsrootsecret/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSecretsTrustdcertificate from './node/get/secrets/trustdcertificate/Page';
 
 registerRoute({
   path: '/maestro/node/get/secrets/trustdcertificate',
@@ -1831,10 +1554,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_secrets_trustdcertificate',
   exact: true,
-  component: () => (<GetSecretsTrustdcertificate/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSiderolinkSiderolinkconfig from './node/get/siderolink/siderolinkconfig/Page';
 
 registerRoute({
   path: '/maestro/node/get/siderolink/siderolinkconfig',
@@ -1842,10 +1563,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_siderolink_siderolinkconfig',
   exact: true,
-  component: () => (<GetSiderolinkSiderolinkconfig/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSiderolinkSiderolinkstatus from './node/get/siderolink/siderolinkstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/siderolink/siderolinkstatus',
@@ -1853,10 +1572,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_siderolink_siderolinkstatus',
   exact: true,
-  component: () => (<GetSiderolinkSiderolinkstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetSiderolinkSiderolinktunnel from './node/get/siderolink/siderolinktunnel/Page';
 
 registerRoute({
   path: '/maestro/node/get/siderolink/siderolinktunnel',
@@ -1864,10 +1581,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_siderolink_siderolinktunnel',
   exact: true,
-  component: () => (<GetSiderolinkSiderolinktunnel/>)
+  component: () => (<GetPage/>)
 });
-
-import GetTalosPlatformmetadata from './node/get/talos/platformmetadata/Page';
 
 registerRoute({
   path: '/maestro/node/get/talos/platformmetadata',
@@ -1875,10 +1590,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_talos_platformmetadata',
   exact: true,
-  component: () => (<GetTalosPlatformmetadata/>)
+  component: () => (<GetPage/>)
 });
-
-import GetTalosSecuritystate from './node/get/talos/securitystate/Page';
 
 registerRoute({
   path: '/maestro/node/get/talos/securitystate',
@@ -1886,10 +1599,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_talos_securitystate',
   exact: true,
-  component: () => (<GetTalosSecuritystate/>)
+  component: () => (<GetPage/>)
 });
-
-import GetV1Alpha1Acquireconfigspec from './node/get/v1alpha1/acquireconfigspec/Page';
 
 registerRoute({
   path: '/maestro/node/get/v1alpha1/acquireconfigspec',
@@ -1897,10 +1608,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_v1alpha1_acquireconfigspec',
   exact: true,
-  component: () => (<GetV1Alpha1Acquireconfigspec/>)
+  component: () => (<GetPage/>)
 });
-
-import GetV1Alpha1Acquireconfigstatus from './node/get/v1alpha1/acquireconfigstatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/v1alpha1/acquireconfigstatus',
@@ -1908,10 +1617,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_v1alpha1_acquireconfigstatus',
   exact: true,
-  component: () => (<GetV1Alpha1Acquireconfigstatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetV1Alpha1Adjtimestatus from './node/get/v1alpha1/adjtimestatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/v1alpha1/adjtimestatus',
@@ -1919,10 +1626,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_v1alpha1_adjtimestatus',
   exact: true,
-  component: () => (<GetV1Alpha1Adjtimestatus/>)
+  component: () => (<GetPage/>)
 });
-
-import GetV1Alpha1Svc from './node/get/v1alpha1/svc/Page';
 
 registerRoute({
   path: '/maestro/node/get/v1alpha1/svc',
@@ -1930,10 +1635,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_v1alpha1_svc',
   exact: true,
-  component: () => (<GetV1Alpha1Svc/>)
+  component: () => (<GetPage/>)
 });
-
-import GetV1Alpha1Timestatus from './node/get/v1alpha1/timestatus/Page';
 
 registerRoute({
   path: '/maestro/node/get/v1alpha1/timestatus',
@@ -1941,7 +1644,8 @@ registerRoute({
   noAuthRequired: true,
   name: 'maestro_get_v1alpha1_timestatus',
   exact: true,
-  component: () => (<GetV1Alpha1Timestatus/>)
+  component: () => (<GetPage/>)
 });
+
 
 
