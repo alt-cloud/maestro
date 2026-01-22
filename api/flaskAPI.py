@@ -11,7 +11,11 @@ app = Flask(__name__)
 # CORS(app, origins=["http://localhost:3000"])
 CORS(app, origins=["*"])
 
-
+# Функция преобразует табличный формат вывода команд talosctl в формат JSON
+# Список полей и смещение каждого столбца определяется по первой строке заголовка
+# Имена полей приводятся к виду -  Первый символ заглавный, остабные строчные
+# Поддерживаются заголовки с одним пробелом внутри (типа LOCAL ADDRESS).
+# В этом слцчае формируется один заголовок с именем LocalAddress
 def tableToJson(str):
   nHead = str.find("\n")
   head = str[0:nHead]
@@ -78,6 +82,7 @@ def talosctl():
     node = params_dict['n']
     cmd = params_dict['cmd']
     print('CMD="%s"'% cmd)
+    # Передача результатов подкоманд команды get в формате JSON
     if cmd == 'get':
       commandSet = params_dict['commandSet']
       subCommand = params_dict['subCommand']
@@ -97,6 +102,7 @@ def talosctl():
           result[index]['spec'] = spec
       reply = json.dumps(result, indent=2)
       return reply
+    # Передача результатов в формате текстовой таблицы
     elif cmd == 'containers' or \
         cmd == 'netstat' or \
         cmd == 'memory' or \
@@ -119,10 +125,11 @@ def talosctl():
         encoding='utf-8'
       )
       reply = tableToJson(result.stdout)
-      fp = open("/tmp/reply.json", 'w')
-      fp.write(reply)
-      fp.close()
+      # fp = open("/tmp/reply.json", 'w')
+      # fp.write(reply)
+      # fp.close()
       return reply
+    # Передача результата команды support - zip-архив
     elif cmd == 'support':
       tmpDir = '/tmp/talossupport_%d' % os.getpid()
       if not os.path.isdir(tmpDir):
@@ -145,7 +152,25 @@ def talosctl():
           as_attachment=True,
           download_name=supportFile
           )
+    # Передача результатов в свободном текстовом формате
+    elif cmd == 'dmesg' or \
+        cmd[0:5] == 'logs/' or \
+        cmd[0:8] ==  'inspect/' or \
+        cmd == 'version' \
+          :
+      cmd = cmd.replace('/', ' ')
+      runCmd = 'talosctl ' + cmd + ' -e ' + endpoint + ' -n ' + node
+      print('runCmd=', runCmd)
+      result = subprocess.run(runCmd,
+        shell=True,
+        stdout=subprocess.PIPE,
+        cwd='/home/kaf/.talos/',
+        encoding='utf-8'
+      )
+      reply = { 'content': result.stdout }
+      return reply
 
+    # Неподдкживаемые команды
     return {
         'all_params': dict(all_params),
         'params_dict': params_dict
