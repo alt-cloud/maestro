@@ -63,7 +63,7 @@ function ServiceCell({ columnId, value, cluster, controlplane, node, nodeType}: 
 //     alert(columnId + '=' + value  + '=' + cluster);
       return (
       <TableCell key={columnId}>
-        <Link to={`/maestro/node/service/logs?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}&service=${value}`}>{value}</Link>
+        <Link to={`/maestro/node/logs/${value}?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}&service=${value}`}>{value}</Link>
       </TableCell>
       );
     } else {

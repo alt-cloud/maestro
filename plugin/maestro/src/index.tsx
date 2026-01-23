@@ -133,6 +133,47 @@ registerSidebarEntry({
 //   sidebar: 'myplugin',
 // });
 
+// TALOSCTL TEXTCMDPAGES
+import TextCmdPage from './node/textCmdPage.tsx';
+
+registerRoute({
+  path: '/maestro/node/dmesg',
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_node_dmesg',
+//   id: 'maestro_get',
+  exact: true,
+  component: () => (<TextCmdPage/>)});
+
+registerRoute({
+  path: '/maestro/node/logs',
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_node_service_logs',
+//   id: 'maestro_get',
+  exact: false,
+  component: () => (<TextCmdPage/>)});
+
+registerRoute({
+  path: '/maestro/node/version',
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_node_version',
+//   id: 'maestro_get',
+  exact: true,
+  component: () => (<TextCmdPage/>)});
+
+
+registerRoute({
+  path: '/maestro/node/inspect/dependencies',
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_node_inspect_dependencies',
+//   id: 'maestro_get',
+  exact: true,
+  component: () => (<TextCmdPage/>)});
+
+// TALOSCTL TABLECMDPAGES
 // TALOSCTL CONTAINERS
 import TableCmdPage from './node/tableCmdPage.tsx';
 

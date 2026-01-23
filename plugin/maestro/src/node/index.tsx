@@ -36,7 +36,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         dashboard
       </li>
       <li>
-        dmesg
+        <Link to={`/maestro/node/dmesg?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>dmesg</Link>
       </li>
       <li>
         edit
@@ -161,7 +161,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         inspect
         <ul>
           <li>
-          dependencies
+            <Link to={`/maestro/node/inspect/dependencies?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>dependencies</Link>
           </li>
         </ul>
       </li>
@@ -171,10 +171,10 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
       <li>
         list
       </li>
+{/*}
       <li>
         logs
       </li>
-{/*}
       <li>
         machineconfig
         <ul>
@@ -263,7 +263,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         validate
       </li>
       <li>
-        version
+        <Link to={`/maestro/node/version?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>version</Link>
       </li>
       <li>
         wipe
