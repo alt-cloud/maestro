@@ -174,6 +174,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
       <li>
         logs
       </li>
+{/*}
       <li>
         machineconfig
         <ul>
@@ -185,6 +186,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
           </li>
         </ul>
       </li>
+{*/}
       <li>
         <Link to={`/maestro/node/memory?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>memory</Link>
       </li>
@@ -247,6 +249,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
       <li>
         <Link to={`/maestro/node/time?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>time</Link>
       </li>
+      {/* */}
       <li>
         upgrade
       </li>
