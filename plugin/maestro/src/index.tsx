@@ -134,7 +134,7 @@ registerSidebarEntry({
 // });
 
 // TALOSCTL CONTAINERS
-import CmdPage from './node/cmdPage';
+import TableCmdPage from './node/tableCmdPage.tsx';
 
 registerRoute({
   path: '/maestro/node/containers',
@@ -143,7 +143,7 @@ registerRoute({
   name: 'maestro_node_containers',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<CmdPage/>)});
+  component: () => (<TableCmdPage/>)});
 
 // TALOSCTL ETCD MEMBERS
 // import EtcdMembers from './node/etcd/members/cmdPage';
@@ -154,7 +154,7 @@ registerRoute({
   name: 'maestro_node_etcd_members',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<CmdPage/>)});
+  component: () => (<TableCmdPage/>)});
 
 // TALOSCTL ETCD MEMBERS
 // import EtcdStatus from './node/etcd/status/cmdPage';
@@ -165,7 +165,7 @@ registerRoute({
   name: 'maestro_node_etcd_status',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<CmdPage/>)});
+  component: () => (<TableCmdPage/>)});
 
 // TALOSCTL MEMORY
 // import Memory from './node/memory/cmdPage';
@@ -176,7 +176,7 @@ registerRoute({
   name: 'maestro_node_memory',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<CmdPage/>)});
+  component: () => (<TableCmdPage/>)});
 
 // TALOSCTL MOUNTS
 // import Mounts from './node/mounts/cmdPage';
@@ -187,7 +187,7 @@ registerRoute({
   name: 'maestro_node_mounts',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<CmdPage/>)});
+  component: () => (<TableCmdPage/>)});
 
 // TALOSCTL NETSTAT
 // import Netstat from './node/netstat/cmdPage';
@@ -198,7 +198,7 @@ registerRoute({
   name: 'maestro_node_netstat',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<CmdPage/>)});
+  component: () => (<TableCmdPage/>)});
 
 // TALOSCTL IMAGE DEFAULT
 // import ImageDefault from './node/image/default/cmdPage';
@@ -209,7 +209,7 @@ registerRoute({
   name: 'maestro_node_image_default',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<CmdPage/>)});
+  component: () => (<TableCmdPage/>)});
 
 // TALOSCTL IMAGE LIST
 // import ImageList from './node/image/list/cmdPage';
@@ -220,7 +220,7 @@ registerRoute({
   name: 'maestro_node_image_list',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<CmdPage/>)});
+  component: () => (<TableCmdPage/>)});
 
 // TALOSCTL IMAGE LIST
 // import Processes from './node/processes/cmdPage';
@@ -231,10 +231,10 @@ registerRoute({
   name: 'maestro_node_processes',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<CmdPage/>)});
+  component: () => (<TableCmdPage/>)});
 
 // TALOSCTL SERVICE
-import ServiceCmdPage from './node/service/cmdPage';
+import ServiceTableCmdPage from './node/service/cmdPage';
 registerRoute({
   path: '/maestro/node/service',
   useClusterURL: false,
@@ -242,7 +242,7 @@ registerRoute({
   name: 'maestro_node_service',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<ServiceCmdPage/>)});
+  component: () => (<ServiceTableCmdPage/>)});
 
 // TALOSCTL STATS
 // import Stats from './node/stats/cmdPage';
@@ -253,7 +253,7 @@ registerRoute({
   name: 'maestro_node_stats',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<CmdPage/>)});
+  component: () => (<TableCmdPage/>)});
 
 // TALOSCTL TIME
 // import Time from './node/time/cmdPage';
@@ -264,7 +264,7 @@ registerRoute({
   name: 'maestro_node_time',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<CmdPage/>)});
+  component: () => (<TableCmdPage/>)});
 
 // TALOSCTL STATS
 // import Usage from './node/usage/cmdPage';
@@ -275,7 +275,7 @@ registerRoute({
   name: 'maestro_node_usage',
 //   id: 'maestro_get',
   exact: true,
-  component: () => (<CmdPage/>)});
+  component: () => (<TableCmdPage/>)});
 
 // TALOSCTL GET TREE
 registerRoute({
