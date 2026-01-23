@@ -9,6 +9,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Box,
   TablePagination,
   TableSortLabel
 } from '@mui/material';
@@ -182,12 +183,13 @@ const TalosCmdInfo: React.FC<{ }> = ({  }) => {
 //   alert('columns='+JSON.stringify(columns, null, 2));
 
   return (
-  <SectionBox>
+<SectionBox>
   <Typography><Link to="/maestro">Clusters</Link
   >&nbsp;/&nbsp;<Link to={`/maestro?cluster=${cluster}`}>{cluster}</Link
   > &nbsp;/&nbsp;<Link to={`/maestro/?cluster=${cluster}&type=${nodeType}`}>{nodeType}</Link
   >&nbsp;/&nbsp;<Link to={`/maestro/node?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>{node}</Link
   >&nbsp;/&nbsp;{fullCommand}</Typography>
+  <Box sx={{ maxHeight: 'calc(100vh - 120px)', overflow: 'auto', whiteSpace: 'pre-wrap' }}>
     <Paper>
       <TableContainer>
         <Table>
@@ -231,7 +233,8 @@ const TalosCmdInfo: React.FC<{ }> = ({  }) => {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Paper>
-  </SectionBox>
+  </Box>
+</SectionBox>
   );
 }
 

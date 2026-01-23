@@ -62,10 +62,6 @@ registerRoute({
 
 registerRoute({
   path: '/maestro/node',
-  sidebar: {
-    item: 'maestro',
-    sidebar: 'myplugin',
-  },
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'node',

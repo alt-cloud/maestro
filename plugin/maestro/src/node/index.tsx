@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
+import { Box } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
 
@@ -22,11 +23,13 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
 //   alert('isControlPlane=' + isControlPlane);
 
   return (
-  <SectionBox title="Node Page" textAlign="left" paddingTop={2}>
-    <Typography><Link to="/maestro">Clusters</Link
+<SectionBox title="Node Page" textAlign="left" paddingTop={2}>
+  <Typography><Link to="/maestro">Clusters</Link
       >&nbsp;/&nbsp;<Link to={`/maestro?cluster=${cluster}`}>{cluster}</Link
       > &nbsp;/&nbsp;<Link to={`/maestro/?cluster=${cluster}&type=${nodeType}`}>{nodeType}</Link
-      >&nbsp;/&nbsp;{node}</Typography>
+      >&nbsp;/&nbsp;{node}
+  </Typography>
+  <Box sx={{ maxHeight: 'calc(100vh - 120px)', overflow: 'auto', whiteSpace: 'pre-wrap' }}>
     <ul>
       <li>
         <Link to={`/maestro/node/get?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>get</Link>
@@ -278,6 +281,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         </ul>
       </li>
     </ul>
+  </Box>
   </SectionBox>
   );
 }
