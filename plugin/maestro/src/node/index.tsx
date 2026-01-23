@@ -18,6 +18,8 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
   const controlplane = queryParams.controlplane;
   const node = queryParams.node;
   const nodeType = queryParams.type;
+  const isControlPlane = (nodeType == 'controlplane');
+//   alert('isControlPlane=' + isControlPlane);
 
   return (
   <SectionBox title="Node Page" textAlign="left" paddingTop={2}>
@@ -41,6 +43,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
       <li>
         edit
       </li>
+      {isControlPlane ?
       <li>
         etcd
         <ul>
@@ -86,6 +89,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
           </li>
         </ul>
       </li>
+      : <span/>}
       <li>
         events
       </li>
