@@ -382,5 +382,31 @@ def getListClusters(configs):
     ret.append(retRow)
   return ret
 
+
+@app.route('/scanNets',methods=['GET', 'POST'])
+
+def scanNets():
+  print('REQUEST=', request.method);
+  maestrConfigDir =  os.getenv('HOME') + '/.maestro'
+  if not os.path.isdir(maestrConfigDir):
+    os.mkdir(maestrConfigDir)
+  scanNetsFile = maestrConfigDir + '/scanNets.json'
+  if not os.path.isfile(scanNetsFile):
+    fp = open(scanNetsFile, 'w')
+    json.dump([], fp, indent=2)
+    fp.close()
+  if request.method == 'GET':
+    fp = open(scanNetsFile, 'r')
+    scanNets = json.load(fp)
+    fp.close()
+    return scanNets
+  # POST
+  print('JSON=', request.get_json());
+  scanNets = request.get_json()
+  fp = open(scanNetsFile, 'w')
+  json.dump(scanNets, fp, indent=2)
+  fp.close()
+  return scanNets
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)
