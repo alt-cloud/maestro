@@ -90,44 +90,41 @@ registerSidebarEntry({
   sidebar: 'myplugin',
 });
 
-/*
-registerSidebarEntry({
-  parent: null,
-  name: 'get',
-  label: 'GET',
-  url: '/maestro/get',
-  icon: 'MaestroIcon',
-  sidebar: 'myplugin',
-});*/
+// CLUSTERS PAGE
 
+import EnterIPs from './cluster/enterScanIPS.tsx';
 
-// // GET/BLOCK Tree
-// registerSidebarEntry({
-// //   parent: '/maestro/get',
-//   name: 'block',
-//   label: 'BLOCK',
-//   url: '/maestro/get/block',
-//   icon: 'MaestroIcon',
-//   sidebar: 'myplugin',
+// registerRoute({
+//   path: '/maestro/cluster/enterips',
+//   sidebar: {
+//     item: 'maestro',
+//     sidebar: 'myplugin',
+//   },
+//   useClusterURL: false,
+//   noAuthRequired: true, // No authentication is required to see the view
+//   name: 'maestro_cluster_enterips',
+//   exact: true,
+//   component: () => (
+//       <EnterIPs/>
+//   ),
 // });
 
-// registerSidebarEntry({
-// //   parent: '/maestro/get',
-//   name: 'blockdevice',
-//   label: 'BLOCKDEVICE',
-//   url: '/maestro/get/block/blockdevice',
-//   icon: 'MaestroIcon',
-//   sidebar: 'myplugin',
-// });
+// import EnterIPsPage from './cluster/enterScanIPS.tsx';
+import ScanNets from './cluster/scanNets.tsx';
 
-// registerSidebarEntry({
-// //   parent: '/maestro/get',
-//   name: 'hardwaredevices',
-//   label: 'HARDWAREDEVICES',
-//   url: '/maestro/get/hardware/devices',
-//   icon: 'MaestroIcon',
-//   sidebar: 'myplugin',
-// });
+registerRoute({
+  path: '/maestro/cluster/scanNets',
+  sidebar: {
+    item: 'maestro',
+    sidebar: 'myplugin',
+  },
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro_cluster_scanNets',
+//   id: 'maestro_get',
+  exact: true,
+  component: () => (<ScanNets/>)});
+
 
 // TALOSCTL TEXTCMDPAGES
 import TextCmdPage from './node/textCmdPage.tsx';

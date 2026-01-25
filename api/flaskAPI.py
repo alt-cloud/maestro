@@ -398,15 +398,20 @@ def scanNets():
   if request.method == 'GET':
     fp = open(scanNetsFile, 'r')
     scanNets = json.load(fp)
+    reply = json.dumps(scanNets, indent=2)
+    print ('scanNets=%s' % reply)
     fp.close()
-    return scanNets
+    return reply
   # POST
   print('JSON=', request.get_json());
   scanNets = request.get_json()
   fp = open(scanNetsFile, 'w')
   json.dump(scanNets, fp, indent=2)
   fp.close()
-  return scanNets
+  return jsonify({
+        "status": "success",
+        "message": f"Successfully scanned"
+    }), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)

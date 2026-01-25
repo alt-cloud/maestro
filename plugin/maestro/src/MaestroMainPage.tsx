@@ -212,6 +212,7 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Paper>
+    <Link to="/maestro/cluster/scanNets">Scan networks</Link>
   </SectionBox>
   );
 }
