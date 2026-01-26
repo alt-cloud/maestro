@@ -231,38 +231,14 @@ def map():
 '''
   return ret
 
-  nets = request.args['nets']
-  # Запросить список узлов сети nets слушающих порт 50000 (сервис apid) и 6443 (kubeAPI)
-  nmapOut = subprocess.run(['nmap', '-p 50000,6443',  nets], capture_output=True, text=True, check=True)
-  # Проанализировать вывод команды nmap и сформировать список узлов
-  nodes = nodesTree(nmapOut.stdout.strip())
-  print('NODES=', json.dumps(nodes, indent=4))
-  # Запросить список поддерживаемых кластеров
-  talosctlOut = subprocess.run([
-    'talosctl',
-    'config',
-    'contexts'
-    ],
-    capture_output=True,
-    text=True,
-    check=True
-  )
-  # Проанализировать вывод команды talosctl и сформировать дерево поддерживаемых кластеров
-  configs = configTree(talosctlOut.stdout.strip())
-  print('CONFIGS=', json.dumps(configs, indent=4))
-  # Переформатировать дерево описания кластеров к требуемому виду
-  fullConfigs = addLostNodesToConfigTree(configs, nodes)
-  ret = getListClusters(fullConfigs)
-  return ret
-
 # Функция анализирует вывод команды nmap и определеяет список IP адресов узлов (с DNS именамиб если они имеются),
 # которые слушают порты 50000 (сервис apid) и 6443 (kubeAPI).
-# Функция возвращает список узорв в формате
+# Функция возвращает список узлов в формате
 # {
 #   <IP>: {'dns': '' or dnsName', 'ip: <IP>, 'kubeState': <open, closed, ...>, 'apidState': <open, closed, ...>},
 #   ...
 # }
-def nodesTree(nmapStr):
+def nodesList(nmapStr):
   nmapStrs = nmapStr.split('\n')
   prefix = 'Nmap scan report for '
   prefixLen = len(prefix)
@@ -293,98 +269,7 @@ def nodesTree(nmapStr):
     ret[nodeState['ip']] = nodeState
   return ret
 
-# Функция аналихирует вывод команды
-# talosctl config contexts
-# и возвращает результат формата
-# {
-# "context": <имя_текущего_кластера0>,
-# "contexts": {
-#   <Имя_кластера>:{"endpoints": [...], "nodes": [...]},
-#   ...
-#  }
-def configTree(talosctStr):
-  configTreeStrs = talosctStr.split('\n')
-  ret = {'context': '', 'contexts': {}}
-  for line in configTreeStrs[1:]:
-    clusterCols = line.split()
-    print(clusterCols)
-    if clusterCols[0] == '*':
-      ret['context'] = clusterCols[1]
-      clusterCols = clusterCols[1:]
-    clusterName = clusterCols[0]
-    clusterState = {}
-    if len(clusterCols) == 3:
-      clusterState['endpoints'] = clusterCols[1].split(',')
-      clusterState['nodes'] = clusterCols[2].split(',')
-    ret['contexts'][clusterName] = clusterState
-  return ret
-
-# Функции передается результат функции configTree и описание node в формате
-# {'dns': '' or dnsName', 'ip: <IP>, 'kubeState': <open, closed, ...>, 'apidState': <open, closed, ...>}
-# Если dns или ip присутствуют в одном из кластеров возвращается его имя
-# Если отсутствует - возвращается пустая строка
-def nodeClusterName(configs, node):
-  dns = node['dns']
-  ip = node['ip']
-  for clusterName in configs['contexts']:
-    clusterInfo = configs['contexts'][clusterName]
-    if 'endpoints' in clusterInfo:
-      for endpoint in clusterInfo['endpoints']:
-        if endpoint == dns or endpoint == ip:
-          return clusterName
-    if 'nodes' in clusterInfo:
-      for nodepoint in clusterInfo['nodes']:
-        if nodepoint == dns or nodepoint == ip:
-          return clusterName
-  return ''
-
-# Функции передается результат функции configTree (configs) и результат функции nodesTree (nodes)
-# Узлы (nodes), отсутствующие в configTree добавляются в виртуальный кластер _LOST
-def addLostNodesToConfigTree(configs, nodes):
-  ret = configs
-  unknownClusterName= '_LOST'
-  for ip in nodes:
-    node = nodes[ip]
-    nameName = node['dns'] if len(node['dns']) > 0  else node['ip']
-    clusterName = nodeClusterName(configs, node)
-    if clusterName == '':
-      ret['contexts'][unknownClusterName] = {'endpoints': [], 'nodes': []}
-      if node['kubeState'] == 'open':
-        ret['contexts'][unknownClusterName]['endpoints'].append(nameName)
-      if node['apidState'] == 'open':
-      # if node['apidState'] == 'open' or True:
-        ret['contexts'][unknownClusterName]['nodes'].append(nameName)
-  return ret
-
-#  Функции передается результат функции addLostNodesToConfigTree
-#  Функция фозвращает результат в формате
-# [
-#   {currentContext: boolean, clusterName: string, controlplanes: [...], workers: [...]},
-#   ...
-# ]
-def getListClusters(configs):
-  ret = []
-  context = configs['context']
-  for clusterName in configs['contexts']:
-    retRow = {}
-    clusterInfo = configs['contexts'][clusterName]
-    retRow['currentContext'] = ( clusterName == context)
-    retRow['clusterName'] = clusterName
-    retRow['id'] = clusterName
-    endpoints = clusterInfo['endpoints'] if 'endpoints' in clusterInfo else []
-    retRow['controlplanes'] = endpoints
-    nodes = clusterInfo['nodes'] if 'nodes' in clusterInfo else []
-    workers = []
-    for node in nodes:
-      if node not in endpoints:
-        workers.append(node)
-    retRow['workers'] = workers
-    ret.append(retRow)
-  return ret
-
-
 @app.route('/scanNets',methods=['GET', 'POST'])
-
 def scanNets():
   print('REQUEST=', request.method);
   maestrConfigDir =  os.getenv('HOME') + '/.maestro'
@@ -408,10 +293,100 @@ def scanNets():
   fp = open(scanNetsFile, 'w')
   json.dump(scanNets, fp, indent=2)
   fp.close()
+  runCmd = 'nmap  -p 50000,6443 ' + ' '.join(scanNets['scanNets'])
+  print('runCmd=', runCmd)
+  result = subprocess.run(runCmd,
+    shell=True,
+    stdout=subprocess.PIPE,
+    cwd='/home/kaf/.maestro/',
+    encoding='utf-8'
+  )
+  nmapOut = result.stdout
+  nodes = nodesList(nmapOut.strip())
+  print('NODES=', json.dumps(nodes, indent=4))
+
+  nodeTypes = {'controlplanes': [], 'workers': []}
+  for ip in nodes:
+    node = nodes[ip]
+    if node['apidState'] == 'open':
+      if node['kubeState'] == 'open':
+        nodeTypes['controlplanes'].append(ip)
+      else:
+        nodeTypes['workers'].append(ip)
+  print('nodeTypes=', nodeTypes)
+  nodeTypesFile = maestrConfigDir + '/nodeTypes.json'
+  fp = open(nodeTypesFile, 'w')
+  json.dump(nodeTypes, fp, indent=2)
+  fp.close()
+
   return jsonify({
         "status": "success",
         "message": f"Successfully scanned"
     }), 200
 
+def talosgetspec(subcmd, node, insecure):
+  runCmd = 'talosctl get %s -e %s -n %s -o json %s' % (subcmd, node, node, insecure)
+  print('RUNCmd=', runCmd)
+  result = subprocess.run(runCmd,
+    shell=True,
+    stdout=subprocess.PIPE,
+    cwd='/home/kaf/.maestro/',
+    encoding='utf-8'
+  )
+  returncode = result.returncode
+  ret = ''
+  if returncode == 0:
+    jsonStr = result.stdout.strip()
+    if len(jsonStr) == 0:
+      returncode = -1
+    else:
+      jsonDict = json.loads(jsonStr)
+      ret = jsonDict['spec']
+  return [ret, returncode]
+
+@app.route('/nodesTree')
+def nodesTree():
+  home = os.getenv('HOME')
+  configDir = home + '/.maestro'
+  nodeTypesFile = configDir + '/nodeTypes.json'
+  fp = open(nodeTypesFile, 'r')
+  nodeTypes = json.load(fp)
+  fp.close()
+  # print('nodeTypes=', nodeTypes)
+
+  nodesTree = {}
+  for nodeType in ['controlplanes', 'workers']:
+    for node in nodeTypes[nodeType]:
+      # print(nodeType, node)
+      [spec, returncode] = talosgetspec('info', node, '')
+      # print('clusterName=%s returncode=%d' % (clusterName, returncode))
+      if returncode != 0:
+        clusterName = '_Orphans'
+        insecure = '-i'
+      else:
+        clusterName = spec['clusterName']
+        insecure = ''
+      if clusterName not in nodesTree:
+        nodesTree[clusterName] = { 'controlplanes': [], 'workers': [] }
+      nodeInfo = {}
+      nodeInfo['ip'] = node
+      [spec, returncode] = talosgetspec('machinestatus', node, insecure)
+      nodeInfo['stage'] = spec['stage']
+      nodeInfo['status'] = spec['status']
+      [spec, returncode] = talosgetspec('nodestatus', node, insecure)
+      if returncode == 0:
+        nodeInfo['nodeReady'] = spec['nodeReady']
+      if nodeType == 'controlplanes':
+        [spec, returncode] = talosgetspec('manifeststatus', node, insecure)
+        nodeInfo['manifestsApplied'] = spec['manifestsApplied']
+        [spec, returncode] = talosgetspec('etcdmember', node, insecure)
+        nodeInfo['memberID'] = spec['memberID']
+      else:
+        nodeInfo['manifestsApplied'] = '-'
+        nodeInfo['memberID'] = '-'
+
+      nodesTree[clusterName][nodeType].append(nodeInfo)
+  return nodesTree
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='127.0.0.1', port=5000, debug=False)
