@@ -196,40 +196,40 @@ def talosctl():
 #   {currentContext: boolean, clusterName: string, controlplanes: [...], workers: [...]},
 #   ...
 # ]
-@app.route('/map')
-def map():
-  ret='''
-[
-  {
-    "id": "Maestro",
-    "currentContext": "*",
-    "clusterName": "Maestro",
-    "controlplanes": [
-      "192.168.122.33"
-    ],
-    "workers": [
-      "192.168.122.87"
-    ]
-  },
-  {
-    "id": "Cluster1",
-    "currentContext": "",
-    "clusterName": "Cluster1",
-    "controlplanes": [],
-    "workers": []
-  },
-  {
-    "id": "_LOST",
-    "currentContext": "",
-    "clusterName": "_LOST",
-    "controlplanes": [],
-    "workers": [
-      "192.168.122.127"
-    ]
-  }
-]
-'''
-  return ret
+# @app.route('/map')
+# def map():
+#   ret='''
+# [
+#   {
+#     "id": "Maestro",
+#     "currentContext": "*",
+#     "clusterName": "Maestro",
+#     "controlplanes": [
+#       "192.168.122.33"
+#     ],
+#     "workers": [
+#       "192.168.122.87"
+#     ]
+#   },
+#   {
+#     "id": "Cluster1",
+#     "currentContext": "",
+#     "clusterName": "Cluster1",
+#     "controlplanes": [],
+#     "workers": []
+#   },
+#   {
+#     "id": "_LOST",
+#     "currentContext": "",
+#     "clusterName": "_LOST",
+#     "controlplanes": [],
+#     "workers": [
+#       "192.168.122.127"
+#     ]
+#   }
+# ]
+# '''
+#   return ret
 
 # Функция анализирует вывод команды nmap и определеяет список IP адресов узлов (с DNS именамиб если они имеются),
 # которые слушают порты 50000 (сервис apid) и 6443 (kubeAPI).
@@ -382,9 +382,8 @@ def nodesTree():
         [spec, returncode] = talosgetspec('etcdmember', node, insecure)
         nodeInfo['memberID'] = spec['memberID']
       else:
-        nodeInfo['manifestsApplied'] = '-'
+        nodeInfo['manifestsApplied'] = []
         nodeInfo['memberID'] = '-'
-
       nodesTree[clusterName][nodeType].append(nodeInfo)
   return nodesTree
 

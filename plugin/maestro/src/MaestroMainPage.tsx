@@ -28,25 +28,109 @@ interface Column {
 }
 
 const columns: Column[] = [
-  { id: 'currentContext', label: 'Current', sortable: true },
-  { id: 'clusterName', label: 'ClusterName', sortable: true },
-  { id: 'controlplanes', label: 'Controlplanes', sortable: false },
-  { id: 'workers', label: 'Workers', sortable: false }
-];
+    {
+      'id': 'ClusterName',
+      'label':'ClusterName',
+      'sortable': true
+    },
+    {
+      'id': 'nodeType',
+      'label':'NodeType',
+      'sortable': true
+    },
+    {
+      'id': 'ip',
+      'label':'IP',
+      'sortable': true
+    },
+    {
+      'id': 'stage',
+      'label':'Stage',
+      'sortable': true
+    },
+    {
+      'id': 'nodeReady',
+      'label':'Ready',
+      'sortable': true
+    },
+    {
+      'id': 'status',
+      'label':'Status',
+      'sortable': true
+    },
+    {
+      'id': 'memberID',
+      'label':'Member',
+      'sortable': true
+    },
+    {
+      'id': 'manifestsApplied',
+      'label':'Manifests',
+      'sortable': true
+    },
+    {
+      'id': 'unmetConditions',
+      'label':'NoCond',
+      'sortable': true
+    }
+  ];
 
-function NodesLinks(pars) {
-//   alert(JSON.stringify(pars));
-  const controlplanes = pars.controlplanes;
-//   alert('controlplanes=' + JSON.stringify(controlplanes));
-  const controlplane = controlplanes.length > 0 ? controlplanes[0] : '';
-//   alert('controlplane=' + JSON.stringify(controlplane));
+// const columns: Column[] = [
+//   { id: 'currentContext', label: 'Current', sortable: true },
+//   { id: 'clusterName', label: 'ClusterName', sortable: true },
+//   { id: 'controlplanes', label: 'Controlplanes', sortable: false },
+//   { id: 'workers', label: 'Workers', sortable: false }
+// ];
 
+// function NodesLinks(pars) {
+// //   alert(JSON.stringify(pars));
+//   const controlplanes = pars.controlplanes;
+// //   alert('controlplanes=' + JSON.stringify(controlplanes));
+//   const controlplane = controlplanes.length > 0 ? controlplanes[0] : '';
+// //   alert('controlplane=' + JSON.stringify(controlplane));
+//
+//   return (
+//     <TableCell sx={{ verticalAlign: 'top', whiteSpace: 'pre-line' }}>
+//       {pars.nodes.map((node, index) => (
+//         <><Link key={node} to={`/maestro/node?cluster=${pars.clusterName}&controlplane=${controlplane}&node=${node}&type=${pars.type}`} >{node}</Link><br /></>
+//       ))}
+//     </TableCell>
+//   );
+// }
+function NodeCols(pars) {
+//   alert('PARS=' + JSON.stringify(pars, null, 2));
+  const nodeType = pars.nodeType;
+  const cols = pars.cols;
   return (
-    <TableCell sx={{ verticalAlign: 'top', whiteSpace: 'pre-line' }}>
-      {pars.nodes.map((node, index) => (
-        <><Link key={node} to={`/maestro/node?cluster=${pars.clusterName}&controlplane=${controlplane}&node=${node}&type=${pars.type}`} >{node}</Link><br /></>
-      ))}
-    </TableCell>
+    <>
+    <TableCell>{cols['ip']}</TableCell>
+    <TableCell>{cols['stage']}</TableCell>
+    <TableCell>{cols['nodeReady'] ? 'V' : 'X'}</TableCell>
+    <TableCell>{cols['status']['ready'] ? 'V' : 'X'}</TableCell>
+    <TableCell>{cols['memberID'] == '-' ? 'X' : 'V'}</TableCell>
+    <TableCell>{cols['manifestsApplied'].length}</TableCell>
+    <TableCell>{cols['status']['unmetConditions'].join("<br/>")}</TableCell>
+    </>
+  );
+}
+
+function NodeRows(pars) {
+    const nodeType = pars.nodeType;
+    var values = pars.values;
+//   alert('nodeType=' + JSON.stringify(nodeType) + ' VALUES=' + JSON.stringify(values));
+  if (values.length == 0) {
+    return (<TableCell>-</TableCell>);
+  }
+  const value0 = values.shift();
+  return (
+    <>
+    <NodeCols nodeType={nodeType} cols={value0}/>
+    {values.map(value => (
+    <TableRow>
+      <NodeCols cols={value}/>
+    </TableRow>
+    ))}
+    </>
   );
 }
 
@@ -54,7 +138,7 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [orderBy, setOrderBy] = useState<keyof Cluster>('id');
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+//   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [rows, setRows] = useState<Cluster[]>([]);
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -82,7 +166,7 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
 
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/map?nets=192.168.122.0/24', {
+        const response = await fetch('http://localhost:5000/nodesTree', {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -153,15 +237,28 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
     setOrderBy(property);
   };
 
-  const sortedRows = [...Rows].sort((a, b) => {
-    if (a[orderBy] < b[orderBy]) return order === 'asc' ? -1 : 1;
-    if (a[orderBy] > b[orderBy]) return order === 'asc' ? 1 : -1;
-    return 0;
-  });
+//   const sortedRows = [...Rows].sort((a, b) => {
+//     if (a[orderBy] < b[orderBy]) return order === 'asc' ? -1 : 1;
+//     if (a[orderBy] > b[orderBy]) return order === 'asc' ? 1 : -1;
+//     return 0;
+//   });
 
-  const paginatedRows = sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-//   alert("paginatedRows="+strigify(paginatedRows));
-//     {(typeof cluster == 'undefined') ? (<span></span>) : {cluster}}
+//   const paginatedRows = sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+//   alert("paginatedRows="+stringify(paginatedRows));
+
+  var clusterNameRowSpans = {}
+  const rowsDict = new Map(Object.entries(rows));
+  for (var clusterName of Object.keys(rows)) {
+    var rowSpans = {};
+    var nodeTypes = rowsDict.get(clusterName);
+    var controlplanes = nodeTypes['controlplanes'];
+    var workers = nodeTypes['workers'];
+    rowSpans['controlplanes'] = Math.max(controlplanes.length, 1);
+    rowSpans['workers'] = Math.max(workers.length, 1);
+    rowSpans['all'] =  rowSpans['controlplanes'] + Math.max(workers.length, 1);
+    clusterNameRowSpans[clusterName] = rowSpans;
+  }
+//   alert('clusterNameRowSpans=' + JSON.stringify(clusterNameRowSpans));
 
   return (
   <SectionBox title="CLUSTERS" textAlign="left" paddingTop={2}>
@@ -175,46 +272,86 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
             <TableRow>
               {columns.map(column => (
                 <TableCell key={column.id}>
-                  {column.sortable ? (
-                    <TableSortLabel
-                      active={orderBy === column.id}
-                      direction={orderBy === column.id ? order : 'asc'}
-                      onClick={() => handleSort(column.id)}
-                    >
-                      {column.label}
-                    </TableSortLabel>
-                  ) : (
-                    column.label
-                  )}
+                {column.label}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedRows.map(row => (
-              <TableRow key={row.id}>
-                <TableCell sx={{ verticalAlign: 'top' }}>{row.currentContext}</TableCell>
-                <TableCell sx={{ verticalAlign: 'top' }}>{row.clusterName}</TableCell>
-                <NodesLinks clusterName={row.clusterName} controlplanes={row.controlplanes} nodes={row.controlplanes} type='controlplane'/>
-                <NodesLinks clusterName={row.clusterName} controlplanes={row.controlplanes} nodes={row.workers} type='worker'/>
-              </TableRow>
-            ))}
+          {Object.entries(rows).map(([clusterName, nodeTypes]) => (
+            <>
+             <TableRow>
+                <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>{clusterName}</TableCell>
+                <TableCell rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}>controlplane</TableCell>
+                <NodeRows nodeType='controlplane' values={nodeTypes['controlplanes']}/>
+             </TableRow>
+             <TableRow>
+                <TableCell rowSpan={clusterNameRowSpans[clusterName]['workers']}>worker</TableCell>
+                <NodeRows nodeType='worker' values={nodeTypes['workers']}/>
+             </TableRow>
+            </>
+          ))}
           </TableBody>
+
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
     </Paper>
     <Link to="/maestro/cluster/scanNets">Scan networks</Link>
   </SectionBox>
   );
 }
+//   return (
+//   <SectionBox title="CLUSTERS" textAlign="left" paddingTop={2}>
+//     <Typography>
+//     <Link to="/maestro">Clusters</Link>
+//     </Typography>
+//     <Paper>
+//       <TableContainer>
+//         <Table>
+//           <TableHead>
+//             <TableRow>
+//               {columns.map(column => (
+//                 <TableCell key={column.id}>
+//                   {column.sortable ? (
+//                     <TableSortLabel
+//                       active={orderBy === column.id}
+//                       direction={orderBy === column.id ? order : 'asc'}
+//                       onClick={() => handleSort(column.id)}
+//                     >
+//                       {column.label}
+//                     </TableSortLabel>
+//                   ) : (
+//                     column.label
+//                   )}
+//                 </TableCell>
+//               ))}
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             {paginatedRows.map(row => (
+//               <TableRow key={row.id}>
+//                 <TableCell sx={{ verticalAlign: 'top' }}>{row.currentContext}</TableCell>
+//                 <TableCell sx={{ verticalAlign: 'top' }}>{row.clusterName}</TableCell>
+//                 <NodesLinks clusterName={row.clusterName} controlplanes={row.controlplanes} nodes={row.controlplanes} type='controlplane'/>
+//                 <NodesLinks clusterName={row.clusterName} controlplanes={row.controlplanes} nodes={row.workers} type='worker'/>
+//               </TableRow>
+//             ))}
+//           </TableBody>
+//         </Table>
+//       </TableContainer>
+//       <TablePagination
+//         rowsPerPageOptions={[5, 10, 25]}
+//         component="div"
+//         count={rows.length}
+//         rowsPerPage={rowsPerPage}
+//         page={page}
+//         onPageChange={handleChangePage}
+//         onRowsPerPageChange={handleChangeRowsPerPage}
+//       />
+//     </Paper>
+//     <Link to="/maestro/cluster/scanNets">Scan networks</Link>
+//   </SectionBox>
+//   );
+// }
 
 export default MaestroMainPage;
