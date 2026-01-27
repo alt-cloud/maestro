@@ -75,35 +75,18 @@ const columns: Column[] = [
     }
   ];
 
-// const columns: Column[] = [
-//   { id: 'currentContext', label: 'Current', sortable: true },
-//   { id: 'clusterName', label: 'ClusterName', sortable: true },
-//   { id: 'controlplanes', label: 'Controlplanes', sortable: false },
-//   { id: 'workers', label: 'Workers', sortable: false }
-// ];
-
-// function NodesLinks(pars) {
-// //   alert(JSON.stringify(pars));
-//   const controlplanes = pars.controlplanes;
-// //   alert('controlplanes=' + JSON.stringify(controlplanes));
-//   const controlplane = controlplanes.length > 0 ? controlplanes[0] : '';
-// //   alert('controlplane=' + JSON.stringify(controlplane));
-//
-//   return (
-//     <TableCell sx={{ verticalAlign: 'top', whiteSpace: 'pre-line' }}>
-//       {pars.nodes.map((node, index) => (
-//         <><Link key={node} to={`/maestro/node?cluster=${pars.clusterName}&controlplane=${controlplane}&node=${node}&type=${pars.type}`} >{node}</Link><br /></>
-//       ))}
-//     </TableCell>
-//   );
-// }
 function NodeCols(pars) {
 //   alert('PARS=' + JSON.stringify(pars, null, 2));
   const nodeType = pars.nodeType;
   const cols = pars.cols;
+  const node = cols['ip'];
   return (
     <>
-    <TableCell>{cols['ip']}</TableCell>
+    <TableCell>
+      <Link key={node} to={`/maestro/node?cluster=${pars.clusterName}&node=${node}&type=${pars.type}`} >
+        {node}
+      </Link>
+    </TableCell>
     <TableCell>{cols['stage']}</TableCell>
     <TableCell>{cols['nodeReady'] ? 'V' : 'X'}</TableCell>
     <TableCell>{cols['status']['ready'] ? 'V' : 'X'}</TableCell>
@@ -124,10 +107,10 @@ function NodeRows(pars) {
   const value0 = values.shift();
   return (
     <>
-    <NodeCols nodeType={nodeType} cols={value0}/>
+    <NodeCols type={nodeType} clusterName={pars.clusterName} nodeType={nodeType} cols={value0}/>
     {values.map(value => (
     <TableRow>
-      <NodeCols cols={value}/>
+      <NodeCols type={nodeType} clusterName={pars.clusterName} nodeType={nodeType} cols={value}/>
     </TableRow>
     ))}
     </>
@@ -135,9 +118,9 @@ function NodeRows(pars) {
 }
 
 const MaestroMainPage: React.FC<{ }> = ({  }) => {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [orderBy, setOrderBy] = useState<keyof Cluster>('id');
+//   const [page, setPage] = useState(0);
+//   const [rowsPerPage, setRowsPerPage] = useState(10);
+//   const [orderBy, setOrderBy] = useState<keyof Cluster>('id');
 //   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [rows, setRows] = useState<Cluster[]>([]);
 
@@ -210,32 +193,31 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
   if (error) return <div>Error: {error}</div>;
   if (!rows) return <div>No data received</div>;
 
-//   alert(JSON.stringify(rows, null, 2))
+//   alert(JSON.stringify(rows, null, 2));
   var Rows;
   if ( typeof cluster != 'undefined' ) {
-    Rows = [];
-    for (var row of rows) {
-      if (row.id == cluster) {
-        Rows.push(row);
-      }
-    }
+    Rows = {};
+    Rows[cluster] = rows[cluster];
   } else {
     Rows = rows;
   }
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+//   alert('Rows=' + JSON.stringify(rows, null, 2));
 
-  const handleSort = (property: keyof Cluster) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
+//   const handleChangePage = (event: unknown, newPage: number) => {
+//     setPage(newPage);
+//   };
+//
+//   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+//     setRowsPerPage(+event.target.value);
+//     setPage(0);
+//   };
+//
+//   const handleSort = (property: keyof Cluster) => {
+//     const isAsc = orderBy === property && order === 'asc';
+//     setOrder(isAsc ? 'desc' : 'asc');
+//     setOrderBy(property);
+//   };
 
 //   const sortedRows = [...Rows].sort((a, b) => {
 //     if (a[orderBy] < b[orderBy]) return order === 'asc' ? -1 : 1;
@@ -247,8 +229,8 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
 //   alert("paginatedRows="+stringify(paginatedRows));
 
   var clusterNameRowSpans = {}
-  const rowsDict = new Map(Object.entries(rows));
-  for (var clusterName of Object.keys(rows)) {
+  const rowsDict = new Map(Object.entries(Rows));
+  for (var clusterName of Object.keys(Rows)) {
     var rowSpans = {};
     var nodeTypes = rowsDict.get(clusterName);
     var controlplanes = nodeTypes['controlplanes'];
@@ -278,16 +260,16 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-          {Object.entries(rows).map(([clusterName, nodeTypes]) => (
+          {Object.entries(Rows).map(([clusterName, nodeTypes]) => (
             <>
              <TableRow>
                 <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>{clusterName}</TableCell>
                 <TableCell rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}>controlplane</TableCell>
-                <NodeRows nodeType='controlplane' values={nodeTypes['controlplanes']}/>
+                <NodeRows clusterName={clusterName} nodeType='controlplane' values={nodeTypes['controlplanes']}/>
              </TableRow>
              <TableRow>
                 <TableCell rowSpan={clusterNameRowSpans[clusterName]['workers']}>worker</TableCell>
-                <NodeRows nodeType='worker' values={nodeTypes['workers']}/>
+                <NodeRows clusterName={clusterName} nodeType='worker' values={nodeTypes['workers']}/>
              </TableRow>
             </>
           ))}
@@ -300,58 +282,5 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
   </SectionBox>
   );
 }
-//   return (
-//   <SectionBox title="CLUSTERS" textAlign="left" paddingTop={2}>
-//     <Typography>
-//     <Link to="/maestro">Clusters</Link>
-//     </Typography>
-//     <Paper>
-//       <TableContainer>
-//         <Table>
-//           <TableHead>
-//             <TableRow>
-//               {columns.map(column => (
-//                 <TableCell key={column.id}>
-//                   {column.sortable ? (
-//                     <TableSortLabel
-//                       active={orderBy === column.id}
-//                       direction={orderBy === column.id ? order : 'asc'}
-//                       onClick={() => handleSort(column.id)}
-//                     >
-//                       {column.label}
-//                     </TableSortLabel>
-//                   ) : (
-//                     column.label
-//                   )}
-//                 </TableCell>
-//               ))}
-//             </TableRow>
-//           </TableHead>
-//           <TableBody>
-//             {paginatedRows.map(row => (
-//               <TableRow key={row.id}>
-//                 <TableCell sx={{ verticalAlign: 'top' }}>{row.currentContext}</TableCell>
-//                 <TableCell sx={{ verticalAlign: 'top' }}>{row.clusterName}</TableCell>
-//                 <NodesLinks clusterName={row.clusterName} controlplanes={row.controlplanes} nodes={row.controlplanes} type='controlplane'/>
-//                 <NodesLinks clusterName={row.clusterName} controlplanes={row.controlplanes} nodes={row.workers} type='worker'/>
-//               </TableRow>
-//             ))}
-//           </TableBody>
-//         </Table>
-//       </TableContainer>
-//       <TablePagination
-//         rowsPerPageOptions={[5, 10, 25]}
-//         component="div"
-//         count={rows.length}
-//         rowsPerPage={rowsPerPage}
-//         page={page}
-//         onPageChange={handleChangePage}
-//         onRowsPerPageChange={handleChangeRowsPerPage}
-//       />
-//     </Paper>
-//     <Link to="/maestro/cluster/scanNets">Scan networks</Link>
-//   </SectionBox>
-//   );
-// }
 
 export default MaestroMainPage;

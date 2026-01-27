@@ -73,25 +73,42 @@ def tableToJson(str):
 
 @app.route('/talosctl')
 def talosctl():
+    homedir = os.getenv('HOME')
     # Получение всех GET параметров
     all_params = request.args
 
     # Преобразование в обычный словарь
     params_dict = request.args.to_dict()
-    endpoint = params_dict['e']
+    print(all_params)
+    clusterName = params_dict['cluster']
     node = params_dict['n']
     cmd = params_dict['cmd']
     print('CMD="%s"'% cmd)
+    if clusterName[0] != '_':
+      insecure = ''
+      endpoint = ''
+      runCmd = 'talosctl config context %s' % clusterName
+      print('setContext=', runCmd)
+      result = subprocess.run(runCmd,
+        shell=True,
+        stdout=subprocess.PIPE,
+        cwd='%s/.maestro/' % homedir,
+        encoding='utf-8'
+      )
+    else:
+      insecure = '-i'
+      endpoint = '-e %s' % node
     # Передача результатов подкоманд команды get в формате JSON
     if cmd == 'get':
       commandSet = params_dict['commandSet']
       subCommand = params_dict['subCommand']
-      runCmd = 'talosctl get ' + subCommand + ' -o json -e ' + endpoint + ' -n ' + node
+      # runCmd = 'talosctl get ' + subCommand + ' -o json -n ' + node
+      runCmd = 'talosctl get  %s -o json -n %s %s %s' % (subCommand, node, endpoint, insecure)
       print('runCmd=', runCmd)
       result = subprocess.run(runCmd,
         shell=True,
         stdout=subprocess.PIPE,
-        cwd='/home/kaf/.talos/',
+        cwd='%s/.maestro/' % homedir,
         encoding='utf-8'
       )
       result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
@@ -102,8 +119,11 @@ def talosctl():
           result[index]['spec'] = spec
       reply = json.dumps(result, indent=2)
       return reply
+
+    if clusterName[0] == '_':
+      return []
     # Передача результатов в формате текстовой таблицы
-    elif cmd == 'containers' or \
+    if cmd == 'containers' or \
         cmd == 'netstat' or \
         cmd == 'memory' or \
         cmd == 'mounts' or \
@@ -116,18 +136,16 @@ def talosctl():
         cmd[0:6] == 'image/' \
         :
       cmd = cmd.replace('/', ' ')
-      runCmd = 'talosctl ' + cmd + ' -e ' + endpoint + ' -n ' + node
+      # runCmd = 'talosctl ' + cmd + ' -n ' + node
+      runCmd = 'talosctl %s -n %s %s %s' % (cmd, node, endpoint, '')
       print('runCmd=', runCmd)
       result = subprocess.run(runCmd,
         shell=True,
         stdout=subprocess.PIPE,
-        cwd='/home/kaf/.talos/',
+        cwd='%s/.maestro/' % homedir,
         encoding='utf-8'
       )
       reply = tableToJson(result.stdout)
-      # fp = open("/tmp/reply.json", 'w')
-      # fp.write(reply)
-      # fp.close()
       return reply
     # Передача результата команды support - zip-архив
     elif cmd == 'support':
@@ -138,12 +156,13 @@ def talosctl():
       SupportFile = tmpDir + '/' + supportFile
       if os.path.exists(SupportFile):
         os.remove(SupportFile)
-      runCmd = 'talosctl support -O ' + SupportFile + ' -e ' + endpoint + ' -n ' + node
+      # runCmd = 'talosctl support -O ' + SupportFile + ' -e ' + endpoint + ' -n ' + node
+      runCmd = 'talosctl support -O %s -n %s %s %s' % (SupportFile,  node, endpoint, '')
       print('runCmd=', runCmd)
       result = subprocess.run(runCmd,
         shell=True,
         stdout=subprocess.PIPE,
-        cwd='/home/kaf/.talos/',
+        cwd='%s/.maestro/' % homedir,
         encoding='utf-8'
       )
       return send_file(
@@ -159,12 +178,13 @@ def talosctl():
         cmd == 'version' \
           :
       cmd = cmd.replace('/', ' ')
-      runCmd = 'talosctl ' + cmd + ' -e ' + endpoint + ' -n ' + node
+      # runCmd = 'talosctl ' + cmd + ' -e ' + endpoint + ' -n ' + node
+      runCmd = 'talosctl %s -n %s %s %s' % (cmd, node, endpoint, '')
       print('runCmd=', runCmd)
       result = subprocess.run(runCmd,
         shell=True,
         stdout=subprocess.PIPE,
-        cwd='/home/kaf/.talos/',
+        cwd='%s/.maestro/' % homedir,
         encoding='utf-8'
       )
       reply = { 'content': result.stdout }
@@ -175,61 +195,6 @@ def talosctl():
         'all_params': dict(all_params),
         'params_dict': params_dict
     }
-
-
-
-# Запрос сканирует командой nmap сети, указанные параметром nets, определеяет список IP адресов узлов (с DNS именамиб если они имеются),
-# которые слушают порты 50000 (сервис apid) и 6443 (kubeAPI).
-#
-# После определения списка узлов командой
-# talosctl config contexts
-# из файла /root/.talos/talosconfig загруэаются
-# - список поддерживаемых кластеров contexts[<clusterName>]
-# - имя текущего активного кластер contaxt
-#
-# Проаеряется наличие узлов, полученных командой nmap в списке кластеров
-# Если узел не входит ни в один из кластеров, он добавляется в кластер _LOST
-# с IP-адресом или DNS именем в элемент nodes и если узел просушиавает порт 6443 в элемент endpoints
-#
-# Полученный  спсиок кластеров возвращается в ответ на запрос в формате
-# [
-#   {currentContext: boolean, clusterName: string, controlplanes: [...], workers: [...]},
-#   ...
-# ]
-# @app.route('/map')
-# def map():
-#   ret='''
-# [
-#   {
-#     "id": "Maestro",
-#     "currentContext": "*",
-#     "clusterName": "Maestro",
-#     "controlplanes": [
-#       "192.168.122.33"
-#     ],
-#     "workers": [
-#       "192.168.122.87"
-#     ]
-#   },
-#   {
-#     "id": "Cluster1",
-#     "currentContext": "",
-#     "clusterName": "Cluster1",
-#     "controlplanes": [],
-#     "workers": []
-#   },
-#   {
-#     "id": "_LOST",
-#     "currentContext": "",
-#     "clusterName": "_LOST",
-#     "controlplanes": [],
-#     "workers": [
-#       "192.168.122.127"
-#     ]
-#   }
-# ]
-# '''
-#   return ret
 
 # Функция анализирует вывод команды nmap и определеяет список IP адресов узлов (с DNS именамиб если они имеются),
 # которые слушают порты 50000 (сервис apid) и 6443 (kubeAPI).
@@ -271,6 +236,7 @@ def nodesList(nmapStr):
 
 @app.route('/scanNets',methods=['GET', 'POST'])
 def scanNets():
+  homedir = os.getenv('HOME')
   print('REQUEST=', request.method);
   maestrConfigDir =  os.getenv('HOME') + '/.maestro'
   if not os.path.isdir(maestrConfigDir):
@@ -298,7 +264,7 @@ def scanNets():
   result = subprocess.run(runCmd,
     shell=True,
     stdout=subprocess.PIPE,
-    cwd='/home/kaf/.maestro/',
+    cwd='%s/.maestro/' % homedir,
     encoding='utf-8'
   )
   nmapOut = result.stdout
@@ -325,12 +291,13 @@ def scanNets():
     }), 200
 
 def talosgetspec(subcmd, node, insecure):
+  homedir = os.getenv('HOME')
   runCmd = 'talosctl get %s -e %s -n %s -o json %s' % (subcmd, node, node, insecure)
   print('RUNCmd=', runCmd)
   result = subprocess.run(runCmd,
     shell=True,
     stdout=subprocess.PIPE,
-    cwd='/home/kaf/.maestro/',
+    cwd='%s/.maestro/' % homedir,
     encoding='utf-8'
   )
   returncode = result.returncode
@@ -346,8 +313,8 @@ def talosgetspec(subcmd, node, insecure):
 
 @app.route('/nodesTree')
 def nodesTree():
-  home = os.getenv('HOME')
-  configDir = home + '/.maestro'
+  homedir = os.getenv('HOME')
+  configDir = homedir + '/.maestro'
   nodeTypesFile = configDir + '/nodeTypes.json'
   fp = open(nodeTypesFile, 'r')
   nodeTypes = json.load(fp)

@@ -172,7 +172,7 @@ const TalosGetInfo: React.FC<{ }> = ({  }) => {
 
     const fetchData = async () => {
       try {
-        const talosURL = "http://localhost:5000/talosctl?e="+controlplane+"&n="+node+"&cmd=get&commandSet="+commandSet+"&subCommand="+command;
+        const talosURL = "http://localhost:5000/talosctl?cluster="+cluster+"&n="+node+"&cmd=get&commandSet="+commandSet+"&subCommand="+command;
 //         alert(talosURL);
         const response = await fetch(talosURL, {
           method: 'GET',

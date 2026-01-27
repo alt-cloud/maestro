@@ -1,10 +1,10 @@
 import React from 'react';
 
-const DownloadZipButton = ({controlplane, node}) => {
+const DownloadZipButton = ({cluster, node}) => {
   const handleDownload = async () => {
     try {
       // Делаем запрос к REST API
-      const talosURL = "http://localhost:5000/talosctl?e="+controlplane+"&n="+node+"&cmd=support";
+      const talosURL = "http://localhost:5000/talosctl?cluster="+cluster+"&n="+node+"&cmd=support";
 //       alert(talosURL);
       const response = await fetch(talosURL, {
         method: 'GET',
