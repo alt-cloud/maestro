@@ -114,10 +114,12 @@ function NodeCols(pars) {
   const nodeType = pars.nodeType;
   const cols = pars.cols;
   const node = cols['ip'];
+  const clusterName = pars.clusterName;
+  const href = clusterName[0] == '_' ? '/maestro/node/get' : '/maestro/node';
   return (
     <>
     <TableCell>
-      <Link key={node} to={`/maestro/node?cluster=${pars.clusterName}&node=${node}&type=${pars.type}`} >
+      <Link key={node} to={`${href}?cluster=${pars.clusterName}&node=${node}&type=${pars.type}`} >
         {node}
       </Link>
     </TableCell>

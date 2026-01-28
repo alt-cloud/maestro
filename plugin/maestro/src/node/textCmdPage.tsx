@@ -7,7 +7,6 @@ import {
   Paper
 } from '@mui/material';
 
-
 import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
 import { useRef } from 'react';
