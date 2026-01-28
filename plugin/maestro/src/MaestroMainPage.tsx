@@ -15,11 +15,45 @@ import {
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
+import { useRef } from 'react';
 
 interface Cluster {
   id: number;
   name: string;
 }
+
+const INTERVAL_OPTIONS = [
+  { label: '1 second', value: 1000 },
+  { label: '5 seconds', value: 5000 },
+  { label: '10 seconds', value: 10000 },
+  { label: '30 seconds', value: 30000 },
+  { label: '1 minute', value: 60000 },
+  { label: 'Off', value: null },
+] as const;
+
+function alignInterval(delay) {
+  if (typeof delay === 'undefined' || Number.isNaN(Number(delay)) || Number(delay) <= 0 ) {
+    delay = null;
+  }
+  let alignDelay = null;
+  if (delay) {
+    delay = Number(delay) * 1000;
+    let lastValue = 0;
+    for (let option of INTERVAL_OPTIONS) {
+      if (option.value === null) break;
+      if (delay <= option.value) {
+        alignDelay = option.value;
+        break;
+      }
+      lastValue = option.value;
+    }
+    if (alignDelay === null) alignDelay = lastValue;
+//     alert('alignDelay=' + alignDelay);
+  }
+  return alignDelay;
+}
+
+type IntervalValue = typeof INTERVAL_OPTIONS[number]['value'];
 
 interface Column {
   id: keyof Cluster;
@@ -117,16 +151,13 @@ function NodeRows(pars) {
   );
 }
 
-const MaestroMainPage: React.FC<{ }> = ({  }) => {
-//   const [page, setPage] = useState(0);
-//   const [rowsPerPage, setRowsPerPage] = useState(10);
-//   const [orderBy, setOrderBy] = useState<keyof Cluster>('id');
-//   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
+  const [timeout, setTimeout] = useState<IntervalValue>(alignInterval(delay));
+  // Используем ref для хранения текущего interval ID (чтобы избежать утечек)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [rows, setRows] = useState<Cluster[]>([]);
-
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
   const location = useLocation();
   const queryParams = useMemo(() => {
     const params = new URLSearchParams(location.search);
@@ -138,9 +169,7 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
   const cluster = queryParams.cluster;
 //   breadcrumbs += (typeof cluster == 'undefined') ? 'Clusters' : "<a href='/maestro'>Clusters</a>";
   const nodeType = queryParams.type;
-//   alert('cluster=' + cluster + ' nodeType=' + typeof nodeType);
-//   if ( typeof nodeType == 'undefined' )
-//     alert('UNDEFINED');
+
 
   useEffect(() => {
 
@@ -181,13 +210,28 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
       }
     };
 
+  // Если интервал отключён — только один раз загрузить данные (опционально)
+  if (timeout === null) {
     fetchData();
-
-    // Cleanup: отменяем запрос при размонтировании или повторном запуске эффекта
     return () => {
       controller.abort();
     };
-  }, []);
+  }
+  // Иначе — загружаем сразу + ставим интервал
+  fetchData();
+  const id = setInterval(fetchData, timeout);
+  intervalRef.current = id;
+  return () => {
+    clearInterval(id);
+    controller.abort();
+    };
+  }, [timeout]);
+
+  // Обработчик изменения выбора
+  const handleIntervalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value === 'null' ? null : Number(e.target.value);
+    setTimeout(value as IntervalValue);
+  };
 
   if (loading) return <div>Loading cluster map...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -204,29 +248,6 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
 
 //   alert('Rows=' + JSON.stringify(rows, null, 2));
 
-//   const handleChangePage = (event: unknown, newPage: number) => {
-//     setPage(newPage);
-//   };
-//
-//   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     setRowsPerPage(+event.target.value);
-//     setPage(0);
-//   };
-//
-//   const handleSort = (property: keyof Cluster) => {
-//     const isAsc = orderBy === property && order === 'asc';
-//     setOrder(isAsc ? 'desc' : 'asc');
-//     setOrderBy(property);
-//   };
-
-//   const sortedRows = [...Rows].sort((a, b) => {
-//     if (a[orderBy] < b[orderBy]) return order === 'asc' ? -1 : 1;
-//     if (a[orderBy] > b[orderBy]) return order === 'asc' ? 1 : -1;
-//     return 0;
-//   });
-
-//   const paginatedRows = sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-//   alert("paginatedRows="+stringify(paginatedRows));
 
   var clusterNameRowSpans = {}
   const rowsDict = new Map(Object.entries(Rows));
@@ -248,6 +269,20 @@ const MaestroMainPage: React.FC<{ }> = ({  }) => {
     <Link to="/maestro">Clusters</Link>
     </Typography>
     <Paper>
+      <div style={{ marginBottom: '16px' }}>
+        <label htmlFor="interval-select">Update interval: </label>
+        <select
+          id="interval-select"
+          value={timeout ?? 'null'}
+          onChange={handleIntervalChange}
+        >
+          {INTERVAL_OPTIONS.map((option) => (
+            <option key={option.value?.toString() || 'null'} value={option.value ?? 'null'}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
       <TableContainer>
         <Table>
           <TableHead>

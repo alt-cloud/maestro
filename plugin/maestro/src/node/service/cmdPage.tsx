@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 
 import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
+import { useRef } from 'react';
 
 // import datasRows from './Data.json';
 // import columnsList from './Columns.json';
@@ -30,6 +31,37 @@ interface Column {
   id: keyof Cluster;
   label: string;
   sortable?: boolean;
+}
+
+const INTERVAL_OPTIONS = [
+  { label: '1 second', value: 1000 },
+  { label: '5 seconds', value: 5000 },
+  { label: '10 seconds', value: 10000 },
+  { label: '30 seconds', value: 30000 },
+  { label: '1 minute', value: 60000 },
+  { label: 'Off', value: null },
+] as const;
+
+function alignInterval(delay) {
+  if (typeof delay === 'undefined' || Number.isNaN(Number(delay)) || Number(delay) <= 0 ) {
+    delay = null;
+  }
+  let alignDelay = null;
+  if (delay) {
+    delay = Number(delay) * 1000;
+    let lastValue = 0;
+    for (let option of INTERVAL_OPTIONS) {
+      if (option.value === null) break;
+      if (delay <= option.value) {
+        alignDelay = option.value;
+        break;
+      }
+      lastValue = option.value;
+    }
+    if (alignDelay === null) alignDelay = lastValue;
+//     alert('alignDelay=' + alignDelay);
+  }
+  return alignDelay;
 }
 
 function createRows(dataRows) {
@@ -75,7 +107,10 @@ function ServiceCell({ columnId, value, cluster, controlplane, node, nodeType}: 
   return (renderServiceCell());
 }
 
-const TalosCmdInfo: React.FC<{ }> = ({  }) => {
+const TalosCmdInfo: React.FC<{ }> = ({ delay }) => {
+  const [timeout, setTimeout] = useState<IntervalValue>(alignInterval(delay));
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [orderBy, setOrderBy] = useState<keyof Cluster>('id');
@@ -152,18 +187,33 @@ const TalosCmdInfo: React.FC<{ }> = ({  }) => {
       }
     };
 
+    if (timeout === null) {
+      fetchData();
+      return () => {
+        controller.abort();
+      };
+    }
     fetchData();
-
+    const id = setInterval(fetchData, timeout);
+    intervalRef.current = id;
     // Cleanup: отменяем запрос при размонтировании или повторном запуске эффекта
     return () => {
+      clearInterval(id);
       controller.abort();
     };
-  }, []);
+  }, [timeout]);
 
   if (loading) return <div>Loading cluster map...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!rows) return <div>No data received</div>;
 //   alert('ROWS='+JSON.stringify(rows, null, 2));
+
+  // Обработчик изменения выбора
+  const handleIntervalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value === 'null' ? null : Number(e.target.value);
+    setTimeout(value as IntervalValue);
+  };
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -198,6 +248,20 @@ const TalosCmdInfo: React.FC<{ }> = ({  }) => {
   >&nbsp;/&nbsp;<Link to={`/maestro/node?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>{node}</Link
   >&nbsp;/&nbsp;{fullCommand}</Typography>
     <Paper>
+      <div style={{ marginBottom: '16px' }}>
+        <label htmlFor="interval-select">Update interval: </label>
+        <select
+          id="interval-select"
+          value={timeout ?? 'null'}
+          onChange={handleIntervalChange}
+        >
+          {INTERVAL_OPTIONS.map((option) => (
+            <option key={option.value?.toString() || 'null'} value={option.value ?? 'null'}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
       <TableContainer>
         <Table>
           <TableHead>

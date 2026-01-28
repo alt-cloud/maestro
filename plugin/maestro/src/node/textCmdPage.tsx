@@ -10,6 +10,7 @@ import {
 
 import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
+import { useRef } from 'react';
 
 // test than module loads
 interface Cluster {
@@ -17,7 +18,41 @@ interface Cluster {
   name: string;
 }
 
-const TalosTextCmdInfo: React.FC<{ }> = ({  }) => {
+const INTERVAL_OPTIONS = [
+  { label: '1 second', value: 1000 },
+  { label: '5 seconds', value: 5000 },
+  { label: '10 seconds', value: 10000 },
+  { label: '30 seconds', value: 30000 },
+  { label: '1 minute', value: 60000 },
+  { label: 'Off', value: null },
+] as const;
+
+function alignInterval(delay) {
+  if (typeof delay === 'undefined' || Number.isNaN(Number(delay)) || Number(delay) <= 0 ) {
+    delay = null;
+  }
+  let alignDelay = null;
+  if (delay) {
+    delay = Number(delay) * 1000;
+    let lastValue = 0;
+    for (let option of INTERVAL_OPTIONS) {
+      if (option.value === null) break;
+      if (delay <= option.value) {
+        alignDelay = option.value;
+        break;
+      }
+      lastValue = option.value;
+    }
+    if (alignDelay === null) alignDelay = lastValue;
+//     alert('alignDelay=' + alignDelay);
+  }
+  return alignDelay;
+}
+
+const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
+  const [timeout, setTimeout] = useState<IntervalValue>(alignInterval(delay));
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
   const [page, setPage] = useState(0);
   const [content, setContent] = useState<Cluster[]>([]);
 
@@ -85,13 +120,21 @@ const TalosTextCmdInfo: React.FC<{ }> = ({  }) => {
       }
     };
 
+    if (timeout === null) {
+      fetchData();
+      return () => {
+        controller.abort();
+      };
+    }
     fetchData();
-
+    const id = setInterval(fetchData, timeout);
+    intervalRef.current = id;
     // Cleanup: отменяем запрос при размонтировании или повторном запуске эффекта
     return () => {
+      clearInterval(id);
       controller.abort();
     };
-  }, []);
+  }, [timeout]);
 
   if (loading) return <div>Loading cluster map...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -101,27 +144,11 @@ const TalosTextCmdInfo: React.FC<{ }> = ({  }) => {
     setPage(newPage);
   };
 
-//   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     setRowsPerPage(+event.target.value);
-//     setPage(0);
-//   };
-//
-//   const handleSort = (property: keyof Cluster) => {
-//     const isAsc = orderBy === property && order === 'asc';
-//     setOrder(isAsc ? 'desc' : 'asc');
-//     setOrderBy(property);
-//   };
-//
-//   const sortedRows = [...rows].sort((a, b) => {
-//     if (a[orderBy] < b[orderBy]) return order === 'asc' ? -1 : 1;
-//     if (a[orderBy] > b[orderBy]) return order === 'asc' ? 1 : -1;
-//     return 0;
-//   });
-
-//   const paginatedRows = sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
-//   alert('paginatedRows='+JSON.stringify(paginatedRows, null, 2));
-//   alert('columns='+JSON.stringify(columns, null, 2));
+  // Обработчик изменения выбора
+  const handleIntervalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value === 'null' ? null : Number(e.target.value);
+    setTimeout(value as IntervalValue);
+  };
 
   return (
   <SectionBox>
@@ -131,6 +158,20 @@ const TalosTextCmdInfo: React.FC<{ }> = ({  }) => {
   >&nbsp;/&nbsp;<Link to={`/maestro/node?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>{node}</Link
   >&nbsp;/&nbsp;{fullCommand}</Typography>
     <Paper>
+      <div style={{ marginBottom: '16px' }}>
+        <label htmlFor="interval-select">Update interval: </label>
+        <select
+          id="interval-select"
+          value={timeout ?? 'null'}
+          onChange={handleIntervalChange}
+        >
+          {INTERVAL_OPTIONS.map((option) => (
+            <option key={option.value?.toString() || 'null'} value={option.value ?? 'null'}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
       <Box sx={{ maxHeight: 'calc(100vh - 120px)', overflow: 'auto', whiteSpace: 'pre-wrap' }}>
         {content}
       </Box>
