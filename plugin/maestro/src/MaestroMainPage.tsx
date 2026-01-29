@@ -10,7 +10,15 @@ import {
   TableRow,
   Paper,
   TablePagination,
-  TableSortLabel
+  TableSortLabel,
+  Box,
+  Button,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
@@ -153,10 +161,43 @@ function NodeRows(pars) {
   );
 }
 
+function ClusterRows(pars) {
+  const clusterName = pars.clusterName;
+  const nodeTypes = pars.nodeTypes;
+  const clusterNameRowSpans = pars.clusterNameRowSpans;
+  const isOrphan = clusterName[0] ==  '_';
+  if (isOrphan) {
+    return (
+      <TableRow>
+        <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>{clusterName}</TableCell>
+        <TableCell rowSpan={clusterNameRowSpans[clusterName]['workers']}>-</TableCell>
+        <NodeRows clusterName={clusterName} nodeType='worker' values={nodeTypes['workers']}/>
+      </TableRow>
+    );
+  } else {
+        return (
+    <>
+      <TableRow>
+        <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>{clusterName}</TableCell>
+        <TableCell rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}>controlplane</TableCell>
+        <NodeRows clusterName={clusterName} nodeType='controlplane' values={nodeTypes['controlplanes']}/>
+      </TableRow>
+      <TableRow>
+        <TableCell rowSpan={clusterNameRowSpans[clusterName]['workers']}>worker</TableCell>
+        <NodeRows clusterName={clusterName} nodeType='worker' values={nodeTypes['workers']}/>
+      </TableRow>
+    </>
+    );
+  }
+}
+
 const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
   const [timeout, setTimeout] = useState<IntervalValue>(alignInterval(delay));
-  // Используем ref для хранения текущего interval ID (чтобы избежать утечек)
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [nameOfCluster, setNameOfCluster] = useState<string>('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const [rows, setRows] = useState<Cluster[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -249,18 +290,17 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
   }
 
 //   alert('Rows=' + JSON.stringify(rows, null, 2));
-
-
   var clusterNameRowSpans = {}
   const rowsDict = new Map(Object.entries(Rows));
   for (var clusterName of Object.keys(Rows)) {
+    const isOrphan = clusterName[0] ==  '_';
     var rowSpans = {};
     var nodeTypes = rowsDict.get(clusterName);
     var controlplanes = nodeTypes['controlplanes'];
     var workers = nodeTypes['workers'];
     rowSpans['controlplanes'] = Math.max(controlplanes.length, 1);
     rowSpans['workers'] = Math.max(workers.length, 1);
-    rowSpans['all'] =  rowSpans['controlplanes'] + Math.max(workers.length, 1);
+    rowSpans['all'] = isOrphan? Math.max(workers.length, 1) : rowSpans['controlplanes'] + Math.max(workers.length, 1);
     clusterNameRowSpans[clusterName] = rowSpans;
   }
 //   alert('clusterNameRowSpans=' + JSON.stringify(clusterNameRowSpans));
@@ -285,6 +325,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
           ))}
         </select>
       </div>
+      <FormControl fullWidth margin="normal" required /*error={!!errors.nodeType}*/>
       <TableContainer>
         <Table>
           <TableHead>
@@ -298,22 +339,41 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
           </TableHead>
           <TableBody>
           {Object.entries(Rows).map(([clusterName, nodeTypes]) => (
-            <>
-             <TableRow>
-                <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>{clusterName}</TableCell>
-                <TableCell rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}>controlplane</TableCell>
-                <NodeRows clusterName={clusterName} nodeType='controlplane' values={nodeTypes['controlplanes']}/>
-             </TableRow>
-             <TableRow>
-                <TableCell rowSpan={clusterNameRowSpans[clusterName]['workers']}>worker</TableCell>
-                <NodeRows clusterName={clusterName} nodeType='worker' values={nodeTypes['workers']}/>
-             </TableRow>
-            </>
+            <ClusterRows clusterName={clusterName} clusterNameRowSpans={clusterNameRowSpans} nodeTypes={nodeTypes} />
           ))}
           </TableBody>
-
         </Table>
       </TableContainer>
+      </FormControl>
+      <TextField
+        fullWidth
+        margin="normal"
+        required
+        label="Cluster name"
+        id="cluster-name"
+        value={nameOfCluster}
+        onChange={(e) => {
+          setNameOfCluster(e.target.value);
+          if (errors.nameOfCluster && e.target.value.trim()) {
+            setErrors(prev => ({ ...prev, nameOfCluster: '' }));
+          }
+        }}
+        error={!!errors.nameOfCluster}
+        helperText={errors.nameOfCluster}
+        placeholder="my-cluster-prod"
+        inputProps={{ 'aria-label': 'Cluster name' }}
+      />
+
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        fullWidth
+        sx={{ mt: 3, py: 1.5 }}
+        aria-label="Create cluster"
+      >
+        Create cluster
+      </Button>
     </Paper>
     <Link to="/maestro/cluster/scanNets">Scan networks</Link>
   </SectionBox>
