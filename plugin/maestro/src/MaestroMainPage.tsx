@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material/styles';
 import {
   Table,
   TableBody,
@@ -39,6 +40,22 @@ const INTERVAL_OPTIONS = [
   { label: 'Off', value: null },
 ] as const;
 
+const statusClusterOptions: StatusOption[] = [
+  { value: 'running', label: 'Running', color: '#e8f5e9', icon: '🟢' },
+  { value: 'restart', label: 'Restart', color: '#fff8e1', icon: '🟡' },
+  { value: 'reboot', label: 'Reboot', color: '#fff8e1', icon: '🟡' },
+  { value: 'shutdown', label: 'Shutdown', color: '#fff8e1', icon: '🟡' },
+  { value: 'reset', label: 'Reset', color: '#ffebee', icon: '🔴' },
+];
+const statusOrphanOptions: StatusOption[] = [
+  { value: 'maintenance', label: 'Maintenance', color: '#e8f5e9', icon: '🟡' },
+  { value: 'controlplane', label: 'Controlplane', color: '#e8f5e9', icon: '🟢' },
+  { value: 'worker', label: 'Worker', color: '#e8f5e9', icon: '🟢' },
+];
+
+const selectedNodeStage = {};
+const selectedDefaultNodeStage = {};
+
 function alignInterval(delay) {
   if (typeof delay === 'undefined' || Number.isNaN(Number(delay)) || Number(delay) <= 0 ) {
     delay = null;
@@ -70,52 +87,113 @@ interface Column {
 }
 
 const columns: Column[] = [
-    {
-      'id': 'ClusterName',
-      'label':'ClusterName',
-      'sortable': true
-    },
-    {
-      'id': 'nodeType',
-      'label':'NodeType',
-      'sortable': true
-    },
-    {
-      'id': 'ip',
-      'label':'IP',
-      'sortable': true
-    },
-    {
-      'id': 'stage',
-      'label':'Stage',
-      'sortable': true
-    },
-    {
-      'id': 'nodeReady',
-      'label':'Ready',
-      'sortable': true
-    },
-    {
-      'id': 'status',
-      'label':'Status',
-      'sortable': true
-    },
-    {
-      'id': 'memberID',
-      'label':'Member',
-      'sortable': true
-    },
-    {
-      'id': 'manifestsApplied',
-      'label':'Manifests',
-      'sortable': true
-    },
-    {
-      'id': 'unmetConditions',
-      'label':'NoCond',
-      'sortable': true
-    }
-  ];
+    {'id': 'ClusterName','label':'ClusterName','sortable': false},
+{'id': 'nodeType','label':'NodeType','sortable': false},
+{'id': 'ip','label':'IP','sortable': false},
+{'id': 'stage','label':'Stage','sortable': false},
+{'id': 'nodeReady','label':'Ready','sortable': false},
+{'id': 'status','label':'Status','sortable': false},
+{'id': 'memberID','label':'Member','sortable': false},
+{'id': 'manifestsApplied','label':'Manifests','sortable': false},
+{'id': 'unmetConditions','label':'NoCond','sortable': false}
+];
+
+  interface StatusOption {
+  value: string;
+  label: string;
+  color: string;
+  icon?: React.ReactNode;
+}
+
+function NodeStage(pars) {
+  const node=pars.node;
+  const nodeType = pars.nodeType;
+  const stage = pars.stage;
+  if (stage == 'running') {
+    return (
+    <TableCell>
+      <NodeStageSelect
+        statusOptions={statusClusterOptions}
+        node={node}
+        setIsSubmitDisabled={pars.setIsSubmitDisabled}
+        />
+    </TableCell>
+    );
+  }
+  if (stage == 'maintenance') {
+    return (
+    <TableCell>
+      <NodeStageSelect
+        statusOptions={statusOrphanOptions}
+        node={node}
+        setIsSubmitDisabled={pars.setIsSubmitDisabled}
+        />
+    </TableCell>
+    );
+  }
+  return (
+    <TableCell>{stage}</TableCell>
+  );
+}
+
+function NodeStageSelect(pars) {
+//         alert(pars.setIsSubmitDisabled);
+    const statusOptions = pars.statusOptions;
+    const node = pars.node;
+    const [status, setStatus] = useState(selectedDefaultNodeStage[node]);
+    selectedNodeStage[node] = pars.stage;
+//     alert('selectedDefaultNodeStage=' + JSON.stringify(selectedNodeStage))
+    const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+//         alert(pars.setIsSubmitDisabled);
+//       alert(event.target.value);
+      const value = event.target.value as string;
+      selectedNodeStage[node] = value;
+//       alert('selectedNodeStage=' + JSON.stringify(selectedNodeStage))
+      setStatus(value);
+      // pars.setIsSubmitDisabled(false);
+//       setIsSubmitDisabled(false);
+    };
+    return (
+    <FormControl sx={{ minWidth: 90 }}>
+      <Select
+        onChange={handleChange}
+        value={status}
+        label="Status"
+        sx={{
+          '& .MuiSelect-select': {
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+          },
+        }}
+      >
+      {statusOptions.map((option) => (
+        <MenuItem
+          key={option.value}
+          value={option.value}
+          sx={{
+            backgroundColor: option.color,
+            '&:hover': {
+              backgroundColor: `${option.color}`,
+            },
+            '&.Mui-selected': {
+              backgroundColor: option.color,
+              fontWeight: 'bold',
+            },
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+          }}
+        >
+          <span>{option.icon}</span>
+          <span>{option.label}</span>
+        </MenuItem>
+      ))}
+      </Select>
+    </FormControl>
+    );
+//   };
+}
 
 function NodeCols(pars) {
 //   alert('PARS=' + JSON.stringify(pars, null, 2));
@@ -131,7 +209,12 @@ function NodeCols(pars) {
         {node}
       </Link>
     </TableCell>
-    <TableCell>{cols['stage']}</TableCell>
+    <NodeStage
+      nodeType={nodeType}
+      stage={cols['stage']}
+      node={node}
+      setIsSubmitDisabled={pars.setIsSubmitDisabled}
+      />
     <TableCell>{cols['nodeReady'] ? 'V' : 'X'}</TableCell>
     <TableCell>{cols['status']['ready'] ? 'V' : 'X'}</TableCell>
     <TableCell>{cols['memberID'] == '-' ? 'X' : 'V'}</TableCell>
@@ -151,10 +234,22 @@ function NodeRows(pars) {
   const value0 = values.shift();
   return (
     <>
-    <NodeCols type={nodeType} clusterName={pars.clusterName} nodeType={nodeType} cols={value0}/>
+    <NodeCols
+      type={nodeType}
+      clusterName={pars.clusterName}
+      nodeType={nodeType}
+      cols={value0}
+      setIsSubmitDisabled={pars.setIsSubmitDisabled}
+      />
     {values.map(value => (
     <TableRow>
-      <NodeCols type={nodeType} clusterName={pars.clusterName} nodeType={nodeType} cols={value}/>
+      <NodeCols
+        type={nodeType}
+        clusterName={pars.clusterName}
+        nodeType={nodeType}
+        cols={value}
+        setIsSubmitDisabled={pars.setIsSubmitDisabled}
+        />
     </TableRow>
     ))}
     </>
@@ -171,7 +266,12 @@ function ClusterRows(pars) {
       <TableRow>
         <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>{clusterName}</TableCell>
         <TableCell rowSpan={clusterNameRowSpans[clusterName]['workers']}>-</TableCell>
-        <NodeRows clusterName={clusterName} nodeType='worker' values={nodeTypes['workers']}/>
+        <NodeRows
+          clusterName={clusterName}
+          nodeType='worker'
+          values={nodeTypes['workers']}
+          setIsSubmitDisabled={pars.setIsSubmitDisabled}
+          />
       </TableRow>
     );
   } else {
@@ -180,7 +280,12 @@ function ClusterRows(pars) {
       <TableRow>
         <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>{clusterName}</TableCell>
         <TableCell rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}>controlplane</TableCell>
-        <NodeRows clusterName={clusterName} nodeType='controlplane' values={nodeTypes['controlplanes']}/>
+        <NodeRows
+          clusterName={clusterName}
+          nodeType='controlplane'
+          values={nodeTypes['controlplanes']}
+          setIsSubmitDisabled={pars.setIsSubmitDisabled}
+          />
       </TableRow>
       <TableRow>
         <TableCell rowSpan={clusterNameRowSpans[clusterName]['workers']}>worker</TableCell>
@@ -192,6 +297,9 @@ function ClusterRows(pars) {
 }
 
 const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const [isEnterClusterNameDisabled, setIsEnterClusterNameDisabled] = useState(true);
+
   const [timeout, setTimeout] = useState<IntervalValue>(alignInterval(delay));
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -201,6 +309,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
   const [rows, setRows] = useState<Cluster[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
   const location = useLocation();
   const queryParams = useMemo(() => {
     const params = new URLSearchParams(location.search);
@@ -297,13 +406,27 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
     var rowSpans = {};
     var nodeTypes = rowsDict.get(clusterName);
     var controlplanes = nodeTypes['controlplanes'];
+//     alert('controlplanes=' + JSON.stringify(controlplanes, null, 2));
+    for (let node of controlplanes) {
+      let stage = isOrphan ? 'maintenance' : 'running'
+      selectedDefaultNodeStage[node['ip']] = stage;
+      selectedNodeStage[node['ip']] = stage;
+    }
     var workers = nodeTypes['workers'];
+    for (let node of workers) {
+      let stage = isOrphan ? 'maintenance' : 'running'
+      selectedDefaultNodeStage[node['ip']] = stage;
+      selectedNodeStage[node['ip']] = stage;
+    }
+//     alert('workers=' + JSON.stringify(workers, null, 2));
     rowSpans['controlplanes'] = Math.max(controlplanes.length, 1);
     rowSpans['workers'] = Math.max(workers.length, 1);
     rowSpans['all'] = isOrphan? Math.max(workers.length, 1) : rowSpans['controlplanes'] + Math.max(workers.length, 1);
     clusterNameRowSpans[clusterName] = rowSpans;
   }
 //   alert('clusterNameRowSpans=' + JSON.stringify(clusterNameRowSpans));
+//   alert('selectedDefaultNodeStage=' + JSON.stringify(selectedDefaultNodeStage));
+//   alert('selectedNodeStage=' + JSON.stringify(selectedNodeStage));
 
   return (
   <SectionBox title="CLUSTERS" textAlign="left" paddingTop={2}>
@@ -325,6 +448,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
           ))}
         </select>
       </div>
+      <form >
       <FormControl fullWidth margin="normal" required /*error={!!errors.nodeType}*/>
       <TableContainer>
         <Table>
@@ -339,13 +463,19 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
           </TableHead>
           <TableBody>
           {Object.entries(Rows).map(([clusterName, nodeTypes]) => (
-            <ClusterRows clusterName={clusterName} clusterNameRowSpans={clusterNameRowSpans} nodeTypes={nodeTypes} />
+            <ClusterRows
+              clusterName={clusterName}
+              clusterNameRowSpans={clusterNameRowSpans}
+              nodeTypes={nodeTypes}
+              setIsSubmitDisabled={setIsSubmitDisabled}
+              />
           ))}
           </TableBody>
         </Table>
       </TableContainer>
       </FormControl>
-      <TextField
+
+      <TextField disabled={isEnterClusterNameDisabled}
         fullWidth
         margin="normal"
         required
@@ -364,16 +494,15 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
         inputProps={{ 'aria-label': 'Cluster name' }}
       />
 
-      <Button
+      <Button disabled={isSubmitDisabled}
         type="submit"
         variant="contained"
         color="primary"
         fullWidth
         sx={{ mt: 3, py: 1.5 }}
         aria-label="Create cluster"
-      >
-        Create cluster
-      </Button>
+      >Apply Changes</Button>
+    </form>
     </Paper>
     <Link to="/maestro/cluster/scanNets">Scan networks</Link>
   </SectionBox>

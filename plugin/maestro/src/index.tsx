@@ -56,7 +56,7 @@ registerRoute({
   name: 'maestro',
   exact: true,
   component: () => (
-      <MaestroMainPage delay='5' />
+      <MaestroMainPage delay='0' />
   ),
 });
 
