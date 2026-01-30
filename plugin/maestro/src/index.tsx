@@ -47,10 +47,17 @@ registerSidebarEntry({
 
 registerRoute({
   path: '/maestro',
-//   sidebar: {
-//     item: 'maestro',
-//     sidebar: 'myplugin',
-//   },
+  useClusterURL: false,
+  noAuthRequired: true, // No authentication is required to see the view
+  name: 'maestro',
+  exact: true,
+  component: () => (
+      <MaestroMainPage delay='0' />
+  ),
+});
+
+registerRoute({
+  path: '/maestro/cluster',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro',

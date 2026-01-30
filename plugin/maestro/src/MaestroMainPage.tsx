@@ -286,7 +286,7 @@ function ClusterRows(pars) {
         {isClusterPage ?
           <span>{clusterName}</span>
           :
-          <Link to={`/maestro?cluster=${clusterName}`}>{clusterName}</Link>
+          <Link to={`/maestro/cluster?cluster=${clusterName}`}>{clusterName}</Link>
         }
         </TableCell>
         <TableCell rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}>controlplane</TableCell>
