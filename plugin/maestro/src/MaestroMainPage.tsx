@@ -53,6 +53,8 @@ const statusOrphanOptions: StatusOption[] = [
   { value: 'worker', label: 'Worker', color: '#e8f5e9', icon: '🟢' },
 ];
 
+const orphansClusterName = '_Orphans';
+let isClusterPage = false;
 const selectedNodeStage = {};
 const selectedDefaultNodeStage = {};
 
@@ -109,7 +111,7 @@ function NodeStage(pars) {
   const node=pars.node;
   const nodeType = pars.nodeType;
   const stage = pars.stage;
-  if (stage == 'running') {
+  if (stage == 'running' && isClusterPage) {
     return (
     <TableCell>
       <NodeStageSelect
@@ -264,7 +266,9 @@ function ClusterRows(pars) {
   if (isOrphan) {
     return (
       <TableRow>
-        <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>{clusterName}</TableCell>
+        <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>
+          {clusterName}
+        </TableCell>
         <TableCell rowSpan={clusterNameRowSpans[clusterName]['workers']}>-</TableCell>
         <NodeRows
           clusterName={clusterName}
@@ -278,7 +282,13 @@ function ClusterRows(pars) {
         return (
     <>
       <TableRow>
-        <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>{clusterName}</TableCell>
+        <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>
+        {isClusterPage ?
+          <span>{clusterName}</span>
+          :
+          <Link to={`/maestro?cluster=${clusterName}`}>{clusterName}</Link>
+        }
+        </TableCell>
         <TableCell rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}>controlplane</TableCell>
         <NodeRows
           clusterName={clusterName}
@@ -385,7 +395,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
     setTimeout(value as IntervalValue);
   };
 
-  if (loading) return <div>Loading cluster map...</div>;
+  if (loading) return <div>Loading cluster list...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!rows) return <div>No data received</div>;
 
@@ -394,8 +404,11 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
   if ( typeof cluster != 'undefined' ) {
     Rows = {};
     Rows[cluster] = rows[cluster];
+    Rows[orphansClusterName] = rows[orphansClusterName];
+    isClusterPage = true;
   } else {
     Rows = rows;
+    isClusterPage = false;
   }
 
 //   alert('Rows=' + JSON.stringify(rows, null, 2));
@@ -432,6 +445,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
   <SectionBox title="CLUSTERS" textAlign="left" paddingTop={2}>
     <Typography>
     <Link to="/maestro">Clusters</Link>
+    {isClusterPage ? <span>&nbsp;/&nbsp;{cluster}</span> :<span/>}
     </Typography>
     <Paper>
       <div style={{ marginBottom: '16px' }}>
@@ -475,7 +489,10 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
       </TableContainer>
       </FormControl>
 
-      <TextField disabled={isEnterClusterNameDisabled}
+      {isClusterPage ?
+        <div/>
+        :
+      <TextField
         fullWidth
         margin="normal"
         required
@@ -490,11 +507,12 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
         }}
         error={!!errors.nameOfCluster}
         helperText={errors.nameOfCluster}
-        placeholder="my-cluster-prod"
+        placeholder="mew-cluster-name"
         inputProps={{ 'aria-label': 'Cluster name' }}
       />
+      }
 
-      <Button disabled={isSubmitDisabled}
+      <Button
         type="submit"
         variant="contained"
         color="primary"
