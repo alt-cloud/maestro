@@ -56,7 +56,7 @@ const statusOrphanOptions: StatusOption[] = [
 
 const orphansClusterName = '_Orphans';
 let isClusterPage = false;
-const selectedNodeStage = {};
+let selectedNodeStage = {};
 const selectedDefaultNodeStage = {};
 
 function alignInterval(delay) {
@@ -128,6 +128,7 @@ function NodeStage(pars) {
     <TableCell>
       <NodeStageSelect
         statusOptions={statusOrphanOptions}
+        clusterName={pars.clusterName}
         node={node}
         setIsSubmitDisabled={pars.setIsSubmitDisabled}
         />
@@ -143,19 +144,22 @@ function NodeStageSelect(pars) {
 //         alert(pars.setIsSubmitDisabled);
     const statusOptions = pars.statusOptions;
     const node = pars.node;
+    const clusterName = pars.clusterName;
     const [status, setStatus] = useState(selectedDefaultNodeStage[node]);
-    selectedNodeStage[node] = pars.stage;
+//     selectedNodeStage[node] = pars.stage;
 //     alert('selectedDefaultNodeStage=' + JSON.stringify(selectedNodeStage))
+
     const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
 //         alert(pars.setIsSubmitDisabled);
 //       alert(event.target.value);
       const value = event.target.value as string;
-      selectedNodeStage[node] = value;
-//       alert('selectedNodeStage=' + JSON.stringify(selectedNodeStage))
+      selectedNodeStage[clusterName][node] = value;
       setStatus(value);
+      alert('handleChange:: selectedNodeStage=' + JSON.stringify(selectedNodeStage))
       // pars.setIsSubmitDisabled(false);
 //       setIsSubmitDisabled(false);
     };
+
     return (
     <FormControl sx={{ minWidth: 90 }}>
       <Select
@@ -214,6 +218,7 @@ function NodeCols(pars) {
     </TableCell>
     <NodeStage
       nodeType={nodeType}
+      clusterName={pars.clusterName}
       stage={cols['stage']}
       node={node}
       setIsSubmitDisabled={pars.setIsSubmitDisabled}
@@ -421,8 +426,10 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
 
 //   alert('Rows=' + JSON.stringify(rows, null, 2));
   var clusterNameRowSpans = {}
+  selectedNodeStage = {};
   const rowsDict = new Map(Object.entries(Rows));
   for (var clusterName of Object.keys(Rows)) {
+    selectedNodeStage[clusterName] = {};
     const isOrphan = clusterName[0] ==  '_';
     var rowSpans = {};
     var nodeTypes = rowsDict.get(clusterName);
@@ -431,15 +438,19 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
     for (let node of controlplanes) {
       let stage = isOrphan ? 'maintenance' : 'running'
       selectedDefaultNodeStage[node['ip']] = stage;
-      selectedNodeStage[node['ip']] = stage;
+      selectedNodeStage[clusterName][node['ip']] = stage;
     }
+//   alert('MaestroMainPage_CP:: selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
+
     var workers = nodeTypes['workers'];
+//     alert('workers=' + JSON.stringify(workers, null, 2));
     for (let node of workers) {
       let stage = isOrphan ? 'maintenance' : 'running'
       selectedDefaultNodeStage[node['ip']] = stage;
-      selectedNodeStage[node['ip']] = stage;
+      selectedNodeStage[clusterName][node['ip']] = stage;
     }
-//     alert('workers=' + JSON.stringify(workers, null, 2));
+//   alert('MaestroMainPage_W:: selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
+
     rowSpans['controlplanes'] = Math.max(controlplanes.length, 1);
     rowSpans['workers'] = Math.max(workers.length, 1);
     rowSpans['all'] = isOrphan? Math.max(workers.length, 1) : rowSpans['controlplanes'] + Math.max(workers.length, 1);
@@ -447,7 +458,11 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
   }
 //   alert('clusterNameRowSpans=' + JSON.stringify(clusterNameRowSpans));
 //   alert('selectedDefaultNodeStage=' + JSON.stringify(selectedDefaultNodeStage));
-//   alert('selectedNodeStage=' + JSON.stringify(selectedNodeStage));
+  alert('MaestroMainPage:: selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
+
+  const handleSubmit =  (item)=> {
+      alert('ITEM=' + JSON.stringify(item, null, 2));
+  };
 
   return (
   <SectionBox title="CLUSTERS" textAlign="left" paddingTop={2}>
@@ -531,7 +546,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
       }
 
       <Button
-        type="submit"
+        onClick={() => handleSubmit(selectedNodeStage)}
         variant="contained"
         color="success"
         fullWidth
