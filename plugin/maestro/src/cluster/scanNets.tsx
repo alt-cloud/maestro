@@ -210,7 +210,7 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
             if (e.key === 'Enter') handleAdd();
           }}
         />
-        <Button variant="contained" onClick={handleAdd}>
+        <Button variant="contained" color="success" onClick={handleAdd}>
           Add
         </Button>
       </Box>

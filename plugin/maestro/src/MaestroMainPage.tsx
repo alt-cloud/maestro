@@ -20,6 +20,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Divider
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
@@ -265,6 +266,12 @@ function ClusterRows(pars) {
   const isOrphan = clusterName[0] ==  '_';
   if (isOrphan) {
     return (
+      <>
+      <Divider
+        style={{
+          backgroundColor: 'green',
+          height: 5
+        }} />
       <TableRow>
         <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>
           {clusterName}
@@ -277,6 +284,7 @@ function ClusterRows(pars) {
           setIsSubmitDisabled={pars.setIsSubmitDisabled}
           />
       </TableRow>
+    </>
     );
   } else {
         return (
@@ -476,6 +484,11 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
             </TableRow>
           </TableHead>
           <TableBody>
+          <Divider
+            style={{
+              backgroundColor: 'green',
+              height: 5
+            }} />
           {Object.entries(Rows).map(([clusterName, nodeTypes]) => (
             <ClusterRows
               clusterName={clusterName}
@@ -484,6 +497,11 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
               setIsSubmitDisabled={setIsSubmitDisabled}
               />
           ))}
+          <Divider
+            style={{
+              backgroundColor: 'green',
+              height: 5
+            }} />
           </TableBody>
         </Table>
       </TableContainer>
@@ -515,14 +533,27 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
       <Button
         type="submit"
         variant="contained"
-        color="primary"
+        color="success"
         fullWidth
         sx={{ mt: 3, py: 1.5 }}
         aria-label="Create cluster"
       >Apply Changes</Button>
     </form>
     </Paper>
-    <Link to="/maestro/cluster/scanNets">Scan networks</Link>
+    <Divider
+      style={{
+        backgroundColor: '#ffffff',
+        height: 5
+      }}
+    />
+    <Button
+      component={Link}
+      to="/maestro/cluster/scanNets"
+      color="success"
+      variant="contained"
+    >
+      Scan networks
+    </Button>
   </SectionBox>
   );
 }
