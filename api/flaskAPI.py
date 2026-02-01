@@ -351,12 +351,17 @@ def nodesTree():
   nodesTree = {}
   for nodeType in ['controlplanes', 'workers']:
     for node in nodeTypes[nodeType]:
-      # print(nodeType, node)
+      print(nodeType, node)
       [spec, returncode] = talosgetspec('info', node, '')
-      # print('clusterName=%s returncode=%d' % (clusterName, returncode))
+      # print('clusterName=%s returncode=%d ' % (clusterName, returncode))
+      print('spec=', spec)
+      print('returncode=', returncode)
       if returncode != 0:
         clusterName = '_Orphans'
         insecure = '-i'
+        [spec, returncode] = talosgetspec('info', node, insecure)
+        if returncode != 0:
+          clusterName = '_Unknown'
       else:
         clusterName = spec['clusterName']
         insecure = ''
@@ -364,20 +369,21 @@ def nodesTree():
         nodesTree[clusterName] = { 'controlplanes': [], 'workers': [] }
       nodeInfo = {}
       nodeInfo['ip'] = node
-      [spec, returncode] = talosgetspec('machinestatus', node, insecure)
-      nodeInfo['stage'] = spec['stage']
-      nodeInfo['status'] = spec['status']
-      [spec, returncode] = talosgetspec('nodestatus', node, insecure)
-      if returncode == 0:
-        nodeInfo['nodeReady'] = spec['nodeReady']
-      if nodeType == 'controlplanes':
-        [spec, returncode] = talosgetspec('manifeststatus', node, insecure)
-        nodeInfo['manifestsApplied'] = spec['manifestsApplied']
-        [spec, returncode] = talosgetspec('etcdmember', node, insecure)
-        nodeInfo['memberID'] = spec['memberID']
-      else:
-        nodeInfo['manifestsApplied'] = []
-        nodeInfo['memberID'] = '-'
+      if clusterName != '_Unknown':
+        [spec, returncode] = talosgetspec('machinestatus', node, insecure)
+        nodeInfo['stage'] = spec['stage']
+        nodeInfo['status'] = spec['status']
+        [spec, returncode] = talosgetspec('nodestatus', node, insecure)
+        if returncode == 0:
+          nodeInfo['nodeReady'] = spec['nodeReady']
+        if nodeType == 'controlplanes':
+          [spec, returncode] = talosgetspec('manifeststatus', node, insecure)
+          nodeInfo['manifestsApplied'] = spec['manifestsApplied']
+          [spec, returncode] = talosgetspec('etcdmember', node, insecure)
+          nodeInfo['memberID'] = spec['memberID']
+        else:
+          nodeInfo['manifestsApplied'] = []
+          nodeInfo['memberID'] = '-'
       nodesTree[clusterName][nodeType].append(nodeInfo)
   return nodesTree
 

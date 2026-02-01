@@ -201,7 +201,7 @@ function NodeStage(pars) {
     );
   }
   return (
-    <TableCell>{stage}</TableCell>
+    <TableCell>{stage == undefined ? '?' : stage}</TableCell>
   );
 }
 
@@ -231,10 +231,10 @@ function NodeCols(pars) {
       setIsSubmitDisabled={pars.setIsSubmitDisabled}
       />
     <TableCell>{cols['nodeReady'] ? 'V' : 'X'}</TableCell>
-    <TableCell>{cols['status']['ready'] ? 'V' : 'X'}</TableCell>
+    <TableCell>{cols['status'] == undefined ? '-' : cols['status']['ready'] ? 'V' : 'X'}</TableCell>
     <TableCell>{cols['memberID'] == '-' ? 'X' : 'V'}</TableCell>
-    <TableCell>{cols['manifestsApplied'].length}</TableCell>
-    <TableCell>{cols['status']['unmetConditions'].join("<br/>")}</TableCell>
+    <TableCell>{cols['manifestsApplied'] == undefined ? '-' : cols['manifestsApplied'].length}</TableCell>
+    <TableCell>{cols['status'] == undefined ? '-' : cols['status']['unmetConditions'].join("<br/>")}</TableCell>
     </>
   );
 }
@@ -243,7 +243,7 @@ function ClusterRows(pars) {
   const clusterName = pars.clusterName;
   const nodeTypes = pars.nodeTypes;
   const clusterNameRowSpans = pars.clusterNameRowSpans;
-  const isOrphan = clusterName[0] ==  '_';
+  const isOrphan = clusterName == orphansClusterName;
   let controlplanesValues = nodeTypes['controlplanes'];
   let controlplanesValue0 = controlplanesValues.shift();
   let workersValues = nodeTypes['workers'];
@@ -426,7 +426,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
 //   alert('rowsDict=' + JSON.stringify(rowsDict, null, 2));
   for (var clusterName of Object.keys(Rows)) {
     selectedNodeStage[clusterName] = {};
-    const isOrphan = clusterName[0] ==  '_';
+    const isOrphan = clusterName ==  orphansClusterName;
     var rowSpans = {};
     var nodeTypes = rowsDict.get(clusterName);
 //     alert('clusterName=' + clusterName , null, 2);
@@ -459,7 +459,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
     let actions = {};
     let toClusterName;
     for (let clusterName in selectedNodeStage) {
-      let isOrphan = clusterName[0] == '_';
+      let isOrphan = clusterName == orphansClusterName;
       if (!isOrphan) toClusterName = clusterName;
       for (let ip in selectedNodeStage[clusterName]) {
         let state = selectedNodeStage[clusterName][ip];
