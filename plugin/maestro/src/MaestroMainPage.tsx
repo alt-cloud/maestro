@@ -207,9 +207,12 @@ function NodeStage(pars) {
 
 
 function NodeCols(pars) {
+  const cols = pars.cols;
+  if (cols == undefined) {
+    return (<TableCell>-</TableCell>);
+  }
 //   alert('PARS=' + JSON.stringify(pars, null, 2));
   const nodeType = pars.nodeType;
-  const cols = pars.cols;
   const node = cols['ip'];
   const clusterName = pars.clusterName;
   const href = clusterName[0] == '_' ? '/maestro/node/get' : '/maestro/node';
@@ -242,10 +245,8 @@ function ClusterRows(pars) {
   const clusterNameRowSpans = pars.clusterNameRowSpans;
   const isOrphan = clusterName[0] ==  '_';
   let controlplanesValues = nodeTypes['controlplanes'];
-  if (controlplanesValues.length == 0) controlplanesValues = ['-'];
   let controlplanesValue0 = controlplanesValues.shift();
   let workersValues = nodeTypes['workers'];
-  if (workersValues.length == 0) workersValues = ['-'];
   let workersValue0 = workersValues.shift();
 
 //   alert('ROWSPAN:: controlplanes=' + clusterNameRowSpans[clusterName]['controlplanes'] +
