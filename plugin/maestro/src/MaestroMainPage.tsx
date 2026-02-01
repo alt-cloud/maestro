@@ -117,6 +117,7 @@ function NodeStage(pars) {
     <TableCell>
       <NodeStageSelect
         statusOptions={statusClusterOptions}
+        clusterName={pars.clusterName}
         node={node}
         setIsSubmitDisabled={pars.setIsSubmitDisabled}
         />
@@ -147,15 +148,15 @@ function NodeStageSelect(pars) {
     const clusterName = pars.clusterName;
     const [status, setStatus] = useState(selectedDefaultNodeStage[node]);
 //     selectedNodeStage[node] = pars.stage;
-//     alert('selectedDefaultNodeStage=' + JSON.stringify(selectedNodeStage))
+//     alert('selectedDefaultNodeStage=' + JSON.stringify(selectedNodeStage) + ' node=' + node + ' status=' + status);
 
     const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-//         alert(pars.setIsSubmitDisabled);
-//       alert(event.target.value);
+//       alert('handleChange:: pars=' + JSON.stringify(pars));
+//       alert('handleChange:: value=' + event.target.value + ' clusterName=' + clusterName);
       const value = event.target.value as string;
       selectedNodeStage[clusterName][node] = value;
       setStatus(value);
-      alert('handleChange:: selectedNodeStage=' + JSON.stringify(selectedNodeStage))
+//       alert('handleChange:: selectedNodeStage=' + JSON.stringify(selectedNodeStage))
       // pars.setIsSubmitDisabled(false);
 //       setIsSubmitDisabled(false);
     };
@@ -458,7 +459,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
   }
 //   alert('clusterNameRowSpans=' + JSON.stringify(clusterNameRowSpans));
 //   alert('selectedDefaultNodeStage=' + JSON.stringify(selectedDefaultNodeStage));
-  alert('MaestroMainPage:: selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
+//   alert('MaestroMainPage:: selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
 
   const handleSubmit =  (item)=> {
       alert('ITEM=' + JSON.stringify(item, null, 2));
