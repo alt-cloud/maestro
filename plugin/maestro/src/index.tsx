@@ -121,10 +121,10 @@ import ScanNets from './cluster/scanNets.tsx';
 
 registerRoute({
   path: '/maestro/cluster/scanNets',
-  sidebar: {
-    item: 'maestro',
-    sidebar: 'myplugin',
-  },
+//   sidebar: {
+//     item: 'maestro',
+//     sidebar: 'myplugin',
+//   },
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_cluster_scanNets',

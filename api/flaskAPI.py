@@ -189,12 +189,39 @@ def talosctl():
       )
       reply = { 'content': result.stdout }
       return reply
+    # Добавление узда в кластер, изменение состояний узла
 
     # Неподдкживаемые команды
     return {
         'all_params': dict(all_params),
         'params_dict': params_dict
     }
+
+@app.route('/apply', methods=['GET', 'POST'])
+def apply():
+  homedir = os.getenv('HOME')
+  print('REQUEST=%s' % request.method);
+  request_json = request.get_json()
+  print('JSON=', request_json);
+  maestrConfigDir =  os.getenv('HOME') + '/.maestro'
+  if not os.path.isdir(maestrConfigDir):
+    os.mkdir(maestrConfigDir)
+  for clusterName in request_json:
+    # print("clusterName=%s" % clusterName)
+    for action in request_json[clusterName]:
+      ips = request_json[clusterName][action]
+      for ip in ips:
+        # print("clusterName=%s action=%s ip=%s" % (clusterName, action, ip))
+        if action == 'controlplane' or action == 'worker':
+          runCmd = 'talosctl apply-config --insecure -n %s --file %s/%s.yaml' % (ip, clusterName, action)
+          print('runCmd=', runCmd)
+          result = subprocess.run(runCmd,
+            shell=True,
+            stdout=subprocess.PIPE,
+            cwd='%s/.maestro/' % homedir,
+            encoding='utf-8'
+          )
+  return {}
 
 # Функция анализирует вывод команды nmap и определеяет список IP адресов узлов (с DNS именамиб если они имеются),
 # которые слушают порты 50000 (сервис apid) и 6443 (kubeAPI).

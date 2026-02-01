@@ -56,8 +56,8 @@ const statusOrphanOptions: StatusOption[] = [
 
 const orphansClusterName = '_Orphans';
 let isClusterPage = false;
+let haveOrphans;
 let selectedNodeStage = {};
-const selectedDefaultNodeStage = {};
 
 function alignInterval(delay) {
   if (typeof delay === 'undefined' || Number.isNaN(Number(delay)) || Number(delay) <= 0 ) {
@@ -108,47 +108,15 @@ const columns: Column[] = [
   icon?: React.ReactNode;
 }
 
-function NodeStage(pars) {
-  const node=pars.node;
-  const nodeType = pars.nodeType;
-  const stage = pars.stage;
-  if (stage == 'running' && isClusterPage) {
-    return (
-    <TableCell>
-      <NodeStageSelect
-        statusOptions={statusClusterOptions}
-        clusterName={pars.clusterName}
-        node={node}
-        setIsSubmitDisabled={pars.setIsSubmitDisabled}
-        />
-    </TableCell>
-    );
-  }
-  if (stage == 'maintenance') {
-    return (
-    <TableCell>
-      <NodeStageSelect
-        statusOptions={statusOrphanOptions}
-        clusterName={pars.clusterName}
-        node={node}
-        setIsSubmitDisabled={pars.setIsSubmitDisabled}
-        />
-    </TableCell>
-    );
-  }
-  return (
-    <TableCell>{stage}</TableCell>
-  );
-}
-
 function NodeStageSelect(pars) {
 //         alert(pars.setIsSubmitDisabled);
     const statusOptions = pars.statusOptions;
     const node = pars.node;
+    const stage = pars.stage;
     const clusterName = pars.clusterName;
-    const [status, setStatus] = useState(selectedDefaultNodeStage[node]);
-//     selectedNodeStage[node] = pars.stage;
-//     alert('selectedDefaultNodeStage=' + JSON.stringify(selectedNodeStage) + ' node=' + node + ' status=' + status);
+//     alert('stage=' + stage);
+    const [status, setStatus] = useState<string>(stage);
+//     selectedNodeStage[clusterName][node] = pars.stage;
 
     const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
 //       alert('handleChange:: pars=' + JSON.stringify(pars));
@@ -200,8 +168,43 @@ function NodeStageSelect(pars) {
       </Select>
     </FormControl>
     );
-//   };
 }
+
+function NodeStage(pars) {
+  const node=pars.node;
+  const nodeType = pars.nodeType;
+  const stage = pars.stage;
+  if (stage == 'running' && isClusterPage) {
+    return (
+    <TableCell>
+      <NodeStageSelect
+        statusOptions={statusClusterOptions}
+        clusterName={pars.clusterName}
+        node={node}
+        stage={stage}
+        setIsSubmitDisabled={pars.setIsSubmitDisabled}
+        />
+    </TableCell>
+    );
+  }
+  if (stage == 'maintenance') {
+    return (
+    <TableCell>
+      <NodeStageSelect
+        statusOptions={statusOrphanOptions}
+        clusterName={pars.clusterName}
+        node={node}
+        stage={stage}
+        setIsSubmitDisabled={pars.setIsSubmitDisabled}
+        />
+    </TableCell>
+    );
+  }
+  return (
+    <TableCell>{stage}</TableCell>
+  );
+}
+
 
 function NodeCols(pars) {
 //   alert('PARS=' + JSON.stringify(pars, null, 2));
@@ -233,91 +236,79 @@ function NodeCols(pars) {
   );
 }
 
-function NodeRows(pars) {
-    const nodeType = pars.nodeType;
-    var values = pars.values;
-//   alert('nodeType=' + JSON.stringify(nodeType) + ' VALUES=' + JSON.stringify(values));
-  if (values.length == 0) {
-    return (<TableCell>-</TableCell>);
-  }
-  const value0 = values.shift();
-  return (
-    <>
-    <NodeCols
-      type={nodeType}
-      clusterName={pars.clusterName}
-      nodeType={nodeType}
-      cols={value0}
-      setIsSubmitDisabled={pars.setIsSubmitDisabled}
-      />
-    {values.map(value => (
-    <TableRow>
-      <NodeCols
-        type={nodeType}
-        clusterName={pars.clusterName}
-        nodeType={nodeType}
-        cols={value}
-        setIsSubmitDisabled={pars.setIsSubmitDisabled}
-        />
-    </TableRow>
-    ))}
-    </>
-  );
-}
-
 function ClusterRows(pars) {
   const clusterName = pars.clusterName;
   const nodeTypes = pars.nodeTypes;
   const clusterNameRowSpans = pars.clusterNameRowSpans;
   const isOrphan = clusterName[0] ==  '_';
-  if (isOrphan) {
-    return (
+  let controlplanesValues = nodeTypes['controlplanes'];
+  if (controlplanesValues.length == 0) controlplanesValues = ['-'];
+  let controlplanesValue0 = controlplanesValues.shift();
+  let workersValues = nodeTypes['workers'];
+  if (workersValues.length == 0) workersValues = ['-'];
+  let workersValue0 = workersValues.shift();
+
+//   alert('ROWSPAN:: controlplanes=' + clusterNameRowSpans[clusterName]['controlplanes'] +
+//     ' workers=' + clusterNameRowSpans[clusterName]['workers']);
+  return (
+  <>
+    <TableRow>
+      <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>
+      {isClusterPage ?
+        <span>{clusterName}</span>
+        :
+        <Link to={`/maestro/cluster?cluster=${clusterName}`}>{clusterName}</Link>
+      }
+      </TableCell>
+      {isOrphan ?
+        <Divider
+          style={{
+            backgroundColor: 'green',
+            height: 5
+          }} />
+      :
       <>
-      <Divider
-        style={{
-          backgroundColor: 'green',
-          height: 5
-        }} />
+      <TableCell rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}>controlplane</TableCell>
+      <NodeCols
+        clusterName={pars.clusterName}
+        nodeType='controlplane'
+        cols={controlplanesValue0}
+        setIsSubmitDisabled={pars.setIsSubmitDisabled}
+        />
+      </>
+      }
+    </TableRow>
+    {controlplanesValues.map(value => (
       <TableRow>
-        <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>
-          {clusterName}
-        </TableCell>
-        <TableCell rowSpan={clusterNameRowSpans[clusterName]['workers']}>-</TableCell>
-        <NodeRows
-          clusterName={clusterName}
-          nodeType='worker'
-          values={nodeTypes['workers']}
-          setIsSubmitDisabled={pars.setIsSubmitDisabled}
-          />
-      </TableRow>
-    </>
-    );
-  } else {
-        return (
-    <>
-      <TableRow>
-        <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>
-        {isClusterPage ?
-          <span>{clusterName}</span>
-          :
-          <Link to={`/maestro/cluster?cluster=${clusterName}`}>{clusterName}</Link>
-        }
-        </TableCell>
-        <TableCell rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}>controlplane</TableCell>
-        <NodeRows
-          clusterName={clusterName}
+        <NodeCols
+          clusterName={pars.clusterName}
           nodeType='controlplane'
-          values={nodeTypes['controlplanes']}
+          cols={value}
           setIsSubmitDisabled={pars.setIsSubmitDisabled}
           />
       </TableRow>
+    ))}
+    <TableRow>
+      <TableCell rowSpan={clusterNameRowSpans[clusterName]['workers']}>worker</TableCell>
+      <NodeCols
+        clusterName={pars.clusterName}
+        nodeType='worker'
+        cols={workersValue0}
+        setIsSubmitDisabled={pars.setIsSubmitDisabled}
+        />
+    </TableRow>
+    {workersValues.map(value => (
       <TableRow>
-        <TableCell rowSpan={clusterNameRowSpans[clusterName]['workers']}>worker</TableCell>
-        <NodeRows clusterName={clusterName} nodeType='worker' values={nodeTypes['workers']}/>
+        <NodeCols
+          clusterName={pars.clusterName}
+          nodeType='worker'
+          cols={value}
+          setIsSubmitDisabled={pars.setIsSubmitDisabled}
+          />
       </TableRow>
-    </>
-    );
-  }
+    ))}
+  </>
+  );
 }
 
 const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
@@ -415,30 +406,33 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
 
 //   alert(JSON.stringify(rows, null, 2));
   var Rows;
+  haveOrphans = rows[orphansClusterName] != undefined;
+//   alert('haveOrphans=' + haveOrphans);
   if ( typeof cluster != 'undefined' ) {
     Rows = {};
     Rows[cluster] = rows[cluster];
-    Rows[orphansClusterName] = rows[orphansClusterName];
+    if (haveOrphans) Rows[orphansClusterName] = rows[orphansClusterName];
     isClusterPage = true;
   } else {
     Rows = rows;
     isClusterPage = false;
   }
 
-//   alert('Rows=' + JSON.stringify(rows, null, 2));
+//   alert('Rows=' + JSON.stringify(Rows, null, 2));
   var clusterNameRowSpans = {}
   selectedNodeStage = {};
   const rowsDict = new Map(Object.entries(Rows));
+//   alert('rowsDict=' + JSON.stringify(rowsDict, null, 2));
   for (var clusterName of Object.keys(Rows)) {
     selectedNodeStage[clusterName] = {};
     const isOrphan = clusterName[0] ==  '_';
     var rowSpans = {};
     var nodeTypes = rowsDict.get(clusterName);
+//     alert('clusterName=' + clusterName , null, 2);
     var controlplanes = nodeTypes['controlplanes'];
 //     alert('controlplanes=' + JSON.stringify(controlplanes, null, 2));
     for (let node of controlplanes) {
       let stage = isOrphan ? 'maintenance' : 'running'
-      selectedDefaultNodeStage[node['ip']] = stage;
       selectedNodeStage[clusterName][node['ip']] = stage;
     }
 //   alert('MaestroMainPage_CP:: selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
@@ -447,7 +441,6 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
 //     alert('workers=' + JSON.stringify(workers, null, 2));
     for (let node of workers) {
       let stage = isOrphan ? 'maintenance' : 'running'
-      selectedDefaultNodeStage[node['ip']] = stage;
       selectedNodeStage[clusterName][node['ip']] = stage;
     }
 //   alert('MaestroMainPage_W:: selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
@@ -457,12 +450,43 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
     rowSpans['all'] = isOrphan? Math.max(workers.length, 1) : rowSpans['controlplanes'] + Math.max(workers.length, 1);
     clusterNameRowSpans[clusterName] = rowSpans;
   }
-//   alert('clusterNameRowSpans=' + JSON.stringify(clusterNameRowSpans));
-//   alert('selectedDefaultNodeStage=' + JSON.stringify(selectedDefaultNodeStage));
+//   alert('clusterNameRowSpans=' + JSON.stringify(clusterNameRowSpans, null, 2));
 //   alert('MaestroMainPage:: selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
 
-  const handleSubmit =  (item)=> {
-      alert('ITEM=' + JSON.stringify(item, null, 2));
+  const handleSubmit = async (selectedNodeStage)=> {
+      alert('selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
+    let actions = {};
+    let toClusterName;
+    for (let clusterName in selectedNodeStage) {
+      let isOrphan = clusterName[0] == '_';
+      if (!isOrphan) toClusterName = clusterName;
+      for (let ip in selectedNodeStage[clusterName]) {
+        let state = selectedNodeStage[clusterName][ip];
+        if (isOrphan && state != 'maintenance' || !isOrphan && state != 'running') {
+          if (actions[toClusterName] === undefined) actions[toClusterName] = {};
+          if (actions[toClusterName][state] === undefined)  actions[toClusterName][state] = []
+          actions[toClusterName][state].push(ip);
+        }
+      }
+    }
+    alert('Actions=' + JSON.stringify(actions, null, 2));
+    try {
+      const response = await fetch('http://localhost:5000/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(actions),
+      });
+
+      if (response.ok) {
+        // Set refresh timeout
+        setTimeout(alignInterval('5') as IntervalValue);
+      } else {
+        console.error('Sending error');
+      }
+    } catch (err) {
+      console.error('Net error:', err);
+    }
+
   };
 
   return (
@@ -523,7 +547,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
       </TableContainer>
       </FormControl>
 
-      {isClusterPage ?
+      {isClusterPage || !haveOrphans ?
         <div/>
         :
       <TextField
@@ -545,7 +569,9 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
         inputProps={{ 'aria-label': 'Cluster name' }}
       />
       }
-
+      {!haveOrphans ?
+        <div/>
+        :
       <Button
         onClick={() => handleSubmit(selectedNodeStage)}
         variant="contained"
@@ -554,6 +580,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
         sx={{ mt: 3, py: 1.5 }}
         aria-label="Create cluster"
       >Apply Changes</Button>
+      }
     </form>
     </Paper>
     <Divider
