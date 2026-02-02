@@ -203,13 +203,65 @@ def apply():
   print('REQUEST=%s' % request.method);
   request_json = request.get_json()
   print('JSON=', request_json);
-  maestrConfigDir =  os.getenv('HOME') + '/.maestro'
-  if not os.path.isdir(maestrConfigDir):
-    os.mkdir(maestrConfigDir)
+  maestroConfigDir =  os.getenv('HOME') + '/.maestro'
+  talosconfigFile = maestroConfigDir + '/talosconfig'
+  if not os.path.isfile(talosconfigFile):
+    fp = open(talosconfigFile, 'w')
+    fp.write("context:\ncontexts:\n")
+    fp.close()
   for clusterName in request_json:
     # print("clusterName=%s" % clusterName)
+    clusterConfigDir = '%s/%s' %( maestroConfigDir, clusterName)
+    if not os.path.isdir(clusterConfigDir):
+      os.mkdir(clusterConfigDir)
+      print('MKDIR: %s' % clusterConfigDir)
+      controlplane =  request_json[clusterName]['controlplane'][0]
+      kubeEndpoint = 'https://%s:6443' % controlplane
+      runCmd = 'talosctl gen config %s %s --output %s' % (clusterName, kubeEndpoint, clusterName)
+      print('runCmd=', runCmd)
+      result = subprocess.run(runCmd,
+        shell=True,
+        stdout=subprocess.PIPE,
+        cwd='%s/.maestro/' % homedir,
+        encoding='utf-8'
+      )
+      runCmd = 'talosctl config merge %s/talosconfig' % clusterName
+      print('runCmd=', runCmd)
+      result = subprocess.run(runCmd,
+        shell=True,
+        stdout=subprocess.PIPE,
+        cwd='%s/.maestro/' % homedir,
+        encoding='utf-8'
+      )
+    runCmd = 'talosctl config context %s' % clusterName
+    print('runCmd=', runCmd)
+    result = subprocess.run(runCmd,
+      shell=True,
+      stdout=subprocess.PIPE,
+      cwd='%s/.maestro/' % homedir,
+      encoding='utf-8'
+    )
+    runCmd = 'talosctl config  info -o json'
+    print('runCmd=', runCmd)
+    result = subprocess.run(runCmd,
+      shell=True,
+      stdout=subprocess.PIPE,
+      cwd='%s/.maestro/' % homedir,
+      encoding='utf-8'
+    )
+    config = json.loads(result.stdout)
     for action in request_json[clusterName]:
       ips = request_json[clusterName][action]
+      endpoints = list(set(config['endpoints']+ips))
+      for nodeType in ['endpoint', 'node']:
+        runCmd = 'talosctl config %s %s' % (nodeType, ' '.join(endpoints))
+        print('runCmd=', runCmd)
+        result = subprocess.run(runCmd,
+          shell=True,
+          stdout=subprocess.PIPE,
+          cwd='%s/.maestro/' % homedir,
+          encoding='utf-8'
+        )
       for ip in ips:
         # print("clusterName=%s action=%s ip=%s" % (clusterName, action, ip))
         if action == 'controlplane' or action == 'worker':
@@ -265,13 +317,11 @@ def nodesList(nmapStr):
 def scanNets():
   homedir = os.getenv('HOME')
   print('REQUEST=', request.method);
-  maestrConfigDir =  os.getenv('HOME') + '/.maestro'
-  if not os.path.isdir(maestrConfigDir):
-    os.mkdir(maestrConfigDir)
-  scanNetsFile = maestrConfigDir + '/scanNets.json'
+  maestroConfigDir =  os.getenv('HOME') + '/.maestro'
+  scanNetsFile = maestroConfigDir + '/scanNets.json'
   if not os.path.isfile(scanNetsFile):
     fp = open(scanNetsFile, 'w')
-    json.dump([], fp, indent=2)
+    json.dump({'scanNets': []}, fp, indent=2)
     fp.close()
   if request.method == 'GET':
     fp = open(scanNetsFile, 'r')
@@ -307,7 +357,7 @@ def scanNets():
       else:
         nodeTypes['workers'].append(ip)
   print('nodeTypes=', nodeTypes)
-  nodeTypesFile = maestrConfigDir + '/nodeTypes.json'
+  nodeTypesFile = maestroConfigDir + '/nodeTypes.json'
   fp = open(nodeTypesFile, 'w')
   json.dump(nodeTypes, fp, indent=2)
   fp.close()
@@ -341,6 +391,8 @@ def nodesTree():
   homedir = os.getenv('HOME')
   configDir = homedir + '/.maestro'
   nodeTypesFile = configDir + '/nodeTypes.json'
+  if not os.path.isfile(nodeTypesFile):
+    return {}
   fp = open(nodeTypesFile, 'r')
   nodeTypes = json.load(fp)
   fp.close()
