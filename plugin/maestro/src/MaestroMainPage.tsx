@@ -216,13 +216,18 @@ function NodeCols(pars) {
   const nodeType = pars.nodeType;
   const node = cols['ip'];
   const clusterName = pars.clusterName;
+  const isUnknownClusterName = clusterName == unknownClusterName;
   const href = clusterName[0] == '_' ? '/maestro/node/get' : '/maestro/node';
   return (
     <>
     <TableCell>
+      {isUnknownClusterName ?
+        <span>{node}</span>
+      :
       <Link key={node} to={`${href}?cluster=${pars.clusterName}&node=${node}&type=${pars.type}`} >
         {node}
       </Link>
+      }
     </TableCell>
     <NodeStage
       nodeType={nodeType}
@@ -264,7 +269,7 @@ function ClusterRows(pars) {
   let controlplanesValue0 = controlplanesValues.shift();
   let workersValues = nodeTypes['workers'];
   let workersValue0 = workersValues.shift();
-
+//   alert('clusterName=' + clusterName);
 //   alert('ROWSPAN:: controlplanes=' + clusterNameRowSpans[clusterName]['controlplanes'] +
 //     ' workers=' + clusterNameRowSpans[clusterName]['workers']);
   return (
@@ -340,6 +345,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
 
   const [timeout, setTimeout] = useState<IntervalValue>(alignInterval(delay));
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const inputRef = useRef(null);
 
   const [nameOfCluster, setNameOfCluster] = useState<string>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -476,24 +482,55 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
   }
 //   alert('clusterNameRowSpans=' + JSON.stringify(clusterNameRowSpans, null, 2));
 //   alert('MaestroMainPage:: selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
-
-  const handleSubmit = async (selectedNodeStage)=> {
-      alert('selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
-    let actions = {};
+  const handleSubmit = async (selectedNodeStage, cluster)=> {
+//     alert('inputRef=' + inputRef);
+//     alert('selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
+//     let nameOfCluster = inputRef.current?.value;
+//     alert('nameOfCluster=' + nameOfCluster);
     let toClusterName;
+    if (inputRef != undefined) {
+      toClusterName = inputRef.current?.value;
+      if (toClusterName.length == 0) {
+        alert('To add a node to a new cluster, enter its name.');
+        return;
+      }
+    } else {
+      for (let clusterName in selectedNodeStage) {
+        if (clusterName[0] != '_') {
+          toClusterName = clusterName;
+          break;
+        }
+      }
+    }
+//     alert('toClusterName=' + toClusterName);
+    let actions = {};
+    let nOrphanControlPlanes = 0;
+    let nOrphanWorkers = 0;
     for (let clusterName in selectedNodeStage) {
+//       alert('clusterName=' + clusterName);
       let isOrphan = clusterName == orphansClusterName;
-      if (!isOrphan) toClusterName = clusterName;
       for (let ip in selectedNodeStage[clusterName]) {
+//         alert('ip=' + ip);
         let state = selectedNodeStage[clusterName][ip];
+//         alert('state=' + state);
         if (isOrphan && state != 'maintenance' || !isOrphan && state != 'running') {
           if (actions[toClusterName] === undefined) actions[toClusterName] = {};
           if (actions[toClusterName][state] === undefined)  actions[toClusterName][state] = []
           actions[toClusterName][state].push(ip);
+          if (state == 'controlplane') nOrphanControlPlanes += 1;
+          if (state == 'worker') nOrphanWorkers += 1;
         }
       }
     }
-    alert('Actions=' + JSON.stringify(actions, null, 2));
+//     alert('Actions=' + JSON.stringify(actions, null, 2));
+    if (Object.keys(actions).length == 0) {
+      alert('No changes');
+      return;
+    }
+    if (inputRef != undefined && nOrphanWorkers >0 && nOrphanControlPlanes ==0) {
+      alert('When creating a new cluster, at least one node of type controlplane is required.');
+      return;
+    }
     try {
       const response = await fetch('http://localhost:5000/apply', {
         method: 'POST',
@@ -570,29 +607,17 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
         <div/>
         :
       <TextField
-        fullWidth
-        margin="normal"
-        required
+        inputRef={inputRef}
+        defaultValue=""
         label="Cluster name"
-        id="cluster-name"
-        value={nameOfCluster}
-        onChange={(e) => {
-          setNameOfCluster(e.target.value);
-          if (errors.nameOfCluster && e.target.value.trim()) {
-            setErrors(prev => ({ ...prev, nameOfCluster: '' }));
-          }
-        }}
-        error={!!errors.nameOfCluster}
-        helperText={errors.nameOfCluster}
-        placeholder="mew-cluster-name"
-        inputProps={{ 'aria-label': 'Cluster name' }}
+        variant="outlined"
       />
       }
       {!haveOrphans ?
         <div/>
         :
       <Button
-        onClick={() => handleSubmit(selectedNodeStage)}
+        onClick={() => handleSubmit(selectedNodeStage, cluster)}
         variant="contained"
         color="success"
         fullWidth
@@ -604,7 +629,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
     </Paper>
     <Divider
       style={{
-        backgroundColor: '#ffffff',
+        backgroundColor: 'white',
         height: 5
       }}
     />
