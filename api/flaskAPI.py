@@ -387,6 +387,8 @@ def nodesTree():
         else:
           nodeInfo['manifestsApplied'] = []
           nodeInfo['memberID'] = '-'
+      elif clusterName == '_Orphans':
+        nodeInfo['stage'] = 'maintenance'
       nodesTree[clusterName][nodeType].append(nodeInfo)
   if '_Orphans' in nodesTree:
     nodesTree['_Orphans']['controlplanes'] = nodesTree['_Orphans']['workers']
