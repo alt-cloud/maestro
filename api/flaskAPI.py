@@ -331,9 +331,7 @@ def talosgetspec(subcmd, node, insecure):
   ret = ''
   if returncode == 0:
     jsonStr = result.stdout.strip()
-    if len(jsonStr) == 0:
-      returncode = -1
-    else:
+    if len(jsonStr) != 0:
       jsonDict = json.loads(jsonStr)
       ret = jsonDict['spec']
   return [ret, returncode]
@@ -360,6 +358,7 @@ def nodesTree():
         clusterName = '_Orphans'
         insecure = '-i'
         [spec, returncode] = talosgetspec('info', node, insecure)
+        print('returncode=', returncode)
         if returncode != 0:
           clusterName = '_Unknown'
       else:
@@ -369,12 +368,16 @@ def nodesTree():
         nodesTree[clusterName] = { 'controlplanes': [], 'workers': [] }
       nodeInfo = {}
       nodeInfo['ip'] = node
-      if clusterName != '_Unknown':
+      # print('clusterName=%s' % clusterName)
+      # print('SPEC=%s' % json.dumps(spec))
+      # print('len(SPEC)=%d' % len(spec))
+      # print("COND=",  clusterName != '_Unknown' and len(spec) > 2)
+      if clusterName != '_Unknown' and len(spec) > 0:
         [spec, returncode] = talosgetspec('machinestatus', node, insecure)
         nodeInfo['stage'] = spec['stage']
         nodeInfo['status'] = spec['status']
         [spec, returncode] = talosgetspec('nodestatus', node, insecure)
-        if returncode == 0:
+        if returncode == 0 :
           nodeInfo['nodeReady'] = spec['nodeReady']
         if nodeType == 'controlplanes':
           [spec, returncode] = talosgetspec('manifeststatus', node, insecure)
@@ -385,6 +388,9 @@ def nodesTree():
           nodeInfo['manifestsApplied'] = []
           nodeInfo['memberID'] = '-'
       nodesTree[clusterName][nodeType].append(nodeInfo)
+  if '_Orphans' in nodesTree:
+    nodesTree['_Orphans']['controlplanes'] = nodesTree['_Orphans']['workers']
+    nodesTree['_Orphans']['workers'] = []
   return nodesTree
 
 if __name__ == '__main__':

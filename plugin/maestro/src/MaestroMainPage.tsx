@@ -55,6 +55,7 @@ const statusOrphanOptions: StatusOption[] = [
 ];
 
 const orphansClusterName = '_Orphans';
+const unknownClusterName = '_Unknown';
 let isClusterPage = false;
 let haveOrphans;
 let selectedNodeStage = {};
@@ -239,6 +240,21 @@ function NodeCols(pars) {
   );
 }
 
+function ClusterDevider(pars) {
+  const clusterName = pars.clusterName;
+  const color = clusterName == orphansClusterName ? '#ffff00' : clusterName == unknownClusterName ? '#0000ff' : '#00ff00';
+//   alert('clusterName=' + clusterName + ' color=' + color);
+  return (
+    <TableRow>
+      <Divider
+        style={{
+          backgroundColor: 'green',
+          height: 5
+        }} />
+    </TableRow>
+  );
+}
+
 function ClusterRows(pars) {
   const clusterName = pars.clusterName;
   const nodeTypes = pars.nodeTypes;
@@ -252,32 +268,26 @@ function ClusterRows(pars) {
 //   alert('ROWSPAN:: controlplanes=' + clusterNameRowSpans[clusterName]['controlplanes'] +
 //     ' workers=' + clusterNameRowSpans[clusterName]['workers']);
   return (
-  <>
+    <>
+    <ClusterDevider clusterName={clusterName} />
     <TableRow>
       <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>
-      {isClusterPage ?
+      {isClusterPage || clusterName[0] =='_' ?
         <span>{clusterName}</span>
         :
         <Link to={`/maestro/cluster?cluster=${clusterName}`}>{clusterName}</Link>
       }
       </TableCell>
-      {isOrphan ?
-        <Divider
-          style={{
-            backgroundColor: 'green',
-            height: 5
-          }} />
-      :
-      <>
-      <TableCell rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}>controlplane</TableCell>
+      <TableCell
+        rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}>
+        {isOrphan ? <span>-</span> : <span>controlplane</span>}
+      </TableCell>
       <NodeCols
         clusterName={pars.clusterName}
         nodeType='controlplane'
         cols={controlplanesValue0}
         setIsSubmitDisabled={pars.setIsSubmitDisabled}
         />
-      </>
-      }
     </TableRow>
     {controlplanesValues.map(value => (
       <TableRow>
@@ -289,6 +299,16 @@ function ClusterRows(pars) {
           />
       </TableRow>
     ))}
+    {isOrphan ?
+    <TableRow>
+      <Divider
+        style={{
+          backgroundColor: 'yallow',
+          height: 5
+        }} />
+    </TableRow>
+    :
+    <>
     <TableRow>
       <TableCell rowSpan={clusterNameRowSpans[clusterName]['workers']}>worker</TableCell>
       <NodeCols
@@ -308,6 +328,8 @@ function ClusterRows(pars) {
           />
       </TableRow>
     ))}
+    </>
+    }
   </>
   );
 }
@@ -429,7 +451,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
     const isOrphan = clusterName ==  orphansClusterName;
     var rowSpans = {};
     var nodeTypes = rowsDict.get(clusterName);
-//     alert('clusterName=' + clusterName , null, 2);
+//     alert('nodeTypes=' +JSON.stringify(nodeTypes , null, 2));
     var controlplanes = nodeTypes['controlplanes'];
 //     alert('controlplanes=' + JSON.stringify(controlplanes, null, 2));
     for (let node of controlplanes) {
@@ -446,7 +468,8 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
     }
 //   alert('MaestroMainPage_W:: selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
 
-    rowSpans['controlplanes'] = Math.max(controlplanes.length, 1);
+
+    rowSpans['controlplanes'] = isOrphan? controlplanes.length : Math.max(controlplanes.length, 1);
     rowSpans['workers'] = Math.max(workers.length, 1);
     rowSpans['all'] = isOrphan? Math.max(workers.length, 1) : rowSpans['controlplanes'] + Math.max(workers.length, 1);
     clusterNameRowSpans[clusterName] = rowSpans;
@@ -525,11 +548,6 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-          <Divider
-            style={{
-              backgroundColor: 'green',
-              height: 5
-            }} />
           {Object.entries(Rows).map(([clusterName, nodeTypes]) => (
             <ClusterRows
               clusterName={clusterName}
