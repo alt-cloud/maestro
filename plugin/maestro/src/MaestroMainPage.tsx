@@ -218,6 +218,19 @@ function NodeCols(pars) {
   const clusterName = pars.clusterName;
   const isUnknownClusterName = clusterName == unknownClusterName;
   const href = clusterName[0] == '_' ? '/maestro/node/get' : '/maestro/node';
+  let unmet = '-';
+//   const unmet ; //= (cols['status'] == undefined ? '-' : cols['status']['unmetConditions'].join("<br/>"));
+  if (cols['status'] != undefined) {
+    unmet = [];
+    for (let nameReason of cols['status']['unmetConditions']) {
+//       alert(JSON.stringify(nameReason));
+      unmet.push(nameReason.name + ': ' + nameReason.reason);
+//       alert(unmet);
+    }
+    unmet = unmet.join(",\n")
+//     JSON.stringify(cols['status']['unmetConditions'], null, 2);
+//     alert('unmet=' + unmet);
+  }
   return (
     <>
     <TableCell>
@@ -240,7 +253,7 @@ function NodeCols(pars) {
     <TableCell>{cols['status'] == undefined ? '-' : cols['status']['ready'] ? 'V' : 'X'}</TableCell>
     <TableCell>{cols['memberID'] == '-' ? 'X' : 'V'}</TableCell>
     <TableCell>{cols['manifestsApplied'] == undefined ? '-' : cols['manifestsApplied'].length}</TableCell>
-    <TableCell>{cols['status'] == undefined ? '-' : cols['status']['unmetConditions'].join("<br/>")}</TableCell>
+    <TableCell>{unmet}</TableCell>
     </>
   );
 }

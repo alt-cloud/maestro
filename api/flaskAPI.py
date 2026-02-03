@@ -6,6 +6,7 @@ import shlex
 import os
 import json
 from flask_cors import CORS
+import socket
 
 app = Flask(__name__)
 # CORS(app, origins=["http://localhost:3000"])
@@ -197,6 +198,24 @@ def talosctl():
         'params_dict': params_dict
     }
 
+def getDiskName(ip):
+  homedir = os.getenv('HOME')
+  runCmd = 'talosctl get  discoveredvolume -o json -n %s -e %s -i' % (ip, ip)
+  print('runCmd=', runCmd)
+  result = subprocess.run(runCmd,
+    shell=True,
+    stdout=subprocess.PIPE,
+    cwd='%s/.maestro/' % homedir,
+    encoding='utf-8'
+  )
+  result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
+  for volInfo in result:
+    id = volInfo['metadata']['id']
+    if id[0:4] == 'loop' or id[0:2] == 'sr':
+      continue
+    disk = volInfo['spec']['dev_path']
+    return disk
+
 @app.route('/apply', methods=['GET', 'POST'])
 def apply():
   homedir = os.getenv('HOME')
@@ -213,11 +232,16 @@ def apply():
     # print("clusterName=%s" % clusterName)
     clusterConfigDir = '%s/%s' %( maestroConfigDir, clusterName)
     if not os.path.isdir(clusterConfigDir):
+      action0 = list(request_json[clusterName].keys())[0]
+      ip0 = request_json[clusterName][action0][0]
+      installDisk = getDiskName(ip0)
       os.mkdir(clusterConfigDir)
       print('MKDIR: %s' % clusterConfigDir)
       controlplane =  request_json[clusterName]['controlplane'][0]
       kubeEndpoint = 'https://%s:6443' % controlplane
-      runCmd = 'talosctl gen config %s %s --output %s' % (clusterName, kubeEndpoint, clusterName)
+      patch = '{"machine":{"kernel":{"modules":[{"name":"bridge"}]},"registries":{"config":{"registry.altlinux.org":{"tls":{"insecureSkipVerify":true}}}}}}'
+      runCmd = "talosctl gen config %s %s --install-image altlinux.space/alt-orchestra/installer:v1.10.6 --config-patch '%s' --install-disk %s --output %s" % \
+        (clusterName, kubeEndpoint, patch, installDisk, clusterName)
       print('runCmd=', runCmd)
       result = subprocess.run(runCmd,
         shell=True,
@@ -265,7 +289,10 @@ def apply():
       for ip in ips:
         # print("clusterName=%s action=%s ip=%s" % (clusterName, action, ip))
         if action == 'controlplane' or action == 'worker':
-          runCmd = 'talosctl apply-config --insecure -n %s --file %s/%s.yaml' % (ip, clusterName, action)
+          installDisk = getDiskName(ip)
+          patch = '{"machine":{"install":{"disk":"%s"}}}' % installDisk
+          runCmd = "talosctl apply-config --config-patch '%s' --insecure -n %s --file %s/%s.yaml" % \
+            (patch, ip, clusterName, action)
           print('runCmd=', runCmd)
           result = subprocess.run(runCmd,
             shell=True,
@@ -273,7 +300,18 @@ def apply():
             cwd='%s/.maestro/' % homedir,
             encoding='utf-8'
           )
+          if action == 'controlplane':
+            runCmd = 'talosctl bootstrap -e %s -n %s' % (ip, ip)
+            print('runCmd=', runCmd)
+            result = subprocess.run(runCmd,
+              shell=True,
+              stdout=subprocess.PIPE,
+              cwd='%s/.maestro/' % homedir,
+              encoding='utf-8'
+            )
+
   return {}
+
 
 # Функция анализирует вывод команды nmap и определеяет список IP адресов узлов (с DNS именамиб если они имеются),
 # которые слушают порты 50000 (сервис apid) и 6443 (kubeAPI).
@@ -314,6 +352,7 @@ def nodesList(nmapStr):
   return ret
 
 @app.route('/scanNets',methods=['GET', 'POST'])
+
 def scanNets():
   homedir = os.getenv('HOME')
   print('REQUEST=', request.method);
@@ -386,6 +425,33 @@ def talosgetspec(subcmd, node, insecure):
       ret = jsonDict['spec']
   return [ret, returncode]
 
+def is_port_open(host: str, port: int, timeout: float = 3.0) -> bool:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(timeout)
+    result = sock.connect_ex((host, port))  # возвращает 0 при успехе, иначе errno
+    sock.close()
+    return result == 0
+
+def refreshNodeTypes(nodeTypes, nodeTypesFile):
+  ret = {}
+  ret['controlplanes'] = []
+  ret['workers'] = []
+  for node in nodeTypes['controlplanes']+nodeTypes['workers']:
+    if is_port_open(node, 50000):
+      if is_port_open(node, 6443):
+        ret['controlplanes'].append(node)
+      else:
+        ret['workers'].append(node)
+  if set(ret['controlplanes']) != set(ret['controlplanes']) or \
+     set(ret['workers']) != set(ret['workers']):
+    print('%s updated' % nodeTypesFile)
+    fp = open(nodeTypesFile, 'w')
+    json.dump(ret, fp, indent=2)
+    fp.close()
+  else:
+    print('%s unchanged' % nodeTypesFile)
+  return ret
+
 @app.route('/nodesTree')
 def nodesTree():
   homedir = os.getenv('HOME')
@@ -397,7 +463,7 @@ def nodesTree():
   nodeTypes = json.load(fp)
   fp.close()
   # print('nodeTypes=', nodeTypes)
-
+  nodeTypes = refreshNodeTypes(nodeTypes, nodeTypesFile)
   nodesTree = {}
   for nodeType in ['controlplanes', 'workers']:
     for node in nodeTypes[nodeType]:
@@ -430,15 +496,11 @@ def nodesTree():
         nodeInfo['status'] = spec['status']
         [spec, returncode] = talosgetspec('nodestatus', node, insecure)
         if returncode == 0 :
-          nodeInfo['nodeReady'] = spec['nodeReady']
-        if nodeType == 'controlplanes':
+          nodeInfo['nodeReady'] = spec['nodeReady'] if 'nodeReady' in spec else '-'
           [spec, returncode] = talosgetspec('manifeststatus', node, insecure)
-          nodeInfo['manifestsApplied'] = spec['manifestsApplied']
+          nodeInfo['manifestsApplied'] = spec['manifestsApplied'] if 'manifestsApplied' in spec else []
           [spec, returncode] = talosgetspec('etcdmember', node, insecure)
-          nodeInfo['memberID'] = spec['memberID']
-        else:
-          nodeInfo['manifestsApplied'] = []
-          nodeInfo['memberID'] = '-'
+          nodeInfo['memberID'] = spec['memberID'] if 'memberID' in spec else '-'
       elif clusterName == '_Orphans':
         nodeInfo['stage'] = 'maintenance'
       nodesTree[clusterName][nodeType].append(nodeInfo)
