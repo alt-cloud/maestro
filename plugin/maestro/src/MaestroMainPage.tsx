@@ -498,10 +498,10 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
   const handleSubmit = async (selectedNodeStage, cluster)=> {
 //     alert('inputRef=' + inputRef);
 //     alert('selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
-//     let nameOfCluster = inputRef.current?.value;
+    let nameOfCluster = inputRef.current?.value;
 //     alert('nameOfCluster=' + nameOfCluster);
     let toClusterName;
-    if (inputRef != undefined) {
+    if (nameOfCluster != undefined) {
       toClusterName = inputRef.current?.value;
       if (toClusterName.length == 0) {
         alert('To add a node to a new cluster, enter its name.');
@@ -540,7 +540,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
       alert('No changes');
       return;
     }
-    if (inputRef != undefined && nOrphanWorkers >0 && nOrphanControlPlanes ==0) {
+    if (nameOfCluster != undefined && nOrphanWorkers >0 && nOrphanControlPlanes ==0) {
       alert('When creating a new cluster, at least one node of type controlplane is required.');
       return;
     }
