@@ -490,7 +490,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
 
     rowSpans['controlplanes'] = isOrphan? controlplanes.length : Math.max(controlplanes.length, 1);
     rowSpans['workers'] = Math.max(workers.length, 1);
-    rowSpans['all'] = isOrphan? Math.max(workers.length, 1) : rowSpans['controlplanes'] + Math.max(workers.length, 1);
+    rowSpans['all'] = isOrphan? Math.max(controlplanes.length, 1) : rowSpans['controlplanes'] + Math.max(workers.length, 1);
     clusterNameRowSpans[clusterName] = rowSpans;
   }
 //   alert('clusterNameRowSpans=' + JSON.stringify(clusterNameRowSpans, null, 2));

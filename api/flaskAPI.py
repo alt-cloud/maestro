@@ -7,6 +7,7 @@ import os
 import json
 from flask_cors import CORS
 import socket
+import time
 
 app = Flask(__name__)
 # CORS(app, origins=["http://localhost:3000"])
@@ -274,11 +275,16 @@ def apply():
       encoding='utf-8'
     )
     config = json.loads(result.stdout)
+    emptyCluster = 'endpoints' not in config or len(config['endpoints']) == 0
     for action in request_json[clusterName]:
       ips = request_json[clusterName][action]
       endpoints = list(set(config['endpoints']+ips))
       for nodeType in ['endpoint', 'node']:
-        runCmd = 'talosctl config %s %s' % (nodeType, ' '.join(endpoints))
+        fieldName = '%ss' % nodeType
+        points = config[fieldName] if fieldName in config else []
+        addPoints = request_json[clusterName][nodeType] if nodeType in request_json[clusterName] else []
+        points = list(set(points + addPoints))
+        runCmd = 'talosctl config %s %s' % (nodeType, ' '.join(points))
         print('runCmd=', runCmd)
         result = subprocess.run(runCmd,
           shell=True,
@@ -300,7 +306,8 @@ def apply():
             cwd='%s/.maestro/' % homedir,
             encoding='utf-8'
           )
-          if action == 'controlplane':
+          if emptyCluster and action == 'controlplane':
+            time.sleep(5)
             runCmd = 'talosctl bootstrap -e %s -n %s' % (ip, ip)
             print('runCmd=', runCmd)
             result = subprocess.run(runCmd,
@@ -309,6 +316,7 @@ def apply():
               cwd='%s/.maestro/' % homedir,
               encoding='utf-8'
             )
+            emptyCluster = False
 
   return {}
 
@@ -452,6 +460,22 @@ def refreshNodeTypes(nodeTypes, nodeTypesFile):
     print('%s unchanged' % nodeTypesFile)
   return ret
 
+def isMaintenance(ip):
+  homedir = os.getenv('HOME')
+  runCmd = 'talosctl get  discoveredvolume -o json -n %s -e %s -i' % (ip, ip)
+  print('runCmd=', runCmd)
+  result = subprocess.run(runCmd,
+    shell=True,
+    stdout=subprocess.PIPE,
+    cwd='%s/.maestro/' % homedir,
+    encoding='utf-8'
+  )
+  result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
+  for volInfo in result:
+    if 'partition_label' in volInfo['spec']:
+      return False
+  return True
+
 @app.route('/nodesTree')
 def nodesTree():
   homedir = os.getenv('HOME')
@@ -475,9 +499,7 @@ def nodesTree():
       if returncode != 0:
         clusterName = '_Orphans'
         insecure = '-i'
-        [spec, returncode] = talosgetspec('info', node, insecure)
-        print('returncode=', returncode)
-        if returncode != 0:
+        if not isMaintenance(node):
           clusterName = '_Unknown'
       else:
         clusterName = spec['clusterName']
