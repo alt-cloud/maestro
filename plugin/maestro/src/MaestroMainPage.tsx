@@ -564,8 +564,8 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
   };
 
   return (
-  <SectionBox title="CLUSTERS" textAlign="left" paddingTop={2}>
-    <Typography>
+  <SectionBox title="" textAlign="left" paddingTop={2}>
+    <Typography variant="h6">
     <Link to="/maestro">Clusters</Link>
     {isClusterPage ? <span>&nbsp;/&nbsp;{cluster}</span> :<span/>}
     </Typography>

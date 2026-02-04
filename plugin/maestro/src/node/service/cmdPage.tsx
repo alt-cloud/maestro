@@ -242,7 +242,7 @@ const TalosCmdInfo: React.FC<{ }> = ({ delay }) => {
 
   return (
   <SectionBox>
-  <Typography><Link to="/maestro">Clusters</Link
+  <Typography variant="h6"><Link to="/maestro">Clusters</Link
   >&nbsp;/&nbsp;<Link to={`/maestro?cluster=${cluster}`}>{cluster}</Link
   > &nbsp;/&nbsp;<Link to={`/maestro/?cluster=${cluster}&type=${nodeType}`}>{nodeType}</Link
   >&nbsp;/&nbsp;<Link to={`/maestro/node?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>{node}</Link

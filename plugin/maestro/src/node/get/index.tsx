@@ -22,7 +22,7 @@ function showRDTree() {
 
   return (
     <SectionBox title="Talosctl get page tree" textAligvaluen="center" paddingTop={2}>
-      <Typography><Link to="/maestro">Clusters</Link
+      <Typography variant="h6"><Link to="/maestro">Clusters</Link
         >&nbsp;/&nbsp;<Link to={`/maestro?cluster=${cluster}`}>{cluster}</Link
         > &nbsp;/&nbsp;<Link to={`/maestro/?cluster=${cluster}&type=${nodeType}`}>{nodeType}</Link
         >&nbsp;/&nbsp;<Link to={`/maestro/node?cluster=${cluster}&type=${nodeType}&node=${node}`}>{node}</Link
