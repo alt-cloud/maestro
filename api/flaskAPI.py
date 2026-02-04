@@ -276,14 +276,25 @@ def apply():
     )
     config = json.loads(result.stdout)
     emptyCluster = 'endpoints' not in config or len(config['endpoints']) == 0
+    # print('request_json=%s' % json.dumps(request_json) )
     for action in request_json[clusterName]:
       ips = request_json[clusterName][action]
-      endpoints = list(set(config['endpoints']+ips))
-      for nodeType in ['endpoint', 'node']:
+      # endpoints = list(set(config['endpoints']+ips))
+      if action == 'controlplane' or action == 'worker':
+        addPoints = {}
+        addPoints['controlplane'] = request_json[clusterName]['controlplane'] if 'controlplane' in request_json[clusterName] else []
+        addPoints['worker'] = request_json[clusterName]['worker'] if 'worker' in request_json[clusterName] else []
+        addPoints['worker'] = addPoints['worker'] + addPoints['controlplane']
+        nodeType = 'endpoint' if action == 'controlplane' else 'node'
         fieldName = '%ss' % nodeType
-        points = config[fieldName] if fieldName in config else []
-        addPoints = request_json[clusterName][nodeType] if nodeType in request_json[clusterName] else []
+        # print('fieldName=', fieldName)
+        # print('config=', json.dumps(config, indent=2))
+        points = config[fieldName] if fieldName in config and config[fieldName] else []
+        addPoints = addPoints[action]
+        # print('Before: points=%s' % json.dumps(points))
+        # print('Before: addPoints=%s' % json.dumps(addPoints))
         points = list(set(points + addPoints))
+        # print('After: points=%s' % json.dumps(points))
         runCmd = 'talosctl config %s %s' % (nodeType, ' '.join(points))
         print('runCmd=', runCmd)
         result = subprocess.run(runCmd,
@@ -307,8 +318,16 @@ def apply():
             encoding='utf-8'
           )
           if emptyCluster and action == 'controlplane':
-            time.sleep(5)
-            runCmd = 'talosctl bootstrap -e %s -n %s' % (ip, ip)
+            runCmd = '''
+            ( \
+            set -x; \
+            sleep 5;\
+            until nmap %s/32 -p 50000 | grep open; do sleep 5; done;\
+            while talosctl bootstrap -e %s -n %s; do sleep 5; done;\
+            until talosctl health -e %s -n %s; do sleep 5; done;\
+            talosctl -e %s -n %s kubeconfig -f;
+            ) > %s/.maestro/%s/bootstrap_%s.log 2>&1  &
+            ''' % (ip, ip, ip, ip, ip, ip, ip, homedir, clusterName, ip)
             print('runCmd=', runCmd)
             result = subprocess.run(runCmd,
               shell=True,
