@@ -15,7 +15,7 @@ headlamp-плугин maestro поддерживает UI-интерфейс к 
 - сканирования сети для получения списка узлов, развернутых под ОС ALTOrchestra/Talos;
 - обращения к talosctl для получения необходимой информации, подключению узлов к ALTOrchestra/Talos кластерам или создания новых кластеров.
 
-![Rest Interface](./Images/rest.drawio.png)
+![Rest Interface](./images/rest.drawio.png)
 
 ## Главная страница 
 
@@ -26,7 +26,7 @@ headlamp-плугин maestro поддерживает UI-интерфейс к 
 - узлы не принадлежащие ни к одному из узлов помещаются в виртуальный кластер `NULL`.
 Полученный список отображается в UI-интерфейсе.
 
-![Главная страница](./Images/mainpahe.png)
+![Главная страница](./images/mainpahe.png)
 
 Для узлов, помещенных в виртуальный кластер `NULL` возможны следующие действия:
 - если узел уже развернут и входит в кластер, но отсутствует в качестве endpoint или node  в файле конфигурации `talosconfig` - добавление его в talosconfig в качестве endpoint или node (при "ручном" разворачивании часто эта информация отсутствует в `talosconfig`);
@@ -42,11 +42,11 @@ headlamp-плугин maestro поддерживает UI-интерфейс к 
 
 - `talosctl get blockdevice` (группа команд block)
 
-![talosctl get blockdevice](./Images/blockdevice.png);
+![talosctl get blockdevice](./images/blockdevice.png);
 
 - `talosctl get devices` (группа команд hardware)
 
-![talosctl get blockdevice](./Images/hardwareDevices.png)
+![talosctl get blockdevice](./images/hardwareDevices.png)
 
 Интерфейс поддерживает:
 
