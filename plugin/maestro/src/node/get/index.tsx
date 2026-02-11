@@ -12,12 +12,10 @@ function showRDTree() {
     const params = new URLSearchParams(location.search);
     return Object.fromEntries(params.entries());
   }, [location.search]);
-//   alert(JSON.stringify(queryParams));
   const cluster = queryParams.cluster;
   const controlplane = queryParams.controlplane;
   const node = queryParams.node;
   const nodeType = queryParams.type;
-//   alert('CLUSTER=' + cluster + ' controlplane=' + controlplane + ' node=' + node + ' nodeType=' + nodeType);
 
 
   return (

@@ -77,7 +77,6 @@ function alignInterval(delay) {
       lastValue = option.value;
     }
     if (alignDelay === null) alignDelay = lastValue;
-//     alert('alignDelay=' + alignDelay);
   }
   return alignDelay;
 }
@@ -110,24 +109,16 @@ const columns: Column[] = [
 }
 
 function NodeStageSelect(pars) {
-//         alert(pars.setIsSubmitDisabled);
     const statusOptions = pars.statusOptions;
     const node = pars.node;
     const stage = pars.stage;
     const clusterName = pars.clusterName;
-//     alert('stage=' + stage);
     const [status, setStatus] = useState<string>(stage);
-//     selectedNodeStage[clusterName][node] = pars.stage;
 
     const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-//       alert('handleChange:: pars=' + JSON.stringify(pars));
-//       alert('handleChange:: value=' + event.target.value + ' clusterName=' + clusterName);
       const value = event.target.value as string;
       selectedNodeStage[clusterName][node] = value;
       setStatus(value);
-//       alert('handleChange:: selectedNodeStage=' + JSON.stringify(selectedNodeStage))
-      // pars.setIsSubmitDisabled(false);
-//       setIsSubmitDisabled(false);
     };
 
     return (
@@ -212,24 +203,18 @@ function NodeCols(pars) {
   if (cols == undefined) {
     return (<TableCell>-</TableCell>);
   }
-//   alert('PARS=' + JSON.stringify(pars, null, 2));
   const nodeType = pars.nodeType;
   const node = cols['ip'];
   const clusterName = pars.clusterName;
   const isUnknownClusterName = clusterName == unknownClusterName;
   const href = clusterName[0] == '_' ? '/maestro/node/get' : '/maestro/node';
   let unmet = '-';
-//   const unmet ; //= (cols['status'] == undefined ? '-' : cols['status']['unmetConditions'].join("<br/>"));
   if (cols['status'] != undefined) {
     unmet = [];
     for (let nameReason of cols['status']['unmetConditions']) {
-//       alert(JSON.stringify(nameReason));
       unmet.push(nameReason.name + ': ' + nameReason.reason);
-//       alert(unmet);
     }
     unmet = unmet.join(",\n")
-//     JSON.stringify(cols['status']['unmetConditions'], null, 2);
-//     alert('unmet=' + unmet);
   }
   return (
     <>
@@ -261,7 +246,6 @@ function NodeCols(pars) {
 function ClusterDevider(pars) {
   const clusterName = pars.clusterName;
   const color = clusterName == orphansClusterName ? '#ffff00' : clusterName == unknownClusterName ? '#0000ff' : '#00ff00';
-//   alert('clusterName=' + clusterName + ' color=' + color);
   return (
     <TableRow>
       <Divider
@@ -282,9 +266,6 @@ function ClusterRows(pars) {
   let controlplanesValue0 = controlplanesValues.shift();
   let workersValues = nodeTypes['workers'];
   let workersValue0 = workersValues.shift();
-//   alert('clusterName=' + clusterName);
-//   alert('ROWSPAN:: controlplanes=' + clusterNameRowSpans[clusterName]['controlplanes'] +
-//     ' workers=' + clusterNameRowSpans[clusterName]['workers']);
   return (
     <>
     <ClusterDevider clusterName={clusterName} />
@@ -372,17 +353,13 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
     const params = new URLSearchParams(location.search);
     return Object.fromEntries(params.entries());
   }, [location.search]);
-//   alert(JSON.stringify(queryParams));
 
-//   var breadcrumbs = '';
   const cluster = queryParams.cluster;
-//   breadcrumbs += (typeof cluster == 'undefined') ? 'Clusters' : "<a href='/maestro'>Clusters</a>";
   const nodeType = queryParams.type;
 
 
   useEffect(() => {
 
-    // Create an abort controller
     const controller = new AbortController();
 
     const fetchData = async () => {
@@ -395,38 +372,31 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
           signal: controller.signal, // bind abort signal
         });
 
-        // If the request is aborted, response.json() will not run
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const clusterRows: ApiResponse = await response.json();
-//         alert('TYPE='+typeof(clusterRows)+' JSONDATA='+JSON.stringify(clusterRows, null, 2));
         setRows(clusterRows);
       } catch (err: any) {
-        // Ignore abort errors
         if (err.name === 'AbortError') {
-//           alert('Fetch aborted');
           console.debug('Fetch aborted');
           return;
         }
         setError(err.message || 'Failed to load data');
       } finally {
-        // Clear loading state even if request was aborted or failed
         if (!controller.signal.aborted) {
           setLoading(false);
         }
       }
     };
 
-  // If interval is off, fetch data only once (optional)
   if (timeout === null) {
     fetchData();
     return () => {
       controller.abort();
     };
   }
-  // Otherwise fetch immediately and start interval
   fetchData();
   const id = setInterval(fetchData, timeout);
   intervalRef.current = id;
@@ -436,7 +406,6 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
     };
   }, [timeout]);
 
-  // Handle interval selection change
   const handleIntervalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value === 'null' ? null : Number(e.target.value);
     setTimeout(value as IntervalValue);
@@ -446,10 +415,8 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
   if (error) return <div>Error: {error}</div>;
   if (!rows) return <div>No data received</div>;
 
-//   alert(JSON.stringify(rows, null, 2));
   var Rows;
   haveOrphans = rows[orphansClusterName] != undefined;
-//   alert('haveOrphans=' + haveOrphans);
   if ( typeof cluster != 'undefined' ) {
     Rows = {};
     Rows[cluster] = rows[cluster];
@@ -460,32 +427,25 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
     isClusterPage = false;
   }
 
-//   alert('Rows=' + JSON.stringify(Rows, null, 2));
   var clusterNameRowSpans = {}
   selectedNodeStage = {};
   const rowsDict = new Map(Object.entries(Rows));
-//   alert('rowsDict=' + JSON.stringify(rowsDict, null, 2));
   for (var clusterName of Object.keys(Rows)) {
     selectedNodeStage[clusterName] = {};
     const isOrphan = clusterName ==  orphansClusterName;
     var rowSpans = {};
     var nodeTypes = rowsDict.get(clusterName);
-//     alert('nodeTypes=' +JSON.stringify(nodeTypes , null, 2));
     var controlplanes = nodeTypes['controlplanes'];
-//     alert('controlplanes=' + JSON.stringify(controlplanes, null, 2));
     for (let node of controlplanes) {
       let stage = isOrphan ? 'maintenance' : 'running'
       selectedNodeStage[clusterName][node['ip']] = stage;
     }
-//   alert('MaestroMainPage_CP:: selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
 
     var workers = nodeTypes['workers'];
-//     alert('workers=' + JSON.stringify(workers, null, 2));
     for (let node of workers) {
       let stage = isOrphan ? 'maintenance' : 'running'
       selectedNodeStage[clusterName][node['ip']] = stage;
     }
-//   alert('MaestroMainPage_W:: selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
 
 
     rowSpans['controlplanes'] = isOrphan? controlplanes.length : Math.max(controlplanes.length, 1);
@@ -493,13 +453,8 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
     rowSpans['all'] = isOrphan? Math.max(controlplanes.length, 1) : rowSpans['controlplanes'] + Math.max(workers.length, 1);
     clusterNameRowSpans[clusterName] = rowSpans;
   }
-//   alert('clusterNameRowSpans=' + JSON.stringify(clusterNameRowSpans, null, 2));
-//   alert('MaestroMainPage:: selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
   const handleSubmit = async (selectedNodeStage, cluster)=> {
-//     alert('inputRef=' + inputRef);
-//     alert('selectedNodeStage=' + JSON.stringify(selectedNodeStage, null, 2));
     let nameOfCluster = inputRef.current?.value;
-//     alert('nameOfCluster=' + nameOfCluster);
     let toClusterName;
     if (nameOfCluster != undefined) {
       toClusterName = inputRef.current?.value;
@@ -515,17 +470,13 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
         }
       }
     }
-//     alert('toClusterName=' + toClusterName);
     let actions = {};
     let nOrphanControlPlanes = 0;
     let nOrphanWorkers = 0;
     for (let clusterName in selectedNodeStage) {
-//       alert('clusterName=' + clusterName);
       let isOrphan = clusterName == orphansClusterName;
       for (let ip in selectedNodeStage[clusterName]) {
-//         alert('ip=' + ip);
         let state = selectedNodeStage[clusterName][ip];
-//         alert('state=' + state);
         if (isOrphan && state != 'maintenance' || !isOrphan && state != 'running') {
           if (actions[toClusterName] === undefined) actions[toClusterName] = {};
           if (actions[toClusterName][state] === undefined)  actions[toClusterName][state] = []
@@ -535,7 +486,6 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
         }
       }
     }
-//     alert('Actions=' + JSON.stringify(actions, null, 2));
     if (Object.keys(actions).length == 0) {
       alert('No changes');
       return;
@@ -552,7 +502,6 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
       });
 
       if (response.ok) {
-        // Set refresh timeout
         setTimeout(alignInterval('5') as IntervalValue);
       } else {
         console.error('Sending error');

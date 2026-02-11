@@ -18,14 +18,11 @@ import {
 import { useHistory } from 'react-router-dom';
 
 
-// import { Delete } from '@mui/icons-material';
-// import DeleteIcon from '@mui/icons-material/Delete';
 
 
 import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
 
-// test than module loads
 interface Cluster {
   id: number;
   name: string;
@@ -36,7 +33,6 @@ const handleRemove = (ipToRemove) => {
   setScanNets(prev => prev.filter(ip => ip !== ipToRemove));
 };
 
-// Validate IP address with CIDR mask
 function isValidIpWithCidr(str) {
   if (!str.includes('/')) return false;
   const [ip, mask] = str.split('/');
@@ -62,11 +58,9 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const [loading, setLoading] = useState<boolean>(true);
-//   const [error, setError] = useState<string | null>(null);
   const history = useHistory();
 
   const location = useLocation();
-  // Parse query parameters
   const queryParams = useMemo(() => {
     const params = new URLSearchParams(location.search);
     return Object.fromEntries(params.entries());
@@ -77,16 +71,13 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
   const commands = path.slice(indexNode+1)
   const commandPath = commands.join('/')
   const fullCommand = commands.join(' ')
-  // alert('PATH='+path+' fullCommand='+fullCommand);
 
   useEffect(() => {
-    // Create an abort controller
     const controller = new AbortController();
 
     const fetchData = async () => {
       try {
         const talosURL = "http://127.0.0.1:5000/scanNets";
-//         alert(talosURL);
         const response = await fetch(talosURL, {
           method: 'GET',
           headers: {
@@ -95,24 +86,19 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
           signal: controller.signal, // bind abort signal
         });
 
-        // If the request is aborted, response.json() will not run
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const scanNets: ApiResponse = await response.json();
-//         alert(JSON.stringify(scanNets));
         setScanNets(scanNets['scanNets'])
       } catch (err: any) {
-        // Ignore abort errors
         if (err.name === 'AbortError') {
-//           alert('Fetch aborted');
           console.debug('Fetch aborted');
           return;
         }
         setErrorGet(err.message || 'Failed to load data');
       } finally {
-        // Clear loading state even if request was aborted or failed
         if (!controller.signal.aborted) {
           setLoading(false);
         }
@@ -121,7 +107,6 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
 
     fetchData();
 
-    // Cleanup: abort request on unmount or effect restart
     return () => {
       controller.abort();
     };
@@ -130,7 +115,6 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
   if (loading) return <div>Loading cluster map...</div>;
   if (errorGet) return <div>Error: {errorGet}</div>;
   if (!scanNets) return <div>No data received</div>;
-//   alert('IpList='+scanNets + ' LEN=' + scanNets.length);
 
   const handleAdd = () => {
     const value = inputValue.trim();
@@ -172,12 +156,8 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
         body: JSON.stringify({ scanNets })
       });
 
-//       alert(JSON.stringify(response));
       if (response.ok) {
         history.push('/maestro');
-//         setSnackbar({ open: true, message: 'Successful scan!', severity: 'success' });
-        // Optional: clear list after submit
-        // setScanNets([]);
       } else {
         throw new Error('Server error');
       }
@@ -191,7 +171,6 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
-//   alert('inputValue=' + inputValue);
   return (
   <SectionBox>
   <Typography>

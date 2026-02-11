@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-// Example of using i18n (internationalization):
-// function MyComponent() {
-//   const { t } = useTranslation();
-//   return <div>{t('translation_key')}</div>;
-// }
 
 
 import {
@@ -35,7 +30,6 @@ import MaestroIcon from './images/maestro.svg';
 import MaestroMainPage from './MaestroMainPage';
 import MaestroNodePage from './node/index';
 
-// Add an entry to the home sidebar (not in cluster).
 registerSidebarEntry({
   name: 'maestroplugin',
   label: 'Maestro',
@@ -78,7 +72,6 @@ registerRoute({
   ),
 });
 
-// Adds a completely new sidebar + entry because the sidebar "myplugin" does not exist.
 registerSidebarEntry({
   name: 'backtoroot',
   label: 'Back to kubernetes',
@@ -88,7 +81,6 @@ registerSidebarEntry({
 });
 
 
-// Adds a entry to the recently created sidebar "maestro".
 registerSidebarEntry({
   name: 'maestro',
   label: 'MAESTRO AREA',
@@ -97,43 +89,21 @@ registerSidebarEntry({
   sidebar: 'myplugin',
 });
 
-// CLUSTERS PAGE
 
 import EnterIPs from './cluster/enterScanIPS.tsx';
 
-// registerRoute({
-//   path: '/maestro/cluster/enterips',
-//   sidebar: {
-//     item: 'maestro',
-//     sidebar: 'myplugin',
-//   },
-//   useClusterURL: false,
-//   noAuthRequired: true, // No authentication is required to see the view
-//   name: 'maestro_cluster_enterips',
-//   exact: true,
-//   component: () => (
-//       <EnterIPs/>
-//   ),
-// });
 
-// import EnterIPsPage from './cluster/enterScanIPS.tsx';
 import ScanNets from './cluster/scanNets.tsx';
 
 registerRoute({
   path: '/maestro/cluster/scanNets',
-//   sidebar: {
-//     item: 'maestro',
-//     sidebar: 'myplugin',
-//   },
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_cluster_scanNets',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<ScanNets/>)});
 
 
-// TALOSCTL TEXTCMDPAGES
 import TextCmdPage from './node/textCmdPage.tsx';
 
 registerRoute({
@@ -141,7 +111,6 @@ registerRoute({
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_dmesg',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TextCmdPage/>)});
 
@@ -150,7 +119,6 @@ registerRoute({
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_service_logs',
-//   id: 'maestro_get',
   exact: false,
   component: () => (<TextCmdPage/>)});
 
@@ -159,7 +127,6 @@ registerRoute({
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_version',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TextCmdPage/>)});
 
@@ -169,12 +136,9 @@ registerRoute({
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_inspect_dependencies',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TextCmdPage/>)});
 
-// TALOSCTL TABLECMDPAGES
-// TALOSCTL CONTAINERS
 import TableCmdPage from './node/tableCmdPage.tsx';
 
 registerRoute({
@@ -182,160 +146,117 @@ registerRoute({
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_containers',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TableCmdPage/>)});
 
-// TALOSCTL ETCD MEMBERS
-// import EtcdMembers from './node/etcd/members/cmdPage';
 registerRoute({
   path: '/maestro/node/etcd/members',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_etcd_members',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TableCmdPage/>)});
 
-// TALOSCTL ETCD MEMBERS
-// import EtcdStatus from './node/etcd/status/cmdPage';
 registerRoute({
   path: '/maestro/node/etcd/status',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_etcd_status',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TableCmdPage/>)});
 
-// TALOSCTL MEMORY
-// import Memory from './node/memory/cmdPage';
 registerRoute({
   path: '/maestro/node/memory',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_memory',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TableCmdPage/>)});
 
-// TALOSCTL MOUNTS
-// import Mounts from './node/mounts/cmdPage';
 registerRoute({
   path: '/maestro/node/mounts',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_mounts',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TableCmdPage/>)});
 
-// TALOSCTL NETSTAT
-// import Netstat from './node/netstat/cmdPage';
 registerRoute({
   path: '/maestro/node/netstat',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_netstat',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TableCmdPage/>)});
 
-// TALOSCTL IMAGE DEFAULT
-// import ImageDefault from './node/image/default/cmdPage';
 registerRoute({
   path: '/maestro/node/image/default',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_image_default',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TableCmdPage/>)});
 
-// TALOSCTL IMAGE LIST
-// import ImageList from './node/image/list/cmdPage';
 registerRoute({
   path: '/maestro/node/image/list',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_image_list',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TableCmdPage/>)});
 
-// TALOSCTL IMAGE LIST
-// import Processes from './node/processes/cmdPage';
 registerRoute({
   path: '/maestro/node/processes',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_processes',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TableCmdPage/>)});
 
-// TALOSCTL SERVICE
 import ServiceTableCmdPage from './node/service/cmdPage';
 registerRoute({
   path: '/maestro/node/service',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_service',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<ServiceTableCmdPage/>)});
 
-// TALOSCTL STATS
-// import Stats from './node/stats/cmdPage';
 registerRoute({
   path: '/maestro/node/stats',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_stats',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TableCmdPage/>)});
 
-// TALOSCTL TIME
-// import Time from './node/time/cmdPage';
 registerRoute({
   path: '/maestro/node/time',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_time',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TableCmdPage/>)});
 
-// TALOSCTL STATS
-// import Usage from './node/usage/cmdPage';
 registerRoute({
   path: '/maestro/node/usage',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_usage',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<TableCmdPage/>)});
 
-// TALOSCTL GET TREE
 registerRoute({
   path: '/maestro/node/get',
   useClusterURL: false,
   noAuthRequired: true, // No authentication is required to see the view
   name: 'maestro_node_get',
-//   id: 'maestro_get',
   exact: true,
   component: () => (<GetTree/>)});
 
 import GetTree from './node/get/index';
 
-// TALOSCTL GET IMPORTS
-// TALOSCTL GET REGISTERROUTES
-// GET/BLOCK/BLOCKDEVICE Tree
 
-// import getRoutes from './node/get/routes';
-// import getRoutes from './getRoutes';
 import GetPage from './node/get/Page';
 
 registerRoute({

@@ -19,9 +19,6 @@ import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
 import { useRef } from 'react';
 
-// import datasRows from './Data.json';
-// import columnsList from './Columns.json';
-// import head from './Head.json';
 
 interface Cluster {
   id: number;
@@ -60,27 +57,10 @@ function alignInterval(delay) {
       lastValue = option.value;
     }
     if (alignDelay === null) alignDelay = lastValue;
-//     alert('alignDelay=' + alignDelay);
   }
   return alignDelay;
 }
 
-// Create columns list from file Columns.json
-// First spec fields
-// After meta fields
-// function createColumns(): Column[] {
-//   const columns: Column[] = [];
-//   for (const field of columnsList['spec']) {
-//     const column: Column = {id: 'spec_'+field, label: 'spec.'+field, sortable: true };
-//     columns.push(column);
-//   }
-//   for (const field of columnsList['meta']) {
-//     const column: Column = {id: 'meta_'+field, label: 'meta.'+field, sortable: true };
-//     columns.push(column);
-//   }
-//
-//   return columns;
-// }
 
 function createColumnsList(clusterRows): Column[] {
   var meta = [];
@@ -94,12 +74,10 @@ function createColumnsList(clusterRows): Column[] {
   var columnsList = {}
   columnsList['meta'] = meta;
   columnsList['spec'] = spec;
-//   alert('columnsList=' + JSON.stringify(columnsList, null, 2))
   return columnsList;
 }
 
 function createColumns(columnsList) {
-//   alert('columnsList=' + JSON.stringify(columnsList, null, 2))
   const columns: Column[] = [];
   for (const field of columnsList['spec']) {
     const column: Column = {id: 'spec_'+field, label: 'spec.'+field, sortable: true };
@@ -109,18 +87,13 @@ function createColumns(columnsList) {
     const column: Column = {id: 'meta_'+field, label: 'meta.'+field, sortable: true };
     columns.push(column);
   }
-//   alert('columns=' + JSON.stringify(columns, null, 2))
   return columns;
 }
 
-// const columns = createColumns();
-// alert(JSON.stringify(columns));
 
 function createRows(columnsList, dataRows) {
-//   alert(JSON.stringify(dataRows));
   const rows = [];
   for (const dataRow of dataRows) {
-//   alert(JSON.stringify(dataRow));
     const row = {};
     for (const field of columnsList['spec']) {
       if (field in dataRow['spec']) {
@@ -160,7 +133,6 @@ function createRows(columnsList, dataRows) {
     }
     rows.push(row);
   }
-//   alert(JSON.stringify(rows));
   return rows;
 }
 
@@ -181,7 +153,6 @@ const TalosGetInfo: React.FC<{ }> = ({ delay }) => {
   const [error, setError] = useState<string | null>(null);
 
   const location = useLocation();
-  // Parse query parameters
   const queryParams = useMemo(() => {
     const params = new URLSearchParams(location.search);
     return Object.fromEntries(params.entries());
@@ -193,22 +164,18 @@ const TalosGetInfo: React.FC<{ }> = ({ delay }) => {
   const commands = path.slice(-2)
   const commandPath = commands.join('/')
   const fullCommand = commands.join(' ')
-//   alert('PATH='+path+' commandSet='+commandSet+' command='+command);
   const cluster = queryParams.cluster;
   const controlplane = queryParams.controlplane;
   const node = queryParams.node;
   const nodeType = queryParams.type;
 
   useEffect(() => {
-    // If the feature is disabled, do nothing
 
-    // Create an abort controller
     const controller = new AbortController();
 
     const fetchData = async () => {
       try {
         const talosURL = "http://localhost:5000/talosctl?cluster="+cluster+"&n="+node+"&cmd=get&commandSet="+commandSet+"&subCommand="+command;
-//         alert(talosURL);
         const response = await fetch(talosURL, {
           method: 'GET',
           headers: {
@@ -217,38 +184,29 @@ const TalosGetInfo: React.FC<{ }> = ({ delay }) => {
           signal: controller.signal, // bind abort signal
         });
 
-        // If the request is aborted, response.json() will not run
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const clusterRows: ApiResponse = await response.json();
-//         alert(JSON.stringify(clusterRows, null, 2));
         const columnsList = createColumnsList(clusterRows);
-//         alert('columnsList=' + JSON.stringify(columnsList, null, 2));
         setColumnsList(columnsList);
         const Columns = createColumns(columnsList);
         setColumns(Columns);
-//         alert('Columns=' + JSON.stringify(Columns, null, 2));
         const Rows = createRows(columnsList, clusterRows);
-//         alert('TYPE='+typeof(clusterRows)+' Rows='+JSON.stringify(Rows, null, 2));
         setRows(Rows);
       } catch (err: any) {
-        // Ignore abort errors
         if (err.name === 'AbortError') {
-//           alert('Fetch aborted');
           console.debug('Fetch aborted');
           return;
         }
         setError(err.message || 'Failed to load data');
       } finally {
-        // Clear loading state even if request was aborted or failed
         if (!controller.signal.aborted) {
           setLoading(false);
         }
       }
     };
-    // If interval is off, fetch data only once (optional)
     if (timeout === null) {
       fetchData();
       return () => {
@@ -267,9 +225,7 @@ const TalosGetInfo: React.FC<{ }> = ({ delay }) => {
   if (loading) return <div>Loading cluster map...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!rows) return <div>No data received</div>;
-//   alert(JSON.stringify(rows, null, 2));
 
-  // Handle interval selection change
   const handleIntervalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value === 'null' ? null : Number(e.target.value);
     setTimeout(value as IntervalValue);

@@ -11,7 +11,6 @@ import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
 import { useRef } from 'react';
 
-// test than module loads
 interface Cluster {
   id: number;
   name: string;
@@ -43,7 +42,6 @@ function alignInterval(delay) {
       lastValue = option.value;
     }
     if (alignDelay === null) alignDelay = lastValue;
-//     alert('alignDelay=' + alignDelay);
   }
   return alignDelay;
 }
@@ -59,7 +57,6 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
   const [error, setError] = useState<string | null>(null);
 
   const location = useLocation();
-  // Parse query parameters
   const queryParams = useMemo(() => {
     const params = new URLSearchParams(location.search);
     return Object.fromEntries(params.entries());
@@ -70,7 +67,6 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
   const commands = path.slice(indexNode+1)
   const commandPath = commands.join('/')
   const fullCommand = commands.join(' ')
-  // alert('PATH='+path+' fullCommand='+fullCommand);
 
   const cluster = queryParams.cluster;
   const controlplane = queryParams.controlplane;
@@ -78,15 +74,12 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
   const nodeType = queryParams.type;
 
   useEffect(() => {
-    // If the feature is disabled, do nothing
 
-    // Create an abort controller
     const controller = new AbortController();
 
     const fetchData = async () => {
       try {
         const talosURL = "http://localhost:5000/talosctl?cluster="+cluster+"&n="+node+"&cmd=" + commandPath;
-//         alert(talosURL);
         const response = await fetch(talosURL, {
           method: 'GET',
           headers: {
@@ -95,24 +88,19 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
           signal: controller.signal, // bind abort signal
         });
 
-        // If the request is aborted, response.json() will not run
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const restReply: ApiResponse = await response.json();
-//         alert(JSON.stringify(restReply['content']));
         setContent(restReply['content'])
       } catch (err: any) {
-        // Ignore abort errors
         if (err.name === 'AbortError') {
-//           alert('Fetch aborted');
           console.debug('Fetch aborted');
           return;
         }
         setError(err.message || 'Failed to load data');
       } finally {
-        // Clear loading state even if request was aborted or failed
         if (!controller.signal.aborted) {
           setLoading(false);
         }
@@ -128,7 +116,6 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
     fetchData();
     const id = setInterval(fetchData, timeout);
     intervalRef.current = id;
-    // Cleanup: abort request on unmount or effect restart
     return () => {
       clearInterval(id);
       controller.abort();
@@ -138,12 +125,10 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
   if (loading) return <div>Loading cluster map...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!content) return <div>No data received</div>;
-//   alert('CONTENT='+content);
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
-  // Handle interval selection change
   const handleIntervalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value === 'null' ? null : Number(e.target.value);
     setTimeout(value as IntervalValue);

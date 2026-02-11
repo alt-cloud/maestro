@@ -14,13 +14,11 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
     const params = new URLSearchParams(location.search);
     return Object.fromEntries(params.entries());
   }, [location.search]);
-//   alert(JSON.stringify(queryParams));
   const cluster = queryParams.cluster;
   const controlplane = queryParams.controlplane;
   const node = queryParams.node;
   const nodeType = queryParams.type;
   const isControlPlane = (nodeType == 'controlplane');
-//   alert('isControlPlane=' + isControlPlane);
 
   return (
 <SectionBox title="Node Page" textAlign="left" paddingTop={2}>
@@ -178,22 +176,6 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
       <li>
         list
       </li>
-{/*}
-      <li>
-        logs
-      </li>
-      <li>
-        machineconfig
-        <ul>
-          <li>
-            gen
-          </li>
-          <li>
-            patch
-          </li>
-        </ul>
-      </li>
-{*/}
       <li>
         <Link to={`/maestro/node/memory?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>memory</Link>
       </li>
@@ -256,7 +238,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
       <li>
         <Link to={`/maestro/node/time?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>time</Link>
       </li>
-      {/* */}
+      {}
       <li>
         upgrade
       </li>
