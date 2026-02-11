@@ -59,7 +59,7 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
   const [error, setError] = useState<string | null>(null);
 
   const location = useLocation();
-  // Парсим query параметры
+  // Parse query parameters
   const queryParams = useMemo(() => {
     const params = new URLSearchParams(location.search);
     return Object.fromEntries(params.entries());
@@ -78,9 +78,9 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
   const nodeType = queryParams.type;
 
   useEffect(() => {
-    // Если фича отключена — ничего не делаем
+    // If the feature is disabled, do nothing
 
-    // Создаём контроллер отмены
+    // Create an abort controller
     const controller = new AbortController();
 
     const fetchData = async () => {
@@ -92,10 +92,10 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
           headers: {
             'Accept': 'application/json',
           },
-          signal: controller.signal, // ← привязываем сигнал отмены
+          signal: controller.signal, // bind abort signal
         });
 
-        // Если запрос был отменён, response.json() не вызовется
+        // If the request is aborted, response.json() will not run
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
@@ -104,7 +104,7 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
 //         alert(JSON.stringify(restReply['content']));
         setContent(restReply['content'])
       } catch (err: any) {
-        // Игнорируем ошибку отмены
+        // Ignore abort errors
         if (err.name === 'AbortError') {
 //           alert('Fetch aborted');
           console.debug('Fetch aborted');
@@ -112,7 +112,7 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
         }
         setError(err.message || 'Failed to load data');
       } finally {
-        // Убираем состояние загрузки, даже если запрос отменили или упал
+        // Clear loading state even if request was aborted or failed
         if (!controller.signal.aborted) {
           setLoading(false);
         }
@@ -128,7 +128,7 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
     fetchData();
     const id = setInterval(fetchData, timeout);
     intervalRef.current = id;
-    // Cleanup: отменяем запрос при размонтировании или повторном запуске эффекта
+    // Cleanup: abort request on unmount or effect restart
     return () => {
       clearInterval(id);
       controller.abort();
@@ -143,7 +143,7 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
     setPage(newPage);
   };
 
-  // Обработчик изменения выбора
+  // Handle interval selection change
   const handleIntervalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value === 'null' ? null : Number(e.target.value);
     setTimeout(value as IntervalValue);

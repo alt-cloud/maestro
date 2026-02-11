@@ -382,7 +382,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
 
   useEffect(() => {
 
-    // Создаём контроллер отмены
+    // Create an abort controller
     const controller = new AbortController();
 
     const fetchData = async () => {
@@ -392,10 +392,10 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
           headers: {
             'Accept': 'application/json',
           },
-          signal: controller.signal, // ← привязываем сигнал отмены
+          signal: controller.signal, // bind abort signal
         });
 
-        // Если запрос был отменён, response.json() не вызовется
+        // If the request is aborted, response.json() will not run
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
@@ -404,7 +404,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
 //         alert('TYPE='+typeof(clusterRows)+' JSONDATA='+JSON.stringify(clusterRows, null, 2));
         setRows(clusterRows);
       } catch (err: any) {
-        // Игнорируем ошибку отмены
+        // Ignore abort errors
         if (err.name === 'AbortError') {
 //           alert('Fetch aborted');
           console.debug('Fetch aborted');
@@ -412,21 +412,21 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
         }
         setError(err.message || 'Failed to load data');
       } finally {
-        // Убираем состояние загрузки, даже если запрос отменили или упал
+        // Clear loading state even if request was aborted or failed
         if (!controller.signal.aborted) {
           setLoading(false);
         }
       }
     };
 
-  // Если интервал отключён — только один раз загрузить данные (опционально)
+  // If interval is off, fetch data only once (optional)
   if (timeout === null) {
     fetchData();
     return () => {
       controller.abort();
     };
   }
-  // Иначе — загружаем сразу + ставим интервал
+  // Otherwise fetch immediately and start interval
   fetchData();
   const id = setInterval(fetchData, timeout);
   intervalRef.current = id;
@@ -436,7 +436,7 @@ const MaestroMainPage: React.FC<{  }> = ({ delay }) => {
     };
   }, [timeout]);
 
-  // Обработчик изменения выбора
+  // Handle interval selection change
   const handleIntervalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value === 'null' ? null : Number(e.target.value);
     setTimeout(value as IntervalValue);

@@ -181,7 +181,7 @@ const TalosGetInfo: React.FC<{ }> = ({ delay }) => {
   const [error, setError] = useState<string | null>(null);
 
   const location = useLocation();
-  // Парсим query параметры
+  // Parse query parameters
   const queryParams = useMemo(() => {
     const params = new URLSearchParams(location.search);
     return Object.fromEntries(params.entries());
@@ -200,9 +200,9 @@ const TalosGetInfo: React.FC<{ }> = ({ delay }) => {
   const nodeType = queryParams.type;
 
   useEffect(() => {
-    // Если фича отключена — ничего не делаем
+    // If the feature is disabled, do nothing
 
-    // Создаём контроллер отмены
+    // Create an abort controller
     const controller = new AbortController();
 
     const fetchData = async () => {
@@ -214,10 +214,10 @@ const TalosGetInfo: React.FC<{ }> = ({ delay }) => {
           headers: {
             'Accept': 'application/json',
           },
-          signal: controller.signal, // ← привязываем сигнал отмены
+          signal: controller.signal, // bind abort signal
         });
 
-        // Если запрос был отменён, response.json() не вызовется
+        // If the request is aborted, response.json() will not run
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
@@ -234,7 +234,7 @@ const TalosGetInfo: React.FC<{ }> = ({ delay }) => {
 //         alert('TYPE='+typeof(clusterRows)+' Rows='+JSON.stringify(Rows, null, 2));
         setRows(Rows);
       } catch (err: any) {
-        // Игнорируем ошибку отмены
+        // Ignore abort errors
         if (err.name === 'AbortError') {
 //           alert('Fetch aborted');
           console.debug('Fetch aborted');
@@ -242,13 +242,13 @@ const TalosGetInfo: React.FC<{ }> = ({ delay }) => {
         }
         setError(err.message || 'Failed to load data');
       } finally {
-        // Убираем состояние загрузки, даже если запрос отменили или упал
+        // Clear loading state even if request was aborted or failed
         if (!controller.signal.aborted) {
           setLoading(false);
         }
       }
     };
-    // Если интервал отключён — только один раз загрузить данные (опционально)
+    // If interval is off, fetch data only once (optional)
     if (timeout === null) {
       fetchData();
       return () => {
@@ -269,7 +269,7 @@ const TalosGetInfo: React.FC<{ }> = ({ delay }) => {
   if (!rows) return <div>No data received</div>;
 //   alert(JSON.stringify(rows, null, 2));
 
-  // Обработчик изменения выбора
+  // Handle interval selection change
   const handleIntervalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value === 'null' ? null : Number(e.target.value);
     setTimeout(value as IntervalValue);

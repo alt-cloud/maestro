@@ -3,39 +3,39 @@ import React from 'react';
 const DownloadZipButton = ({cluster, node}) => {
   const handleDownload = async () => {
     try {
-      // Делаем запрос к REST API
+      // Send request to REST API
       const talosURL = "http://localhost:5000/talosctl?cluster="+cluster+"&n="+node+"&cmd=support";
 //       alert(talosURL);
       const response = await fetch(talosURL, {
         method: 'GET',
-        // headers: { /* например, Authorization: 'Bearer ...' */ }
+        // headers: { /* e.g., Authorization: 'Bearer ...' */ }
       });
 
       if (!response.ok) {
         throw new Error(`Ошибка: ${response.status} ${response.statusText}`);
       }
 
-      // Получаем ответ как Blob (бинарные данные)
+      // Read response as Blob (binary data)
       const blob = await response.blob();
 
-      // Создаём URL для скачивания
+      // Create object URL for download
       const url = window.URL.createObjectURL(blob);
 
-      // Создаём временный элемент <a>
+      // Create temporary <a> element
       const a = document.createElement('a');
       a.href = url;
       a.download = 'support_' + node.replaceAll('.', '_') + '.zip'
 
-      // Добавляем в DOM, кликаем, удаляем
+      // Append to DOM, click, then remove
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
 
-      // Освобождаем память
+      // Release memory
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Не удалось скачать ZIP-файл:', error);
-      // Можно показать уведомление пользователю
+      // Optionally show user-facing notification
     }
   };
 

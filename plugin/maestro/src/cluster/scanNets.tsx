@@ -36,7 +36,7 @@ const handleRemove = (ipToRemove) => {
   setScanNets(prev => prev.filter(ip => ip !== ipToRemove));
 };
 
-// Функция валидации IP-адреса с маской (CIDR)
+// Validate IP address with CIDR mask
 function isValidIpWithCidr(str) {
   if (!str.includes('/')) return false;
   const [ip, mask] = str.split('/');
@@ -49,7 +49,7 @@ function isValidIpWithCidr(str) {
 
   return ipParts.every(part => {
     const num = Number(part);
-    return !isNaN(num) && num >= 0 && num <= 255 && String(num) === part; // запрещаем ведущие нули
+    return !isNaN(num) && num >= 0 && num <= 255 && String(num) === part; // disallow leading zeros
   });
 }
 
@@ -66,7 +66,7 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
   const history = useHistory();
 
   const location = useLocation();
-  // Парсим query параметры
+  // Parse query parameters
   const queryParams = useMemo(() => {
     const params = new URLSearchParams(location.search);
     return Object.fromEntries(params.entries());
@@ -80,7 +80,7 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
   // alert('PATH='+path+' fullCommand='+fullCommand);
 
   useEffect(() => {
-    // Создаём контроллер отмены
+    // Create an abort controller
     const controller = new AbortController();
 
     const fetchData = async () => {
@@ -92,10 +92,10 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
           headers: {
             'Accept': 'application/json',
           },
-          signal: controller.signal, // ← привязываем сигнал отмены
+          signal: controller.signal, // bind abort signal
         });
 
-        // Если запрос был отменён, response.json() не вызовется
+        // If the request is aborted, response.json() will not run
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
@@ -104,7 +104,7 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
 //         alert(JSON.stringify(scanNets));
         setScanNets(scanNets['scanNets'])
       } catch (err: any) {
-        // Игнорируем ошибку отмены
+        // Ignore abort errors
         if (err.name === 'AbortError') {
 //           alert('Fetch aborted');
           console.debug('Fetch aborted');
@@ -112,7 +112,7 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
         }
         setErrorGet(err.message || 'Failed to load data');
       } finally {
-        // Убираем состояние загрузки, даже если запрос отменили или упал
+        // Clear loading state even if request was aborted or failed
         if (!controller.signal.aborted) {
           setLoading(false);
         }
@@ -121,7 +121,7 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
 
     fetchData();
 
-    // Cleanup: отменяем запрос при размонтировании или повторном запуске эффекта
+    // Cleanup: abort request on unmount or effect restart
     return () => {
       controller.abort();
     };
@@ -176,7 +176,7 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
       if (response.ok) {
         history.push('/maestro');
 //         setSnackbar({ open: true, message: 'Successful scan!', severity: 'success' });
-        // Опционально: очистить список после отправки
+        // Optional: clear list after submit
         // setScanNets([]);
       } else {
         throw new Error('Server error');
