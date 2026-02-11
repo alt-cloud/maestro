@@ -476,7 +476,7 @@ def refreshTalosconfig():
       else: # endpoint в init режиме
         if contextName not in newNodes:
           newNodes[contextName] = {'endpoints': [], 'nodes': []}
-        newNodes[contextName]['endpoints'].push(ip)
+        newNodes[contextName]['endpoints'].append(ip)
 
     nodes = talosconfig['contexts'][contextName]['nodes']\
       if 'nodes' in talosconfig['contexts'][contextName] else []
@@ -494,7 +494,7 @@ def refreshTalosconfig():
       else:  # worker in init mode
         if contextName not in newNodes:
           newNodes[contextName] = {'endpoints': [], 'nodes': []}
-        newNodes[contextName]['nodes'].push(ip)
+        newNodes[contextName]['nodes'].append(ip)
   print('refreshTalosconfig:: After:  talosconfig=%s' % json.dumps(talosconfig, indent=2))
   for clusterName in newNodes:
     endpoints = list(set(newNodes[clusterName]['endpoints'])) # uniq values
@@ -523,6 +523,7 @@ def refreshTalosconfig():
 def initTalosconfig(nodes):
   homedir = os.getenv('HOME')
   maestroConfigDir =  '%s/.maestro' % homedir
+  talosconfigFile = '%s/talosconfig' % maestroConfigDir
   fp = open(talosconfigFile, 'w')
   emptyContent = '''context: _Orphans
 contexts:
@@ -533,13 +534,14 @@ contexts:
     endpoints: []
     nodes: %s
 '''
-  fp.write(emptyContent % json.dimps(nodes))
+  fp.write(emptyContent % json.dumps(nodes))
   fp.close()
-  start_dir = Path(".")
+  start_dir = Path(maestroConfigDir)
   for item in start_dir.iterdir():
+    print('initTalosconfig:: itemName=%s' % item.name)
     if item.is_dir():
-      # print(item.name)
-      talosconfigFile = '%s/talosconfig' % item.name
+      talosconfigFile = '%s/%s/talosconfig' % (maestroConfigDir, item.name)
+      print('initTalosconfig:: DIR=%s talosconfigFile=%s' % (item.name, talosconfigFile))
       if os.path.exists(talosconfigFile):
         print('initTalosconfig:: merge subTalosconfig=%s' % talosconfigFile)
         runCmd = 'talosctl config merge %s' % talosconfigFile
@@ -601,7 +603,7 @@ def scanNets():
   nodes = nodesList(nmapOut.strip())
   print('NODES=', json.dumps(nodes, indent=4))
 
-  initTalosconfig(nodes)
+  initTalosconfig(list(nodes.keys()))
 
   # talosconfigFile = maestroConfigDir + '/talosconfig'
   # with open(talosconfigFile, 'w') as fp:
@@ -634,7 +636,7 @@ def scanNets():
   for virtualCluster in ['_Orphans', '_Unknown']:
     for nodeType in [ 'endpoint', 'node']:
       nodes = nodesTree[virtualCluster][nodeType]
-      runShellCommand("yq '.contexts.%s.%ss=%s" % (virtualCluster, nodeType, json.dumps(nodes)), homedir),
+      runShellCommand("yq '.contexts.%s.%ss=%s'" % (virtualCluster, nodeType, json.dumps(nodes)), homedir),
       # runShellCommand('talosctl config context %s' % virtualCluster, homedir)
       # runShellCommand('talosctl config %s %s' % (nodeType, ' '.join(nodes)), homedir)
   # print('nodeTypes=', nodeTypes)
