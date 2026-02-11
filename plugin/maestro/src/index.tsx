@@ -18,15 +18,9 @@
 
 import {
   registerRoute,
-  registerRouteFilter,
   registerSidebarEntry,
-  registerSidebarEntryFilter,
 } from '@kinvolk/headlamp-plugin/lib';
 import React from 'react';
-import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
-import Typography from '@mui/material/Typography';
-
-import MaestroIcon from './images/maestro.svg';
 import MaestroMainPage from './MaestroMainPage';
 import MaestroNodePage from './node/index';
 
@@ -90,7 +84,6 @@ registerSidebarEntry({
 });
 
 
-import EnterIPs from './cluster/enterScanIPS.tsx';
 
 
 import ScanNets from './cluster/scanNets.tsx';
@@ -255,8 +248,6 @@ registerRoute({
   component: () => (<GetTree/>)});
 
 import GetTree from './node/get/index';
-
-
 import GetPage from './node/get/Page';
 
 registerRoute({

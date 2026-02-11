@@ -1,22 +1,21 @@
-import React, { useState, useEffect } from 'react';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
-import Typography from '@mui/material/Typography';
 import {
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
-  Paper,
   TablePagination,
+  TableRow,
   TableSortLabel
 } from '@mui/material';
-import { Link } from 'react-router-dom';
-
-import { useLocation } from 'react-router-dom';
+import Typography from '@mui/material/Typography';
+import React, { useEffect,useState } from 'react';
 import { useMemo } from 'react';
 import { useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 
 interface Cluster {
@@ -47,7 +46,7 @@ function alignInterval(delay) {
   if (delay) {
     delay = Number(delay) * 1000;
     let lastValue = 0;
-    for (let option of INTERVAL_OPTIONS) {
+    for (const option of INTERVAL_OPTIONS) {
       if (option.value === null) break;
       if (delay <= option.value) {
         alignDelay = option.value;

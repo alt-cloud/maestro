@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
-import Typography from '@mui/material/Typography';
-import { Link } from 'react-router-dom';
 import { Box } from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import Typography from '@mui/material/Typography';
+import React from 'react';
 import { useMemo } from 'react';
-
+import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import DownloadZipButton from './support/button';
 
 const MaestroNodePage: React.FC<{ }> = ({  }) => {
@@ -15,7 +14,6 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
     return Object.fromEntries(params.entries());
   }, [location.search]);
   const cluster = queryParams.cluster;
-  const controlplane = queryParams.controlplane;
   const node = queryParams.node;
   const nodeType = queryParams.type;
   const isControlPlane = (nodeType == 'controlplane');

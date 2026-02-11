@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import Typography from '@mui/material/Typography';
+import React from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-import { useMemo } from 'react';
-
 import RDTree from './RDTree.json';
 function showRDTree() {
   const location = useLocation();

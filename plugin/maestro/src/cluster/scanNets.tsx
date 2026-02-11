@@ -1,37 +1,24 @@
-import React, { useState, useEffect } from 'react';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
-import Typography from '@mui/material/Typography';
-import { Link } from 'react-router-dom';
-
 import {
+  Alert,
   Box,
-  Paper,
-  TextField,
   Button,
+  IconButton,
   List,
   ListItem,
   ListItemText,
-  IconButton,
-  Alert,
-  Snackbar
-} from '@mui/material';
+  Paper,
+  Snackbar,
+  TextField} from '@mui/material';
+import Typography from '@mui/material/Typography';
+import React, { useEffect,useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
-
-
-
-
-import { useLocation } from 'react-router-dom';
-import { useMemo } from 'react';
 
 interface Cluster {
   id: number;
   name: string;
 }
-
-const handleRemove = (ipToRemove) => {
-  alert(ipToRemove);
-  setScanNets(prev => prev.filter(ip => ip !== ipToRemove));
-};
 
 function isValidIpWithCidr(str) {
   if (!str.includes('/')) return false;
@@ -59,18 +46,6 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const history = useHistory();
-
-  const location = useLocation();
-  const queryParams = useMemo(() => {
-    const params = new URLSearchParams(location.search);
-    return Object.fromEntries(params.entries());
-  }, [location.search]);
-
-  const path = location.pathname.split('/');
-  const indexNode = path.indexOf('node')
-  const commands = path.slice(indexNode+1)
-  const commandPath = commands.join('/')
-  const fullCommand = commands.join(' ')
 
   useEffect(() => {
     const controller = new AbortController();

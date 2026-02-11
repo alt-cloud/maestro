@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
-import Typography from '@mui/material/Typography';
-import { Link } from 'react-router-dom';
 import { Box } from '@mui/material';
 import {
   Paper
 } from '@mui/material';
-
-import { useLocation } from 'react-router-dom';
+import Typography from '@mui/material/Typography';
+import React, { useEffect,useState } from 'react';
 import { useMemo } from 'react';
 import { useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 interface Cluster {
   id: number;
@@ -33,7 +32,7 @@ function alignInterval(delay) {
   if (delay) {
     delay = Number(delay) * 1000;
     let lastValue = 0;
-    for (let option of INTERVAL_OPTIONS) {
+    for (const option of INTERVAL_OPTIONS) {
       if (option.value === null) break;
       if (delay <= option.value) {
         alignDelay = option.value;
@@ -50,7 +49,6 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
   const [timeout, setTimeout] = useState<IntervalValue>(alignInterval(delay));
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [page, setPage] = useState(0);
   const [content, setContent] = useState<Cluster[]>([]);
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -125,9 +123,6 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
   if (loading) return <div>Loading cluster map...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!content) return <div>No data received</div>;
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
 
   const handleIntervalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value === 'null' ? null : Number(e.target.value);
