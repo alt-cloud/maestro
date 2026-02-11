@@ -31,7 +31,7 @@ import React from 'react';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import Typography from '@mui/material/Typography';
 
-import MaestroIcon from './maestro.svg';
+import MaestroIcon from './images/maestro.svg';
 import MaestroMainPage from './MaestroMainPage';
 import MaestroNodePage from './node/index';
 
