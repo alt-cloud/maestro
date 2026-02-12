@@ -565,8 +565,11 @@ def nodesTree():
         # else:
         #   clusterName = spec['clusterName']
         #   insecure = ''
+        nodeTypesAlias = nodeTypesAliases[nodeType]
         if clusterName != '_Unknown' and clusterName != '_Orphans':
           [spec, returncode] = talosgetspec('machinestatus', node, insecure)
+          if  len(spec) == 0:
+            continue;
           nodeInfo['stage'] = spec['stage']
           nodeInfo['status'] = spec['status']
           [spec, returncode] = talosgetspec('nodestatus', node, insecure)
@@ -579,8 +582,6 @@ def nodesTree():
         elif clusterName == '_Orphans':
           nodeInfo['stage'] = 'maintenance'
           nodeTypesAlias = 'controlplanes'
-        else:
-          nodeTypesAlias = nodeTypesAliases[nodeType]
         nodesTree[clusterName][nodeTypesAlias].append(nodeInfo)
   print('nodesTree:: nodesTree=%s' % json.dumps(nodesTree, indent=2))
   return nodesTree
