@@ -103,12 +103,7 @@ def talosctl():
       endpoint = ''
       runCmd = 'talosctl config context %s' % clusterName
       print('setContext=', runCmd)
-      result = subprocess.run(runCmd,
-        shell=True,
-        stdout=subprocess.PIPE,
-        cwd='%s/.maestro/' % homedir,
-        encoding='utf-8'
-      )
+      result = runShellCommand(runCmd, homedir)
     else:
       insecure = '-i'
       endpoint = '-e %s' % node
@@ -118,13 +113,7 @@ def talosctl():
       subCommand = params_dict['subCommand']
       # runCmd = 'talosctl get ' + subCommand + ' -o json -n ' + node
       runCmd = 'talosctl get  %s -o json -n %s %s %s' % (subCommand, node, endpoint, insecure)
-      print('runCmd=', runCmd)
-      result = subprocess.run(runCmd,
-        shell=True,
-        stdout=subprocess.PIPE,
-        cwd='%s/.maestro/' % homedir,
-        encoding='utf-8'
-      )
+      result = runShellCommand(runCmd, homedir)
       result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
       if len(result) > 0 and isinstance(result[0]['spec'], str):
         for index, row in enumerate(result):
@@ -152,13 +141,7 @@ def talosctl():
       cmd = cmd.replace('/', ' ')
       # runCmd = 'talosctl ' + cmd + ' -n ' + node
       runCmd = 'talosctl %s -n %s %s %s' % (cmd, node, endpoint, '')
-      print('runCmd=', runCmd)
-      result = subprocess.run(runCmd,
-        shell=True,
-        stdout=subprocess.PIPE,
-        cwd='%s/.maestro/' % homedir,
-        encoding='utf-8'
-      )
+      result = runShellCommand(runCmd, homedir)
       reply = tableToJson(result.stdout)
       return reply
     # Передача результата команды support - zip-архив
@@ -170,15 +153,8 @@ def talosctl():
       SupportFile = tmpDir + '/' + supportFile
       if os.path.exists(SupportFile):
         os.remove(SupportFile)
-      # runCmd = 'talosctl support -O ' + SupportFile + ' -e ' + endpoint + ' -n ' + node
       runCmd = 'talosctl support -O %s -n %s %s %s' % (SupportFile,  node, endpoint, '')
-      print('runCmd=', runCmd)
-      result = subprocess.run(runCmd,
-        shell=True,
-        stdout=subprocess.PIPE,
-        cwd='%s/.maestro/' % homedir,
-        encoding='utf-8'
-      )
+      result = runShellCommand(runCmd, homedir)
       return send_file(
           SupportFile,
           mimetype='application/zip',
@@ -192,15 +168,8 @@ def talosctl():
         cmd == 'version' \
           :
       cmd = cmd.replace('/', ' ')
-      # runCmd = 'talosctl ' + cmd + ' -e ' + endpoint + ' -n ' + node
       runCmd = 'talosctl %s -n %s %s %s' % (cmd, node, endpoint, '')
-      print('runCmd=', runCmd)
-      result = subprocess.run(runCmd,
-        shell=True,
-        stdout=subprocess.PIPE,
-        cwd='%s/.maestro/' % homedir,
-        encoding='utf-8'
-      )
+      result = runShellCommand(runCmd, homedir)
       reply = { 'content': result.stdout }
       return reply
     # Добавление узда в кластер, изменение состояний узла
@@ -214,13 +183,7 @@ def talosctl():
 def getDiskName(ip):
   homedir = os.getenv('HOME')
   runCmd = 'talosctl get  discoveredvolume -o json -n %s -e %s -i' % (ip, ip)
-  print('runCmd=', runCmd)
-  result = subprocess.run(runCmd,
-    shell=True,
-    stdout=subprocess.PIPE,
-    cwd='%s/.maestro/' % homedir,
-    encoding='utf-8'
-  )
+  result = runShellCommand(runCmd, homedir)
   result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
   for volInfo in result:
     id = volInfo['metadata']['id']
@@ -255,37 +218,13 @@ def apply():
       patch = '{"machine":{"kernel":{"modules":[{"name":"bridge"}]},"registries":{"config":{"registry.altlinux.org":{"tls":{"insecureSkipVerify":true}}}}}}'
       runCmd = "talosctl gen config %s %s --install-image altlinux.space/alt-orchestra/installer:v1.10.6 --config-patch '%s' --install-disk %s --output %s" % \
         (clusterName, kubeEndpoint, patch, installDisk, clusterName)
-      print('runCmd=', runCmd)
-      result = subprocess.run(runCmd,
-        shell=True,
-        stdout=subprocess.PIPE,
-        cwd='%s/.maestro/' % homedir,
-        encoding='utf-8'
-      )
+      result = runShellCommand(runCmd, homedir)
       runCmd = 'talosctl config merge %s/talosconfig' % clusterName
-      print('runCmd=', runCmd)
-      result = subprocess.run(runCmd,
-        shell=True,
-        stdout=subprocess.PIPE,
-        cwd='%s/.maestro/' % homedir,
-        encoding='utf-8'
-      )
+      result = runShellCommand(runCmd, homedir)
     runCmd = 'talosctl config context %s' % clusterName
-    print('runCmd=', runCmd)
-    result = subprocess.run(runCmd,
-      shell=True,
-      stdout=subprocess.PIPE,
-      cwd='%s/.maestro/' % homedir,
-      encoding='utf-8'
-    )
+    result = runShellCommand(runCmd, homedir)
     runCmd = 'talosctl config  info -o json'
-    print('runCmd=', runCmd)
-    result = subprocess.run(runCmd,
-      shell=True,
-      stdout=subprocess.PIPE,
-      cwd='%s/.maestro/' % homedir,
-      encoding='utf-8'
-    )
+    result = runShellCommand(runCmd, homedir)
     config = json.loads(result.stdout)
     emptyCluster = 'endpoints' not in config or len(config['endpoints']) == 0
     # print('request_json=%s' % json.dumps(request_json) )
@@ -308,13 +247,7 @@ def apply():
         points = list(set(points + addPoints))
         # print('After: points=%s' % json.dumps(points))
         runCmd = 'talosctl config %s %s' % (nodeType, ' '.join(points))
-        print('runCmd=', runCmd)
-        result = subprocess.run(runCmd,
-          shell=True,
-          stdout=subprocess.PIPE,
-          cwd='%s/.maestro/' % homedir,
-          encoding='utf-8'
-        )
+        result = runShellCommand(runCmd, homedir)
       for ip in ips:
         # print("clusterName=%s action=%s ip=%s" % (clusterName, action, ip))
         if action == 'controlplane' or action == 'worker':
@@ -322,13 +255,7 @@ def apply():
           patch = '{"machine":{"install":{"disk":"%s"}}}' % installDisk
           runCmd = "talosctl apply-config --config-patch '%s' --insecure -n %s --file %s/%s.yaml" % \
             (patch, ip, clusterName, action)
-          print('runCmd=', runCmd)
-          result = subprocess.run(runCmd,
-            shell=True,
-            stdout=subprocess.PIPE,
-            cwd='%s/.maestro/' % homedir,
-            encoding='utf-8'
-          )
+          result = runShellCommand(runCmd, homedir)
           if emptyCluster and action == 'controlplane':
             runCmd = '''
             ( \
@@ -340,15 +267,8 @@ def apply():
             talosctl -e %s -n %s kubeconfig -f;
             ) > %s/.maestro/%s/bootstrap_%s.log 2>&1  &
             ''' % (ip, ip, ip, ip, ip, ip, ip, homedir, clusterName, ip)
-            print('runCmd=', runCmd)
-            result = subprocess.run(runCmd,
-              shell=True,
-              stdout=subprocess.PIPE,
-              cwd='%s/.maestro/' % homedir,
-              encoding='utf-8'
-            )
+            result = runShellCommand(runCmd, homedir)
             emptyCluster = False
-
   return {}
 
 
@@ -393,13 +313,7 @@ def nodesList(nmapStr):
 def isMaintenance(ip):
   homedir = os.getenv('HOME')
   runCmd = 'talosctl get  discoveredvolume -o json -n %s -e %s -i' % (ip, ip)
-  print('runCmd=', runCmd)
-  result = subprocess.run(runCmd,
-    shell=True,
-    stdout=subprocess.PIPE,
-    cwd='%s/.maestro/' % homedir,
-    encoding='utf-8'
-  )
+  result = runShellCommand(runCmd, homedir)
   result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
   for volInfo in result:
     if 'partition_label' in volInfo['spec']:
@@ -410,13 +324,7 @@ def isMaintenance(ip):
 def talosgetspec(subcmd, node, insecure):
   homedir = os.getenv('HOME')
   runCmd = 'talosctl get %s -e %s -n %s -o json %s' % (subcmd, node, node, insecure)
-  print('RUNCmd=', runCmd)
-  result = subprocess.run(runCmd,
-    shell=True,
-    stdout=subprocess.PIPE,
-    cwd='%s/.maestro/' % homedir,
-    encoding='utf-8'
-  )
+  result = runShellCommand(runCmd, homedir)
   returncode = result.returncode
   ret = ''
   if returncode == 0:
@@ -453,6 +361,8 @@ def refreshTalosconfig():
   maestroConfigDir =  '%s/.maestro' % homedir
   print('refreshTalosconfig:: Before: maestroConfigDir=%s' % maestroConfigDir)
   talosconfigFile = '%s/talosconfig' % maestroConfigDir
+  if not os.path.exists(talosconfigFile):
+    initTalosconfig()
   fp = open(talosconfigFile, 'r')
   talosconfig = yaml.safe_load(fp)
   fp.close()
@@ -530,8 +440,7 @@ def refreshTalosconfig():
       # print('refreshTalosconfig:: clusterName=%s nodes:' % clusterName, nodes)
       runShellCommand("yq -yi '.contexts.%s.endpoints=%s' talosconfig" % (clusterName, json.dumps(endpoints)), homedir)
       runShellCommand("yq -yi '.contexts.%s.nodes=%s' talosconfig" % (clusterName, json.dumps(nodes)), homedir)
-      # runShellCommand('talosctl config endpoint %s' % ' '.join(endpoints), homedir)
-      # runShellCommand('talosctl config node %s' % ' '.join(nodes), homedir)
+
 
 def initTalosconfig():
   homedir = os.getenv('HOME')
@@ -560,26 +469,6 @@ contexts:
         runCmd = 'talosctl config merge %s' % talosconfigFile
         runShellCommand(runCmd, homedir)
 
-# def refreshNodeTypes(nodeTypes, nodeTypesFile):
-#   ret = {}
-#   ret['controlplanes'] = []
-#   ret['workers'] = []
-#   for node in nodeTypes['controlplanes']+nodeTypes['workers']:
-#     if is_port_open(node, 50000):
-#       if is_port_open(node, 6443):
-#         ret['controlplanes'].append(node)
-#       else:
-#         ret['workers'].append(node)
-#   if set(ret['controlplanes']) != set(ret['controlplanes']) or \
-#      set(ret['workers']) != set(ret['workers']):
-#     print('%s updated' % nodeTypesFile)
-#     fp = open(nodeTypesFile, 'w')
-#     json.dump(ret, fp, indent=2)
-#     fp.close()
-#   else:
-#     print('%s unchanged' % nodeTypesFile)
-#   return ret
-
 @app.route('/scanNets',methods=['GET', 'POST'])
 def scanNets():
   homedir = os.getenv('HOME')
@@ -604,13 +493,7 @@ def scanNets():
   json.dump(scanNets, fp, indent=2)
   fp.close()
   runCmd = 'nmap  -p 50000,6443 ' + ' '.join(scanNets['scanNets'])
-  print('runCmd=', runCmd)
-  result = subprocess.run(runCmd,
-    shell=True,
-    stdout=subprocess.PIPE,
-    cwd='%s/.maestro/' % homedir,
-    encoding='utf-8'
-  )
+  result = runShellCommand(runCmd, homedir)
   nmapOut = result.stdout
   nodes = nodesList(nmapOut.strip())
   print('NODES=', json.dumps(nodes, indent=4))
@@ -664,22 +547,25 @@ def nodesTree():
   nodeTypesAliases = {'endpoints': 'controlplanes', 'nodes': 'workers'}
   for clusterName in talosconfig['contexts']:
     nodesTree[clusterName] = { 'controlplanes': [], 'workers': [] }
+    print('nodesTree:: clusterName=%s' % clusterName)
     for nodeType in ['endpoints', 'nodes']:
       nodes = talosconfig['contexts'][clusterName][nodeType] if nodeType in talosconfig['contexts'][clusterName] else []
+      print('nodesTree:: nodeType=%s nodes=%s' % (clusterName, json.dumps(nodes)))
       for node in nodes:
         nodeInfo = {}
         nodeInfo['ip'] = node
-        [spec, returncode] = talosgetspec('info', node, '')
-        print('clusterName=%s returncode=%d ' % (clusterName, returncode))
-        if returncode != 0:
-          clusterName = '_Orphans'
-          insecure = '-i'
-          if not isMaintenance(node):
-            clusterName = '_Unknown'
-        else:
-          clusterName = spec['clusterName']
-          insecure = ''
-        if clusterName != '_Unknown' and len(spec) > 0:
+        insecure = '-i' if clusterName == '_Orphans' else ''
+        # [spec, returncode] = talosgetspec('info', node, '')
+        # print('clusterName=%s returncode=%d spec=%s' % (clusterName, returncode, json.dumps(spec)))
+        # if returncode != 0:
+        #   clusterName = '_Orphans'
+        #   insecure = '-i'
+        #   if not isMaintenance(node):
+        #     clusterName = '_Unknown'
+        # else:
+        #   clusterName = spec['clusterName']
+        #   insecure = ''
+        if clusterName != '_Unknown' and clusterName != '_Orphans':
           [spec, returncode] = talosgetspec('machinestatus', node, insecure)
           nodeInfo['stage'] = spec['stage']
           nodeInfo['status'] = spec['status']
@@ -692,59 +578,12 @@ def nodesTree():
             nodeInfo['memberID'] = spec['memberID'] if 'memberID' in spec else '-'
         elif clusterName == '_Orphans':
           nodeInfo['stage'] = 'maintenance'
-        nodeTypesAlias = nodeTypesAliases[nodeType]
+          nodeTypesAlias = 'controlplanes'
+        else:
+          nodeTypesAlias = nodeTypesAliases[nodeType]
         nodesTree[clusterName][nodeTypesAlias].append(nodeInfo)
+  print('nodesTree:: nodesTree=%s' % json.dumps(nodesTree, indent=2))
   return nodesTree
-
-  # nodeTypesFile = configDir + '/nodeTypes.json'
-  # if not os.path.isfile(nodeTypesFile):
-  #   return {}
-  # fp = open(nodeTypesFile, 'r')
-  # nodeTypes = json.load(fp)
-  # fp.close()
-  # # print('nodeTypes=', nodeTypes)
-  # nodeTypes = refreshNodeTypes(nodeTypes, nodeTypesFile)
-  # for nodeType in ['controlplanes', 'workers']:
-  #   for node in nodeTypes[nodeType]:
-  #     print(nodeType, node)
-  #     [spec, returncode] = talosgetspec('info', node, '')
-  #     # print('clusterName=%s returncode=%d ' % (clusterName, returncode))
-  #     print('spec=', spec)
-  #     print('returncode=', returncode)
-  #     if returncode != 0:
-  #       clusterName = '_Orphans'
-  #       insecure = '-i'
-  #       if not isMaintenance(node):
-  #         clusterName = '_Unknown'
-  #     else:
-  #       clusterName = spec['clusterName']
-  #       insecure = ''
-  #     if clusterName not in nodesTree:
-  #       nodesTree[clusterName] = { 'controlplanes': [], 'workers': [] }
-  #     nodeInfo = {}
-  #     nodeInfo['ip'] = node
-  #     # print('clusterName=%s' % clusterName)
-  #     # print('SPEC=%s' % json.dumps(spec))
-  #     # print('len(SPEC)=%d' % len(spec))
-  #     # print("COND=",  clusterName != '_Unknown' and len(spec) > 2)
-  #     if clusterName != '_Unknown' and len(spec) > 0:
-  #       [spec, returncode] = talosgetspec('machinestatus', node, insecure)
-  #       nodeInfo['stage'] = spec['stage']
-  #       nodeInfo['status'] = spec['status']
-  #       [spec, returncode] = talosgetspec('nodestatus', node, insecure)
-  #       if returncode == 0 :
-  #         nodeInfo['nodeReady'] = spec['nodeReady'] if 'nodeReady' in spec else '-'
-  #         [spec, returncode] = talosgetspec('manifeststatus', node, insecure)
-  #         nodeInfo['manifestsApplied'] = spec['manifestsApplied'] if 'manifestsApplied' in spec else []
-  #         [spec, returncode] = talosgetspec('etcdmember', node, insecure)
-  #         nodeInfo['memberID'] = spec['memberID'] if 'memberID' in spec else '-'
-  #     elif clusterName == '_Orphans':
-  #       nodeInfo['stage'] = 'maintenance'
-  #     nodesTree[clusterName][nodeType].append(nodeInfo)
-  # if '_Orphans' in nodesTree:
-  #   nodesTree['_Orphans']['controlplanes'] = nodesTree['_Orphans']['workers']
-  #   nodesTree['_Orphans']['workers'] = []
-  # return nodesTree
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=False)
