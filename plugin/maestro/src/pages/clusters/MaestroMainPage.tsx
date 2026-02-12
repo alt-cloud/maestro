@@ -2,6 +2,7 @@ import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import {
   Alert,
+  Box,
   Button,
   Divider,
   FormControl,
@@ -26,16 +27,56 @@ import RefreshIntervalControl from '../shared/ui/RefreshIntervalControl';
 import { alignRefreshInterval, getRefreshIntervalOptions, IntervalValue } from '../shared/ui/refreshIntervals';
 
 const clusterStatusOptions: StatusOption[] = [
-  { value: 'running', labelKey: 'clustersPage.stages.running', color: '#e8f5e9', icon: '🟢' },
-  { value: 'restart', labelKey: 'clustersPage.stages.restart', color: '#fff8e1', icon: '🟡' },
-  { value: 'reboot', labelKey: 'clustersPage.stages.reboot', color: '#fff8e1', icon: '🟡' },
-  { value: 'shutdown', labelKey: 'clustersPage.stages.shutdown', color: '#fff8e1', icon: '🟡' },
-  { value: 'reset', labelKey: 'clustersPage.stages.reset', color: '#ffebee', icon: '🔴' },
+  {
+    value: 'running',
+    labelKey: 'clustersPage.stages.running',
+    itemColor: '#e8f5e9',
+    markerColor: '#2e7d32',
+  },
+  {
+    value: 'restart',
+    labelKey: 'clustersPage.stages.restart',
+    itemColor: '#fff8e1',
+    markerColor: '#ed6c02',
+  },
+  {
+    value: 'reboot',
+    labelKey: 'clustersPage.stages.reboot',
+    itemColor: '#fff8e1',
+    markerColor: '#ed6c02',
+  },
+  {
+    value: 'shutdown',
+    labelKey: 'clustersPage.stages.shutdown',
+    itemColor: '#fff8e1',
+    markerColor: '#ed6c02',
+  },
+  {
+    value: 'reset',
+    labelKey: 'clustersPage.stages.reset',
+    itemColor: '#ffebee',
+    markerColor: '#d32f2f',
+  },
 ];
 const orphanStatusOptions: StatusOption[] = [
-  { value: 'maintenance', labelKey: 'clustersPage.stages.maintenance', color: '#e8f5e9', icon: '🟡' },
-  { value: 'controlplane', labelKey: 'clustersPage.stages.controlplane', color: '#e8f5e9', icon: '🟢' },
-  { value: 'worker', labelKey: 'clustersPage.stages.worker', color: '#e8f5e9', icon: '🟢' },
+  {
+    value: 'maintenance',
+    labelKey: 'clustersPage.stages.maintenance',
+    itemColor: '#e8f5e9',
+    markerColor: '#ed6c02',
+  },
+  {
+    value: 'controlplane',
+    labelKey: 'clustersPage.stages.controlplane',
+    itemColor: '#e8f5e9',
+    markerColor: '#2e7d32',
+  },
+  {
+    value: 'worker',
+    labelKey: 'clustersPage.stages.worker',
+    itemColor: '#e8f5e9',
+    markerColor: '#2e7d32',
+  },
 ];
 
 const orphansClusterName = '_Orphans';
@@ -53,8 +94,8 @@ interface Column {
 interface StatusOption {
   value: string;
   labelKey: string;
-  color: string;
-  icon?: React.ReactNode;
+  itemColor: string;
+  markerColor: string;
 }
 
 interface PageProps {
@@ -94,12 +135,12 @@ function NodeStageSelect(props) {
           key={option.value}
           value={option.value}
           sx={{
-            backgroundColor: option.color,
+            backgroundColor: option.itemColor,
             '&:hover': {
-              backgroundColor: `${option.color}`,
+              backgroundColor: `${option.itemColor}`,
             },
             '&.Mui-selected': {
-              backgroundColor: option.color,
+              backgroundColor: option.itemColor,
               fontWeight: 'bold',
             },
             display: 'flex',
@@ -107,7 +148,17 @@ function NodeStageSelect(props) {
             gap: 1,
           }}
         >
-          <span>{option.icon}</span>
+          <Box
+            component="span"
+            sx={{
+              backgroundColor: option.markerColor,
+              borderRadius: '50%',
+              display: 'inline-block',
+              flexShrink: 0,
+              height: 10,
+              width: 10,
+            }}
+          />
           <span>{t(option.labelKey)}</span>
         </MenuItem>
       ))}
@@ -118,7 +169,7 @@ function NodeStageSelect(props) {
 
 function getTranslatedStage(stage: string | undefined, t: (key: string) => string) {
   if (typeof stage === 'undefined') {
-    return '?';
+    return t('common.unknown');
   }
 
   const key = `clustersPage.stages.${stage}`;
@@ -202,9 +253,9 @@ function NodeColumns(props) {
       setIsSubmitDisabled={props.setIsSubmitDisabled}
       t={t}
       />
-    <TableCell>{cols['nodeReady'] ? 'V' : 'X'}</TableCell>
-    <TableCell>{cols['status'] === undefined ? '-' : cols['status']['ready'] ? 'V' : 'X'}</TableCell>
-    <TableCell>{cols['memberID'] === '-' ? 'X' : 'V'}</TableCell>
+    <TableCell>{cols['nodeReady'] ? t('common.yes') : t('common.no')}</TableCell>
+    <TableCell>{cols['status'] === undefined ? '-' : cols['status']['ready'] ? t('common.yes') : t('common.no')}</TableCell>
+    <TableCell>{cols['memberID'] === '-' ? t('common.no') : t('common.yes')}</TableCell>
     <TableCell>{cols['manifestsApplied'] === undefined ? '-' : cols['manifestsApplied'].length}</TableCell>
     <TableCell>{unmet}</TableCell>
     </>

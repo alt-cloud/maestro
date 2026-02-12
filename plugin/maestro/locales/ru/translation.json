@@ -12,7 +12,10 @@
     "noDataReceived": "Данные не получены.",
     "node": "Узел",
     "nodeType": "Тип узла",
+    "no": "Нет",
     "remove": "Удалить",
+    "unknown": "Неизвестно",
+    "yes": "Да",
     "worker": "worker"
   },
   "refresh": {

@@ -12,7 +12,10 @@
     "noDataReceived": "No data received.",
     "node": "Node",
     "nodeType": "Node type",
+    "no": "No",
     "remove": "Remove",
+    "unknown": "Unknown",
+    "yes": "Yes",
     "worker": "worker"
   },
   "refresh": {
