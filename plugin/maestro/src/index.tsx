@@ -16,14 +16,14 @@
 
 import { registerRoute, registerSidebarEntry } from '@kinvolk/headlamp-plugin/lib';
 import React from 'react';
-import ScanNetworksPage from './cluster/ScanNetworksPage';
-import MaestroMainPage from './MaestroMainPage';
-import GetResourcePage from './node/get/GetResourcePage';
-import GetTreePage from './node/get/GetTreePage';
-import NodePage from './node/NodePage';
-import ServiceCommandPage from './node/service/ServiceCommandPage';
-import TableCommandPage from './node/TableCommandPage';
-import TextCommandPage from './node/TextCommandPage';
+import MaestroMainPage from './pages/clusters/MaestroMainPage';
+import ScanNetworksPage from './pages/clusters/ScanNetworksPage';
+import ServiceCommandPage from './pages/node/commands/ServiceCommandPage';
+import TableCommandPage from './pages/node/commands/TableCommandPage';
+import TextCommandPage from './pages/node/commands/TextCommandPage';
+import GetResourcePage from './pages/node/get/GetResourcePage';
+import GetTreePage from './pages/node/get/GetTreePage';
+import NodePage from './pages/node/NodePage';
 
 interface SidebarConfig {
   item: string;
