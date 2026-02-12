@@ -1,3 +1,4 @@
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import {
   Alert,
@@ -16,18 +17,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { buildServerUrl } from '../../../config/server';
 import PageHeader from '../../shared/ui/PageHeader';
-import RefreshIntervalControl, { IntervalOption } from '../../shared/ui/RefreshIntervalControl';
-
-const INTERVAL_OPTIONS: readonly IntervalOption[] = [
-  { label: '1 second', value: 1000 },
-  { label: '5 seconds', value: 5000 },
-  { label: '10 seconds', value: 10000 },
-  { label: '30 seconds', value: 30000 },
-  { label: '1 minute', value: 60000 },
-  { label: 'Off', value: null },
-] as const;
-
-type IntervalValue = typeof INTERVAL_OPTIONS[number]['value'];
+import RefreshIntervalControl from '../../shared/ui/RefreshIntervalControl';
+import { alignRefreshInterval, getRefreshIntervalOptions, IntervalValue } from '../../shared/ui/refreshIntervals';
 type TableRowData = Record<string, string>;
 
 interface Column {
@@ -39,27 +30,6 @@ interface Column {
 interface ColumnGroups {
   meta: string[];
   spec: string[];
-}
-
-function alignInterval(delay: string | number | null | undefined): IntervalValue {
-  if (typeof delay === 'undefined' || Number.isNaN(Number(delay)) || Number(delay) <= 0) {
-    return null;
-  }
-
-  const delayMs = Number(delay) * 1000;
-  let lastValue = 0;
-
-  for (const option of INTERVAL_OPTIONS) {
-    if (option.value === null) {
-      break;
-    }
-    if (delayMs <= option.value) {
-      return option.value;
-    }
-    lastValue = option.value;
-  }
-
-  return lastValue || null;
 }
 
 function createColumnGroups(resourceRows: any[]): ColumnGroups {
@@ -127,7 +97,9 @@ function createRows(columnGroups: ColumnGroups, dataRows: any[]): TableRowData[]
 }
 
 const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }) => {
-  const [timeout, setTimeout] = useState<IntervalValue>(alignInterval(delay));
+  const { t } = useTranslation();
+  const intervalOptions = useMemo(() => getRefreshIntervalOptions(t), [t]);
+  const [timeout, setTimeout] = useState<IntervalValue>(alignRefreshInterval(delay));
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const [page, setPage] = useState(0);
@@ -189,7 +161,7 @@ const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }
         if (err.name === 'AbortError') {
           return;
         }
-        setError(err.message || 'Failed to load data');
+        setError(err.message || t('common.failedToLoadData'));
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -212,7 +184,7 @@ const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }
       clearInterval(intervalId);
       controller.abort();
     };
-  }, [cluster, command, commandSet, node, orderBy, timeout]);
+  }, [cluster, command, commandSet, node, orderBy, t, timeout]);
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
@@ -244,27 +216,27 @@ const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }
     <SectionBox title="" textAlign="left" paddingTop={2}>
       <PageHeader
         breadcrumbs={[
-          { label: 'Clusters', to: '/maestro' },
-          { label: cluster || 'Cluster', to: `/maestro?cluster=${cluster || ''}` },
-          { label: nodeType || 'Node type', to: `/maestro/?cluster=${cluster || ''}&type=${nodeType || ''}` },
-          { label: node || 'Node', to: `/maestro/node?cluster=${cluster || ''}&type=${nodeType || ''}&controlplane=${controlPlane || ''}&node=${node || ''}` },
-          { label: 'get', to: `/maestro/node/get?cluster=${cluster || ''}&type=${nodeType || ''}&controlplane=${controlPlane || ''}&node=${node || ''}` },
+          { label: t('common.clusters'), to: '/maestro' },
+          { label: cluster || t('common.cluster'), to: `/maestro?cluster=${cluster || ''}` },
+          { label: nodeType || t('common.nodeType'), to: `/maestro/?cluster=${cluster || ''}&type=${nodeType || ''}` },
+          { label: node || t('common.node'), to: `/maestro/node?cluster=${cluster || ''}&type=${nodeType || ''}&controlplane=${controlPlane || ''}&node=${node || ''}` },
+          { label: t('common.get'), to: `/maestro/node/get?cluster=${cluster || ''}&type=${nodeType || ''}&controlplane=${controlPlane || ''}&node=${node || ''}` },
           { label: commandSet },
           { label: command },
         ]}
-        subtitle="Structured output grouped by spec and metadata fields."
-        title="Get resource"
+        subtitle={t('getResourcePage.subtitle')}
+        title={t('getResourcePage.title')}
       />
 
       <Paper sx={{ p: 2 }} variant="outlined">
         <Box sx={{ mb: 2 }}>
-          <RefreshIntervalControl onChange={setTimeout} options={INTERVAL_OPTIONS} value={timeout} />
+          <RefreshIntervalControl onChange={setTimeout} options={intervalOptions} value={timeout} />
         </Box>
 
-        {loading && <Alert severity="info">Loading command output...</Alert>}
+        {loading && <Alert severity="info">{t('common.loadingCommandOutput')}</Alert>}
         {error && <Alert severity="error">{error}</Alert>}
 
-        {!loading && !error && rows.length === 0 && <Alert severity="warning">No data received.</Alert>}
+        {!loading && !error && rows.length === 0 && <Alert severity="warning">{t('common.noDataReceived')}</Alert>}
 
         {!loading && !error && rows.length > 0 && (
           <>
@@ -273,10 +245,10 @@ const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }
                 <TableHead>
                   <TableRow>
                     <TableCell colSpan={columnGroups.spec.length} sx={{ fontWeight: 700 }}>
-                      SPEC
+                      {t('getResourcePage.specHeader')}
                     </TableCell>
                     <TableCell colSpan={columnGroups.meta.length} sx={{ fontWeight: 700 }}>
-                      METADATA
+                      {t('getResourcePage.metadataHeader')}
                     </TableCell>
                   </TableRow>
                   <TableRow>

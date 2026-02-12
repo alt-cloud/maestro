@@ -1,3 +1,4 @@
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import {
   Box,
@@ -42,6 +43,7 @@ interface SnackbarState {
 }
 
 const ScanNetworksPage: React.FC<{}> = () => {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
   const [scanNetworks, setScanNetworks] = useState<string[]>([]);
   const [formError, setFormError] = useState('');
@@ -79,7 +81,7 @@ const ScanNetworksPage: React.FC<{}> = () => {
         if (err.name === 'AbortError') {
           return;
         }
-        setFetchError(err.message || 'Failed to load data');
+        setFetchError(err.message || t('common.failedToLoadData'));
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -92,22 +94,22 @@ const ScanNetworksPage: React.FC<{}> = () => {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [t]);
 
   const handleAdd = () => {
     const value = inputValue.trim();
     if (!value) {
-      setFormError('The field cannot be empty');
+      setFormError(t('scanNetworks.emptyField'));
       return;
     }
 
     if (!isValidIpWithCidr(value)) {
-      setFormError('Invalid IP/mask format. Example: 192.168.1.0/24');
+      setFormError(t('scanNetworks.invalidFormat'));
       return;
     }
 
     if (scanNetworks.includes(value)) {
-      setFormError('This address has already been added');
+      setFormError(t('scanNetworks.duplicateAddress'));
       return;
     }
 
@@ -122,7 +124,7 @@ const ScanNetworksPage: React.FC<{}> = () => {
 
   const handleSubmit = async () => {
     if (scanNetworks.length === 0) {
-      setSnackbar({ open: true, message: 'Add at least one network before scanning', severity: 'warning' });
+      setSnackbar({ open: true, message: t('scanNetworks.addAtLeastOne'), severity: 'warning' });
       return;
     }
 
@@ -138,11 +140,11 @@ const ScanNetworksPage: React.FC<{}> = () => {
       if (response.ok) {
         history.push('/maestro');
       } else {
-        throw new Error('Server error');
+        throw new Error(t('scanNetworks.serverError'));
       }
     } catch (err) {
       console.error(err);
-      setSnackbar({ open: true, message: 'Network scan request failed', severity: 'error' });
+      setSnackbar({ open: true, message: t('scanNetworks.requestFailed'), severity: 'error' });
     }
   };
 
@@ -153,12 +155,12 @@ const ScanNetworksPage: React.FC<{}> = () => {
   return (
     <SectionBox title="" textAlign="left" paddingTop={2}>
       <PageHeader
-        breadcrumbs={[{ label: 'Clusters', to: '/maestro' }, { label: 'Scan networks' }]}
-        subtitle="Define CIDR ranges that the backend should scan for cluster discovery."
-        title="Network scanner"
+        breadcrumbs={[{ label: t('common.clusters'), to: '/maestro' }, { label: t('scanNetworks.breadcrumb') }]}
+        subtitle={t('scanNetworks.subtitle')}
+        title={t('scanNetworks.title')}
       />
 
-      {loading && <Alert severity="info">Loading network settings...</Alert>}
+      {loading && <Alert severity="info">{t('scanNetworks.loadingSettings')}</Alert>}
       {fetchError && <Alert severity="error">{fetchError}</Alert>}
 
       {!loading && !fetchError && (
@@ -168,8 +170,8 @@ const ScanNetworksPage: React.FC<{}> = () => {
               <TextField
                 error={Boolean(formError)}
                 fullWidth
-                helperText={formError || 'Use CIDR notation, e.g. 10.0.0.0/24'}
-                label="Network CIDR"
+                helperText={formError || t('scanNetworks.cidrHint')}
+                label={t('scanNetworks.cidrLabel')}
                 onChange={event => setInputValue(event.target.value)}
                 onKeyDown={event => {
                   if (event.key === 'Enter') {
@@ -180,17 +182,17 @@ const ScanNetworksPage: React.FC<{}> = () => {
                 value={inputValue}
               />
               <Button onClick={handleAdd} sx={{ minWidth: 140 }} variant="contained">
-                Add network
+                {t('scanNetworks.addNetwork')}
               </Button>
             </Stack>
 
             <Box>
               <Typography sx={{ mb: 1 }} variant="subtitle1">
-                Networks to scan
+                {t('scanNetworks.networksToScan')}
               </Typography>
               {scanNetworks.length === 0 ? (
                 <Typography color="text.secondary" variant="body2">
-                  No networks added yet.
+                  {t('scanNetworks.noNetworks')}
                 </Typography>
               ) : (
                 <List dense sx={{ border: theme => `1px solid ${theme.palette.divider}`, borderRadius: 1 }}>
@@ -199,7 +201,7 @@ const ScanNetworksPage: React.FC<{}> = () => {
                       <ListItemText primary={network} />
                       <ListItemSecondaryAction>
                         <IconButton edge="end" onClick={() => handleRemove(network)}>
-                          Remove
+                          {t('common.remove')}
                         </IconButton>
                       </ListItemSecondaryAction>
                     </ListItem>
@@ -209,7 +211,7 @@ const ScanNetworksPage: React.FC<{}> = () => {
             </Box>
 
             <Button disabled={scanNetworks.length === 0} onClick={handleSubmit} size="large" variant="contained">
-              Start scan
+              {t('scanNetworks.startScan')}
             </Button>
           </Stack>
         </Paper>

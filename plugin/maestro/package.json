@@ -2,6 +2,12 @@
   "name": "maestro",
   "version": "0.1.0",
   "description": "Maestro Headlamp plugin",
+  "headlamp": {
+    "i18n": [
+      "en",
+      "ru"
+    ]
+  },
   "scripts": {
     "start": "NODE_ENV=development headlamp-plugin start ",
     "build": "headlamp-plugin build",

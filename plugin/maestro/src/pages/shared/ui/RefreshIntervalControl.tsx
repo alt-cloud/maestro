@@ -1,3 +1,4 @@
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import React from 'react';
 
@@ -14,11 +15,14 @@ interface RefreshIntervalControlProps {
 }
 
 function RefreshIntervalControl({
-  label = 'Auto refresh',
+  label,
   value,
   options,
   onChange,
 }: RefreshIntervalControlProps) {
+  const { t } = useTranslation();
+  const resolvedLabel = label ?? t('common.autoRefresh');
+
   const handleChange = (event: SelectChangeEvent<string>) => {
     const nextValue = event.target.value === 'null' ? null : Number(event.target.value);
     onChange(nextValue);
@@ -26,10 +30,10 @@ function RefreshIntervalControl({
 
   return (
     <FormControl size="small" sx={{ minWidth: 180 }}>
-      <InputLabel id="refresh-interval-label">{label}</InputLabel>
+      <InputLabel id="refresh-interval-label">{resolvedLabel}</InputLabel>
       <Select
         id="refresh-interval-select"
-        label={label}
+        label={resolvedLabel}
         labelId="refresh-interval-label"
         onChange={handleChange}
         value={value === null ? 'null' : String(value)}

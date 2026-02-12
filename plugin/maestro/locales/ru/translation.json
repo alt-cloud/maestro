@@ -1,0 +1,149 @@
+{
+  "common": {
+    "autoRefresh": "Автообновление",
+    "breadcrumb": "хлебные крошки",
+    "cluster": "Кластер",
+    "clusters": "Кластеры",
+    "controlplane": "controlplane",
+    "errorPrefix": "Ошибка: {{message}}",
+    "failedToLoadData": "Не удалось загрузить данные",
+    "get": "get",
+    "loadingCommandOutput": "Загрузка вывода команды...",
+    "noDataReceived": "Данные не получены.",
+    "node": "Узел",
+    "nodeType": "Тип узла",
+    "remove": "Удалить",
+    "worker": "worker"
+  },
+  "refresh": {
+    "fiveSeconds": "5 секунд",
+    "off": "Выключено",
+    "oneMinute": "1 минута",
+    "oneSecond": "1 секунда",
+    "tenSeconds": "10 секунд",
+    "thirtySeconds": "30 секунд"
+  },
+  "clustersPage": {
+    "alertControlplaneRequired": "При создании нового кластера нужен минимум один узел controlplane.",
+    "alertNameRequired": "Чтобы добавить узел в новый кластер, введите его имя.",
+    "alertNoChanges": "Изменений нет",
+    "applyChanges": "Применить изменения",
+    "clusterNameLabel": "Имя кластера",
+    "columns": {
+      "clusterName": "Кластер",
+      "ip": "IP",
+      "manifests": "Манифесты",
+      "member": "Участник",
+      "noConditions": "НетУсловий",
+      "nodeReady": "Готов",
+      "nodeType": "ТипУзла",
+      "stage": "Этап",
+      "status": "Статус"
+    },
+    "createClusterAria": "Создать кластер",
+    "loadingClusterList": "Загрузка списка кластеров...",
+    "netError": "Ошибка сети",
+    "scanNetworks": "Сканировать сети",
+    "sendError": "Ошибка отправки запроса",
+    "stages": {
+      "controlplane": "Controlplane",
+      "maintenance": "Обслуживание",
+      "reboot": "Перезагрузка",
+      "reset": "Сброс",
+      "restart": "Рестарт",
+      "running": "Работает",
+      "shutdown": "Выключение",
+      "worker": "Worker"
+    },
+    "subtitle": "Топология кластера и действия жизненного цикла узлов.",
+    "title": "Кластеры"
+  },
+  "scanNetworks": {
+    "addAtLeastOne": "Добавьте хотя бы одну сеть перед сканированием",
+    "addNetwork": "Добавить сеть",
+    "breadcrumb": "Сканирование сетей",
+    "cidrHint": "Пример: 192.168.1.0/24",
+    "cidrLabel": "Сеть (CIDR)",
+    "duplicateAddress": "Этот адрес уже добавлен",
+    "emptyField": "Поле не может быть пустым",
+    "invalidFormat": "Неверный формат IP/маски. Пример: 192.168.1.0/24",
+    "loadingSettings": "Загрузка настроек сканера...",
+    "networksToScan": "Сети для сканирования",
+    "noNetworks": "Сети пока не добавлены.",
+    "requestFailed": "Не удалось отправить запрос на сканирование сети",
+    "serverError": "Ошибка сервера",
+    "startScan": "Начать сканирование",
+    "subtitle": "Укажите CIDR-сети, которые нужно просканировать для поиска узлов кластера.",
+    "title": "Сканирование сети кластера"
+  },
+  "nodePage": {
+    "cards": {
+      "overviewDescription": "Основные точки входа для этого узла.",
+      "overviewTitle": "Обзор",
+      "supportTitle": "Поддержка и roadmap",
+      "tableCommandsDescription": "Табличный вывод команд с сортировкой и пагинацией.",
+      "tableCommandsTitle": "Табличные команды",
+      "textCommandsDescription": "Потоковый текстовый вывод команд Talos.",
+      "textCommandsTitle": "Текстовые команды"
+    },
+    "links": {
+      "containers": "Контейнеры",
+      "dmesg": "dmesg",
+      "etcdMembers": "etcd участники",
+      "etcdStatus": "etcd статус",
+      "getResources": "Получить ресурсы",
+      "imageDefault": "image default",
+      "imageList": "image list",
+      "inspectDependencies": "inspect dependencies",
+      "memory": "memory",
+      "mounts": "mounts",
+      "netstat": "netstat",
+      "processes": "processes",
+      "serviceLogs": "Логи сервиса",
+      "services": "Сервисы",
+      "stats": "stats",
+      "time": "time",
+      "usage": "usage",
+      "version": "version"
+    },
+    "plannedActions": "Запланированные действия:",
+    "roadmap": {
+      "dashboard": "dashboard",
+      "health": "health",
+      "patch": "patch",
+      "reboot": "reboot",
+      "reset": "reset",
+      "shutdown": "shutdown",
+      "upgrade": "upgrade"
+    },
+    "subtitle": "Управляйте действиями узла и переходите к представлениям команд Talos.",
+    "title": "Операции узла"
+  },
+  "getTreePage": {
+    "subtitle": "Выберите команду Talos get из доступных групп ресурсов.",
+    "title": "Talosctl get"
+  },
+  "getResourcePage": {
+    "metadataHeader": "МЕТАДАННЫЕ",
+    "specHeader": "СПЕЦИФИКАЦИЯ",
+    "subtitle": "Структурированный вывод, сгруппированный по полям spec и metadata.",
+    "title": "Ресурс get"
+  },
+  "tableCommandPage": {
+    "subtitle": "Табличный вывод выполнения команды Talos.",
+    "title": "Результат команды"
+  },
+  "serviceCommandPage": {
+    "subtitle": "Табличный вывод сервисов. Нажмите на имя сервиса, чтобы открыть логи.",
+    "title": "Команда сервисов"
+  },
+  "textCommandPage": {
+    "subtitle": "Потоковый текстовый вывод команд Talos.",
+    "title": "Текстовая команда"
+  },
+  "support": {
+    "downloadBundle": "Скачать support bundle",
+    "downloadFailed": "Не удалось скачать support bundle",
+    "downloading": "Скачивание..."
+  }
+}

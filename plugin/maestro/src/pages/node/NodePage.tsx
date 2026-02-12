@@ -1,3 +1,4 @@
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import {
   Card,
@@ -52,6 +53,7 @@ function ActionCard({ title, description, links }: ActionCardProps) {
 }
 
 const NodePage: React.FC<{}> = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const queryParams = useMemo(() => {
     const params = new URLSearchParams(location.search);
@@ -75,78 +77,90 @@ const NodePage: React.FC<{}> = () => {
   const buildPath = (path: string) => `${path}${querySuffix}`;
 
   const overviewLinks: CommandLink[] = [
-    { label: 'Get resources', path: buildPath('/maestro/node/get') },
-    { label: 'Services', path: buildPath('/maestro/node/service') },
-    { label: 'Service logs', path: buildPath('/maestro/node/logs') },
-    { label: 'Containers', path: buildPath('/maestro/node/containers') },
+    { label: t('nodePage.links.getResources'), path: buildPath('/maestro/node/get') },
+    { label: t('nodePage.links.services'), path: buildPath('/maestro/node/service') },
+    { label: t('nodePage.links.serviceLogs'), path: buildPath('/maestro/node/logs') },
+    { label: t('nodePage.links.containers'), path: buildPath('/maestro/node/containers') },
   ];
 
   const textCommandLinks: CommandLink[] = [
-    { label: 'dmesg', path: buildPath('/maestro/node/dmesg') },
-    { label: 'version', path: buildPath('/maestro/node/version') },
-    { label: 'inspect dependencies', path: buildPath('/maestro/node/inspect/dependencies') },
+    { label: t('nodePage.links.dmesg'), path: buildPath('/maestro/node/dmesg') },
+    { label: t('nodePage.links.version'), path: buildPath('/maestro/node/version') },
+    { label: t('nodePage.links.inspectDependencies'), path: buildPath('/maestro/node/inspect/dependencies') },
   ];
 
   const tableCommandLinks: CommandLink[] = [
-    { label: 'memory', path: buildPath('/maestro/node/memory') },
-    { label: 'mounts', path: buildPath('/maestro/node/mounts') },
-    { label: 'netstat', path: buildPath('/maestro/node/netstat') },
-    { label: 'processes', path: buildPath('/maestro/node/processes') },
-    { label: 'stats', path: buildPath('/maestro/node/stats') },
-    { label: 'time', path: buildPath('/maestro/node/time') },
-    { label: 'usage', path: buildPath('/maestro/node/usage') },
-    { label: 'image default', path: buildPath('/maestro/node/image/default') },
-    { label: 'image list', path: buildPath('/maestro/node/image/list') },
+    { label: t('nodePage.links.memory'), path: buildPath('/maestro/node/memory') },
+    { label: t('nodePage.links.mounts'), path: buildPath('/maestro/node/mounts') },
+    { label: t('nodePage.links.netstat'), path: buildPath('/maestro/node/netstat') },
+    { label: t('nodePage.links.processes'), path: buildPath('/maestro/node/processes') },
+    { label: t('nodePage.links.stats'), path: buildPath('/maestro/node/stats') },
+    { label: t('nodePage.links.time'), path: buildPath('/maestro/node/time') },
+    { label: t('nodePage.links.usage'), path: buildPath('/maestro/node/usage') },
+    { label: t('nodePage.links.imageDefault'), path: buildPath('/maestro/node/image/default') },
+    { label: t('nodePage.links.imageList'), path: buildPath('/maestro/node/image/list') },
   ];
 
   if (isControlPlane) {
     tableCommandLinks.push(
-      { label: 'etcd members', path: buildPath('/maestro/node/etcd/members') },
-      { label: 'etcd status', path: buildPath('/maestro/node/etcd/status') }
+      { label: t('nodePage.links.etcdMembers'), path: buildPath('/maestro/node/etcd/members') },
+      { label: t('nodePage.links.etcdStatus'), path: buildPath('/maestro/node/etcd/status') }
     );
   }
 
   const plannedActions = [
-    'dashboard',
-    'health',
-    'patch',
-    'reboot',
-    'reset',
-    'shutdown',
-    'upgrade',
+    t('nodePage.roadmap.dashboard'),
+    t('nodePage.roadmap.health'),
+    t('nodePage.roadmap.patch'),
+    t('nodePage.roadmap.reboot'),
+    t('nodePage.roadmap.reset'),
+    t('nodePage.roadmap.shutdown'),
+    t('nodePage.roadmap.upgrade'),
   ];
 
   return (
     <SectionBox title="" textAlign="left" paddingTop={2}>
       <PageHeader
         breadcrumbs={[
-          { label: 'Clusters', to: '/maestro' },
-          { label: cluster || 'Cluster', to: `/maestro?cluster=${cluster || ''}` },
-          { label: nodeType || 'Node type', to: `/maestro/?cluster=${cluster || ''}&type=${nodeType || ''}` },
-          { label: node || 'Node' },
+          { label: t('common.clusters'), to: '/maestro' },
+          { label: cluster || t('common.cluster'), to: `/maestro?cluster=${cluster || ''}` },
+          { label: nodeType || t('common.nodeType'), to: `/maestro/?cluster=${cluster || ''}&type=${nodeType || ''}` },
+          { label: node || t('common.node') },
         ]}
-        subtitle="Manage node actions and jump to Talos command views."
-        title="Node operations"
+        subtitle={t('nodePage.subtitle')}
+        title={t('nodePage.title')}
       />
 
       <Grid container spacing={2}>
         <Grid item md={6} xs={12}>
-          <ActionCard description="Primary entry points for this node." links={overviewLinks} title="Overview" />
+          <ActionCard
+            description={t('nodePage.cards.overviewDescription')}
+            links={overviewLinks}
+            title={t('nodePage.cards.overviewTitle')}
+          />
         </Grid>
         <Grid item md={6} xs={12}>
-          <ActionCard description="Streaming text outputs from Talos commands." links={textCommandLinks} title="Text commands" />
+          <ActionCard
+            description={t('nodePage.cards.textCommandsDescription')}
+            links={textCommandLinks}
+            title={t('nodePage.cards.textCommandsTitle')}
+          />
         </Grid>
         <Grid item md={6} xs={12}>
-          <ActionCard description="Tabular command outputs with sorting and pagination." links={tableCommandLinks} title="Table commands" />
+          <ActionCard
+            description={t('nodePage.cards.tableCommandsDescription')}
+            links={tableCommandLinks}
+            title={t('nodePage.cards.tableCommandsTitle')}
+          />
         </Grid>
         <Grid item md={6} xs={12}>
           <Card sx={{ height: '100%' }} variant="outlined">
             <CardContent>
               <Stack spacing={1.5}>
-                <Typography variant="h6">Support and roadmap</Typography>
+                <Typography variant="h6">{t('nodePage.cards.supportTitle')}</Typography>
                 <SupportDownloadButton cluster={cluster} node={node} />
                 <Typography color="text.secondary" variant="body2">
-                  Planned actions:
+                  {t('nodePage.plannedActions')}
                 </Typography>
                 <Stack direction="row" flexWrap="wrap" gap={1}>
                   {plannedActions.map(action => (

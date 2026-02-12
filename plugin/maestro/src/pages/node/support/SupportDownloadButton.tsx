@@ -1,3 +1,4 @@
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import { Button } from '@mui/material';
 import React, { useState } from 'react';
 import { buildServerUrl } from '../../../config/server';
@@ -8,6 +9,7 @@ interface SupportDownloadButtonProps {
 }
 
 const SupportDownloadButton = ({ cluster, node }: SupportDownloadButtonProps) => {
+  const { t } = useTranslation();
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleSupportDownload = async () => {
@@ -35,7 +37,7 @@ const SupportDownloadButton = ({ cluster, node }: SupportDownloadButtonProps) =>
 
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Failed to download ZIP file:', error);
+      console.error(t('support.downloadFailed'), error);
     } finally {
       setIsDownloading(false);
     }
@@ -43,7 +45,7 @@ const SupportDownloadButton = ({ cluster, node }: SupportDownloadButtonProps) =>
 
   return (
     <Button disabled={isDownloading} onClick={handleSupportDownload} size="small" variant="outlined">
-      {isDownloading ? 'Downloading...' : 'Download support bundle'}
+      {isDownloading ? t('support.downloading') : t('support.downloadBundle')}
     </Button>
   );
 };

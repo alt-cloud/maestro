@@ -1,0 +1,149 @@
+{
+  "common": {
+    "autoRefresh": "Auto refresh",
+    "breadcrumb": "breadcrumb",
+    "cluster": "Cluster",
+    "clusters": "Clusters",
+    "controlplane": "controlplane",
+    "errorPrefix": "Error: {{message}}",
+    "failedToLoadData": "Failed to load data",
+    "get": "get",
+    "loadingCommandOutput": "Loading command output...",
+    "noDataReceived": "No data received.",
+    "node": "Node",
+    "nodeType": "Node type",
+    "remove": "Remove",
+    "worker": "worker"
+  },
+  "refresh": {
+    "fiveSeconds": "5 seconds",
+    "off": "Off",
+    "oneMinute": "1 minute",
+    "oneSecond": "1 second",
+    "tenSeconds": "10 seconds",
+    "thirtySeconds": "30 seconds"
+  },
+  "clustersPage": {
+    "alertControlplaneRequired": "When creating a new cluster, at least one controlplane node is required.",
+    "alertNameRequired": "To add a node to a new cluster, enter its name.",
+    "alertNoChanges": "No changes",
+    "applyChanges": "Apply Changes",
+    "clusterNameLabel": "Cluster name",
+    "columns": {
+      "clusterName": "ClusterName",
+      "ip": "IP",
+      "manifests": "Manifests",
+      "member": "Member",
+      "noConditions": "NoCond",
+      "nodeReady": "Ready",
+      "nodeType": "NodeType",
+      "stage": "Stage",
+      "status": "Status"
+    },
+    "createClusterAria": "Create cluster",
+    "loadingClusterList": "Loading cluster list...",
+    "netError": "Network error",
+    "scanNetworks": "Scan networks",
+    "sendError": "Request failed",
+    "stages": {
+      "controlplane": "Controlplane",
+      "maintenance": "Maintenance",
+      "reboot": "Reboot",
+      "reset": "Reset",
+      "restart": "Restart",
+      "running": "Running",
+      "shutdown": "Shutdown",
+      "worker": "Worker"
+    },
+    "subtitle": "Cluster topology and node lifecycle actions.",
+    "title": "Clusters"
+  },
+  "scanNetworks": {
+    "addAtLeastOne": "Add at least one network before scanning",
+    "addNetwork": "Add network",
+    "breadcrumb": "Scan networks",
+    "cidrHint": "Example: 192.168.1.0/24",
+    "cidrLabel": "Network (CIDR)",
+    "duplicateAddress": "This address has already been added",
+    "emptyField": "The field cannot be empty",
+    "invalidFormat": "Invalid IP/mask format. Example: 192.168.1.0/24",
+    "loadingSettings": "Loading scanner settings...",
+    "networksToScan": "Networks to scan",
+    "noNetworks": "No networks added yet.",
+    "requestFailed": "Network scan request failed",
+    "serverError": "Server error",
+    "startScan": "Start scan",
+    "subtitle": "Configure CIDR networks that should be scanned for cluster nodes.",
+    "title": "Cluster network scan"
+  },
+  "nodePage": {
+    "cards": {
+      "overviewDescription": "Primary entry points for this node.",
+      "overviewTitle": "Overview",
+      "supportTitle": "Support and roadmap",
+      "tableCommandsDescription": "Tabular command outputs with sorting and pagination.",
+      "tableCommandsTitle": "Table commands",
+      "textCommandsDescription": "Streaming text outputs from Talos commands.",
+      "textCommandsTitle": "Text commands"
+    },
+    "links": {
+      "containers": "Containers",
+      "dmesg": "dmesg",
+      "etcdMembers": "etcd members",
+      "etcdStatus": "etcd status",
+      "getResources": "Get resources",
+      "imageDefault": "image default",
+      "imageList": "image list",
+      "inspectDependencies": "inspect dependencies",
+      "memory": "memory",
+      "mounts": "mounts",
+      "netstat": "netstat",
+      "processes": "processes",
+      "serviceLogs": "Service logs",
+      "services": "Services",
+      "stats": "stats",
+      "time": "time",
+      "usage": "usage",
+      "version": "version"
+    },
+    "plannedActions": "Planned actions:",
+    "roadmap": {
+      "dashboard": "dashboard",
+      "health": "health",
+      "patch": "patch",
+      "reboot": "reboot",
+      "reset": "reset",
+      "shutdown": "shutdown",
+      "upgrade": "upgrade"
+    },
+    "subtitle": "Manage node actions and jump to Talos command views.",
+    "title": "Node operations"
+  },
+  "getTreePage": {
+    "subtitle": "Select a Talos get command from the available resource groups.",
+    "title": "Talosctl get"
+  },
+  "getResourcePage": {
+    "metadataHeader": "METADATA",
+    "specHeader": "SPEC",
+    "subtitle": "Structured output grouped by spec and metadata fields.",
+    "title": "Get resource"
+  },
+  "tableCommandPage": {
+    "subtitle": "Table output from Talos command execution.",
+    "title": "Command result"
+  },
+  "serviceCommandPage": {
+    "subtitle": "Service table output. Click service names to open logs.",
+    "title": "Service command"
+  },
+  "textCommandPage": {
+    "subtitle": "Streaming text output from Talos commands.",
+    "title": "Text command"
+  },
+  "support": {
+    "downloadBundle": "Download support bundle",
+    "downloadFailed": "Failed to download support bundle",
+    "downloading": "Downloading..."
+  }
+}

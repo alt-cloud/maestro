@@ -1,3 +1,4 @@
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import {
   Card,
@@ -26,6 +27,7 @@ interface TreeCommandGroup {
 }
 
 function GetTreePage() {
+  const { t } = useTranslation();
   const location = useLocation();
   const queryParams = useMemo(() => {
     const params = new URLSearchParams(location.search);
@@ -43,14 +45,14 @@ function GetTreePage() {
     <SectionBox title="" textAlign="left" paddingTop={2}>
       <PageHeader
         breadcrumbs={[
-          { label: 'Clusters', to: '/maestro' },
-          { label: cluster || 'Cluster', to: `/maestro?cluster=${cluster || ''}` },
-          { label: nodeType || 'Node type', to: `/maestro/?cluster=${cluster || ''}&type=${nodeType || ''}` },
-          { label: node || 'Node', to: `/maestro/node?cluster=${cluster || ''}&type=${nodeType || ''}&node=${node || ''}` },
-          { label: 'get' },
+          { label: t('common.clusters'), to: '/maestro' },
+          { label: cluster || t('common.cluster'), to: `/maestro?cluster=${cluster || ''}` },
+          { label: nodeType || t('common.nodeType'), to: `/maestro/?cluster=${cluster || ''}&type=${nodeType || ''}` },
+          { label: node || t('common.node'), to: `/maestro/node?cluster=${cluster || ''}&type=${nodeType || ''}&node=${node || ''}` },
+          { label: t('common.get') },
         ]}
-        subtitle="Select a Talos get command from the available resource groups."
-        title="Talosctl get"
+        subtitle={t('getTreePage.subtitle')}
+        title={t('getTreePage.title')}
       />
 
       <Grid container spacing={2}>

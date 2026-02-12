@@ -1,3 +1,4 @@
+import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import { Breadcrumbs, Link as MuiLink, Stack, Typography } from '@mui/material';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -14,11 +15,13 @@ interface PageHeaderProps {
 }
 
 function PageHeader({ title, subtitle, breadcrumbs = [] }: PageHeaderProps) {
+  const { t } = useTranslation();
+
   return (
     <Stack spacing={0.75} sx={{ mb: 2 }}>
       <Typography variant="h5">{title}</Typography>
       {breadcrumbs.length > 0 && (
-        <Breadcrumbs aria-label="breadcrumb" sx={{ '& .MuiBreadcrumbs-ol': { flexWrap: 'wrap' } }}>
+        <Breadcrumbs aria-label={t('common.breadcrumb')} sx={{ '& .MuiBreadcrumbs-ol': { flexWrap: 'wrap' } }}>
           {breadcrumbs.map(item =>
             item.to ? (
               <MuiLink key={`${item.to}-${item.label}`} component={RouterLink} color="inherit" to={item.to} underline="hover">
