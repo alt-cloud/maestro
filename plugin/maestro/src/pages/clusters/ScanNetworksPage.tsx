@@ -1,44 +1,57 @@
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import {
-  Alert,
   Box,
   Button,
   IconButton,
   List,
   ListItem,
+  ListItemSecondaryAction,
   ListItemText,
   Paper,
   Snackbar,
-  TextField} from '@mui/material';
-import Typography from '@mui/material/Typography';
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
+import Alert, { AlertColor } from '@mui/material/Alert';
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import PageHeader from '../shared/ui/PageHeader';
 
 function isValidIpWithCidr(value: string) {
   if (!value.includes('/')) return false;
   const [ip, mask] = value.split('/');
   const maskNum = Number(mask);
 
-  if (isNaN(maskNum) || maskNum < 0 || maskNum > 32) return false;
+  if (Number.isNaN(maskNum) || maskNum < 0 || maskNum > 32) return false;
 
   const ipParts = ip.split('.');
   if (ipParts.length !== 4) return false;
 
   return ipParts.every(part => {
     const num = Number(part);
-    return !isNaN(num) && num >= 0 && num <= 255 && String(num) === part;
+    return !Number.isNaN(num) && num >= 0 && num <= 255 && String(num) === part;
   });
+}
+
+interface SnackbarState {
+  open: boolean;
+  message: string;
+  severity: AlertColor;
 }
 
 const ScanNetworksPage: React.FC<{}> = () => {
   const [inputValue, setInputValue] = useState('');
   const [scanNetworks, setScanNetworks] = useState<string[]>([]);
-  const [error, setError] = useState('');
+  const [formError, setFormError] = useState('');
   const [fetchError, setFetchError] = useState<string | null>(null);
-
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-
   const [loading, setLoading] = useState<boolean>(true);
+  const [snackbar, setSnackbar] = useState<SnackbarState>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
+
   const history = useHistory();
 
   useEffect(() => {
@@ -50,9 +63,9 @@ const ScanNetworksPage: React.FC<{}> = () => {
         const response = await fetch(talosUrl, {
           method: 'GET',
           headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
-          signal: controller.signal, // bind abort signal
+          signal: controller.signal,
         });
 
         if (!response.ok) {
@@ -63,7 +76,6 @@ const ScanNetworksPage: React.FC<{}> = () => {
         setScanNetworks(payload.scanNets ?? []);
       } catch (err: any) {
         if (err.name === 'AbortError') {
-          console.debug('Fetch aborted');
           return;
         }
         setFetchError(err.message || 'Failed to load data');
@@ -81,38 +93,35 @@ const ScanNetworksPage: React.FC<{}> = () => {
     };
   }, []);
 
-  if (loading) return <div>Loading cluster map...</div>;
-  if (fetchError) return <div>Error: {fetchError}</div>;
-  if (!scanNetworks) return <div>No data received</div>;
-
   const handleAdd = () => {
     const value = inputValue.trim();
     if (!value) {
-      setError('The field cannot be empty');
+      setFormError('The field cannot be empty');
       return;
     }
 
     if (!isValidIpWithCidr(value)) {
-      setError('Invalid IP/mask format (example: 192.168.1.0/24)');
+      setFormError('Invalid IP/mask format. Example: 192.168.1.0/24');
       return;
     }
 
     if (scanNetworks.includes(value)) {
-      setError('This address has already been added');
+      setFormError('This address has already been added');
       return;
     }
+
     setScanNetworks(prev => [...prev, value]);
     setInputValue('');
-    setError('');
+    setFormError('');
   };
 
-  const handleRemove = (ipToRemove: string) => {
-    setScanNetworks(prev => prev.filter(ip => ip !== ipToRemove));
+  const handleRemove = (networkToRemove: string) => {
+    setScanNetworks(prev => prev.filter(network => network !== networkToRemove));
   };
 
   const handleSubmit = async () => {
     if (scanNetworks.length === 0) {
-      setSnackbar({ open: true, message: 'Empty network list', severity: 'warning' });
+      setSnackbar({ open: true, message: 'Add at least one network before scanning', severity: 'warning' });
       return;
     }
 
@@ -120,9 +129,9 @@ const ScanNetworksPage: React.FC<{}> = () => {
       const response = await fetch('http://127.0.0.1:5000/scanNets', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ scanNets: scanNetworks })
+        body: JSON.stringify({ scanNets: scanNetworks }),
       });
 
       if (response.ok) {
@@ -132,82 +141,86 @@ const ScanNetworksPage: React.FC<{}> = () => {
       }
     } catch (err) {
       console.error(err);
-      alert('ERR=' + err);
-      setSnackbar({ open: true, message: 'Scan failed', severity: 'error' });
+      setSnackbar({ open: true, message: 'Network scan request failed', severity: 'error' });
     }
   };
 
   const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
+    setSnackbar(prev => ({ ...prev, open: false }));
   };
+
   return (
-  <SectionBox>
-  <Typography>
-    <Link to="/maestro">Clusters</Link>
-  </Typography>
-    <Paper>
-      <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-        <TextField
-          fullWidth
-          label="IP/mask (for example: 192.168.1.0/24)"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          error={!!error}
-          helperText={error}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') handleAdd();
-          }}
-        />
-        <Button variant="contained" color="success" onClick={handleAdd}>
-          Add
-        </Button>
-      </Box>
-      {scanNetworks.length > 0 && (
-        <>
-          <Typography variant="subtitle1" sx={{ mb: 1 }}>
-            List of scanned networks:
-          </Typography>
-          <List dense>
-            {scanNetworks.map((ip) => (
-              <ListItem
-                key={ip}
-                secondaryAction={
-                  <IconButton edge="end" onClick={() => handleRemove(ip)}>
-                    X
-                  </IconButton>
-                }
-              >
-                <ListItemText primary={ip} />
-              </ListItem>
-            ))}
-          </List>
-        </>
+    <SectionBox title="" textAlign="left" paddingTop={2}>
+      <PageHeader
+        breadcrumbs={[{ label: 'Clusters', to: '/maestro' }, { label: 'Scan networks' }]}
+        subtitle="Define CIDR ranges that the backend should scan for cluster discovery."
+        title="Network scanner"
+      />
+
+      {loading && <Alert severity="info">Loading network settings...</Alert>}
+      {fetchError && <Alert severity="error">{fetchError}</Alert>}
+
+      {!loading && !fetchError && (
+        <Paper sx={{ p: 2 }} variant="outlined">
+          <Stack spacing={2}>
+            <Stack direction={{ sm: 'row', xs: 'column' }} spacing={1}>
+              <TextField
+                error={Boolean(formError)}
+                fullWidth
+                helperText={formError || 'Use CIDR notation, e.g. 10.0.0.0/24'}
+                label="Network CIDR"
+                onChange={event => setInputValue(event.target.value)}
+                onKeyDown={event => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    handleAdd();
+                  }
+                }}
+                value={inputValue}
+              />
+              <Button onClick={handleAdd} sx={{ minWidth: 140 }} variant="contained">
+                Add network
+              </Button>
+            </Stack>
+
+            <Box>
+              <Typography sx={{ mb: 1 }} variant="subtitle1">
+                Networks to scan
+              </Typography>
+              {scanNetworks.length === 0 ? (
+                <Typography color="text.secondary" variant="body2">
+                  No networks added yet.
+                </Typography>
+              ) : (
+                <List dense sx={{ border: theme => `1px solid ${theme.palette.divider}`, borderRadius: 1 }}>
+                  {scanNetworks.map(network => (
+                    <ListItem key={network}>
+                      <ListItemText primary={network} />
+                      <ListItemSecondaryAction>
+                        <IconButton edge="end" onClick={() => handleRemove(network)}>
+                          Remove
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+            </Box>
+
+            <Button disabled={scanNetworks.length === 0} onClick={handleSubmit} size="large" variant="contained">
+              Start scan
+            </Button>
+          </Stack>
+        </Paper>
       )}
 
-      <Button
-        fullWidth
-        variant="contained"
-        color="success"
-        onClick={handleSubmit}
-        disabled={scanNetworks.length === 0}
-        sx={{ mt: 2 }}
-      >
-        Scan
-      </Button>
-
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-      >
+      <Snackbar autoHideDuration={3000} onClose={handleCloseSnackbar} open={snackbar.open}>
         <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
           {snackbar.message}
         </Alert>
       </Snackbar>
-
-    </Paper>
-  </SectionBox>
+    </SectionBox>
   );
-}
+};
 
 export default ScanNetworksPage;

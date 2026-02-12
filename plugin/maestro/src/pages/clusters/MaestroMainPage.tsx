@@ -6,6 +6,8 @@ import {
   MenuItem,
   Paper,
   Select,
+  SelectChangeEvent,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -13,16 +15,12 @@ import {
   TableHead,
   TableRow,
   TextField} from '@mui/material';
-import Typography from '@mui/material/Typography';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import PageHeader from '../shared/ui/PageHeader';
+import RefreshIntervalControl, { IntervalOption } from '../shared/ui/RefreshIntervalControl';
 
-interface Cluster {
-  id: number;
-  name: string;
-}
-
-const INTERVAL_OPTIONS = [
+const INTERVAL_OPTIONS: readonly IntervalOption[] = [
   { label: '1 second', value: 1000 },
   { label: '5 seconds', value: 5000 },
   { label: '10 seconds', value: 10000 },
@@ -75,7 +73,7 @@ function alignInterval(delay) {
 type IntervalValue = typeof INTERVAL_OPTIONS[number]['value'];
 
 interface Column {
-  id: keyof Cluster;
+  id: string;
   label: string;
   sortable?: boolean;
 }
@@ -110,7 +108,7 @@ function NodeStageSelect(props) {
   const clusterName = props.clusterName;
   const [status, setStatus] = useState<string>(stage);
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const handleChange = (event: SelectChangeEvent<string>) => {
     const value = event.target.value as string;
     selectedNodeStages[clusterName][node] = value;
     setStatus(value);
@@ -204,11 +202,11 @@ function NodeColumns(props) {
   const href = clusterName[0] === '_' ? '/maestro/node/get' : '/maestro/node';
   let unmet = '-';
   if (cols['status'] !== undefined) {
-    unmet = [];
+    const unmetConditions: string[] = [];
     for (const nameReason of cols['status']['unmetConditions']) {
-      unmet.push(nameReason.name + ': ' + nameReason.reason);
+      unmetConditions.push(nameReason.name + ': ' + nameReason.reason);
     }
-    unmet = unmet.join(",\n")
+    unmet = unmetConditions.join(",\n")
   }
   return (
     <>
@@ -332,7 +330,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const [rows, setRows] = useState<Cluster[]>([]);
+  const [rows, setRows] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -363,7 +361,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const responseRows: ApiResponse = await response.json();
+        const responseRows = await response.json();
         setRows(responseRows);
       } catch (err: any) {
         if (err.name === 'AbortError') {
@@ -392,11 +390,6 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
     controller.abort();
     };
   }, [timeout]);
-
-  const handleIntervalChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value === 'null' ? null : Number(e.target.value);
-    setTimeout(value as IntervalValue);
-  };
 
   if (loading) return <div>Loading cluster list...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -501,26 +494,27 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
 
   return (
   <SectionBox title="" textAlign="left" paddingTop={2}>
-    <Typography variant="h6">
-    <Link to="/maestro">Clusters</Link>
-    {isClusterPage ? <span>&nbsp;/&nbsp;{selectedCluster}</span> :<span/>}
-    </Typography>
-    <Paper>
-      <div style={{ marginBottom: '16px' }}>
-        <label htmlFor="interval-select">Update interval: </label>
-        <select
-          id="interval-select"
-          value={timeout ?? 'null'}
-          onChange={handleIntervalChange}
+    <PageHeader
+      breadcrumbs={[
+        { label: 'Clusters', to: '/maestro' },
+        ...(isClusterPage ? [{ label: selectedCluster || 'Cluster' }] : []),
+      ]}
+      subtitle="Cluster topology and node lifecycle actions."
+      title="Clusters"
+    />
+    <Paper sx={{ p: 2 }} variant="outlined">
+      <Stack direction={{ sm: 'row', xs: 'column' }} justifyContent="space-between" spacing={1.5} sx={{ mb: 2 }}>
+        <RefreshIntervalControl onChange={setTimeout} options={INTERVAL_OPTIONS} value={timeout} />
+        <Button
+          component={Link}
+          size="small"
+          to="/maestro/cluster/scanNets"
+          variant="contained"
         >
-          {INTERVAL_OPTIONS.map((option) => (
-            <option key={option.value?.toString() || 'null'} value={option.value ?? 'null'}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
-      <form >
+          Scan networks
+        </Button>
+      </Stack>
+      <form>
       <FormControl fullWidth margin="normal" required>
       <TableContainer>
         <Table>
@@ -576,20 +570,6 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       }
     </form>
     </Paper>
-    <Divider
-      style={{
-        backgroundColor: 'white',
-        height: 5
-      }}
-    />
-    <Button
-      component={Link}
-      to="/maestro/cluster/scanNets"
-      color="success"
-      variant="contained"
-    >
-      Scan networks
-    </Button>
   </SectionBox>
   );
 }

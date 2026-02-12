@@ -1,10 +1,55 @@
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
-import { Box } from '@mui/material';
-import Typography from '@mui/material/Typography';
-import React from 'react';
-import { useMemo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import {
+  Card,
+  CardContent,
+  Chip,
+  Grid,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Stack,
+  Typography,
+} from '@mui/material';
+import React, { useMemo } from 'react';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
+import PageHeader from '../shared/ui/PageHeader';
 import SupportDownloadButton from './support/SupportDownloadButton';
+
+interface CommandLink {
+  label: string;
+  path: string;
+}
+
+interface ActionCardProps {
+  description: string;
+  links: CommandLink[];
+  title: string;
+}
+
+function ActionCard({ title, description, links }: ActionCardProps) {
+  return (
+    <Card sx={{ height: '100%' }} variant="outlined">
+      <CardContent>
+        <Stack spacing={1}>
+          <Typography variant="h6">{title}</Typography>
+          <Typography color="text.secondary" variant="body2">
+            {description}
+          </Typography>
+          <List dense disablePadding>
+            {links.map(link => (
+              <ListItem disableGutters disablePadding key={link.path}>
+                <ListItemButton component={RouterLink} to={link.path}>
+                  <ListItemText primary={link.label} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Stack>
+      </CardContent>
+    </Card>
+  );
+}
 
 const NodePage: React.FC<{}> = () => {
   const location = useLocation();
@@ -12,257 +57,109 @@ const NodePage: React.FC<{}> = () => {
     const params = new URLSearchParams(location.search);
     return Object.fromEntries(params.entries());
   }, [location.search]);
+
   const cluster = queryParams.cluster;
   const node = queryParams.node;
   const nodeType = queryParams.type;
   const isControlPlane = nodeType === 'controlplane';
 
+  const querySuffix = useMemo(() => {
+    const params = new URLSearchParams();
+    if (cluster) params.set('cluster', cluster);
+    if (nodeType) params.set('type', nodeType);
+    if (node) params.set('node', node);
+    const query = params.toString();
+    return query ? `?${query}` : '';
+  }, [cluster, node, nodeType]);
+
+  const buildPath = (path: string) => `${path}${querySuffix}`;
+
+  const overviewLinks: CommandLink[] = [
+    { label: 'Get resources', path: buildPath('/maestro/node/get') },
+    { label: 'Services', path: buildPath('/maestro/node/service') },
+    { label: 'Service logs', path: buildPath('/maestro/node/logs') },
+    { label: 'Containers', path: buildPath('/maestro/node/containers') },
+  ];
+
+  const textCommandLinks: CommandLink[] = [
+    { label: 'dmesg', path: buildPath('/maestro/node/dmesg') },
+    { label: 'version', path: buildPath('/maestro/node/version') },
+    { label: 'inspect dependencies', path: buildPath('/maestro/node/inspect/dependencies') },
+  ];
+
+  const tableCommandLinks: CommandLink[] = [
+    { label: 'memory', path: buildPath('/maestro/node/memory') },
+    { label: 'mounts', path: buildPath('/maestro/node/mounts') },
+    { label: 'netstat', path: buildPath('/maestro/node/netstat') },
+    { label: 'processes', path: buildPath('/maestro/node/processes') },
+    { label: 'stats', path: buildPath('/maestro/node/stats') },
+    { label: 'time', path: buildPath('/maestro/node/time') },
+    { label: 'usage', path: buildPath('/maestro/node/usage') },
+    { label: 'image default', path: buildPath('/maestro/node/image/default') },
+    { label: 'image list', path: buildPath('/maestro/node/image/list') },
+  ];
+
+  if (isControlPlane) {
+    tableCommandLinks.push(
+      { label: 'etcd members', path: buildPath('/maestro/node/etcd/members') },
+      { label: 'etcd status', path: buildPath('/maestro/node/etcd/status') }
+    );
+  }
+
+  const plannedActions = [
+    'dashboard',
+    'health',
+    'patch',
+    'reboot',
+    'reset',
+    'shutdown',
+    'upgrade',
+  ];
+
   return (
-<SectionBox title="Node Page" textAlign="left" paddingTop={2}>
-  <Typography variant="h6"><Link to="/maestro">Clusters</Link
-      >&nbsp;/&nbsp;<Link to={`/maestro?cluster=${cluster}`}>{cluster}</Link
-      > &nbsp;/&nbsp;<Link to={`/maestro/?cluster=${cluster}&type=${nodeType}`}>{nodeType}</Link
-      >&nbsp;/&nbsp;{node}
-  </Typography>
-  <Box sx={{ maxHeight: 'calc(100vh - 120px)', overflow: 'auto', whiteSpace: 'pre-wrap' }}>
-    <ul>
-      <li>
-        <Link to={`/maestro/node/get?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>get</Link>
-      </li>
-      <li>
-        <Link to={`/maestro/node/containers?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>containers</Link>
-      </li>
-      <li>
-        dashboard
-      </li>
-      <li>
-        <Link to={`/maestro/node/dmesg?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>dmesg</Link>
-      </li>
-      <li>
-        edit
-      </li>
-      {isControlPlane ?
-      <li>
-        etcd
-        <ul>
-          <li>
-            alarm
-            <ul>
-              <li>
-                disarm
-              </li>
-              <li>
-                list
-              </li>
-            </ul>
-          </li>
-          <li>
-            downgrade
-            <ul>
-              <li>
-                cancel
-              </li>
-              <li>
-                enable
-              </li>
-              <li>
-                validate
-              </li>
-            </ul>
-          </li>
-          <li>
-            leave
-          </li>
-          <li>
-            <Link to={`/maestro/node/etcd/members?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>members</Link>
-          </li>
-          <li>
-            remove-member
-          </li>
-          <li>
-            snapshot
-          </li>
-          <li>
-            <Link to={`/maestro/node/etcd/status?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>status</Link>
-          </li>
-        </ul>
-      </li>
-      : <span/>}
-      <li>
-        events
-      </li>
-      <li>
-        gen
-        <ul>
-          <li>
-            ca
-          </li>
-          <li>
-            config
-          </li>
-          <li>
-            crt
-          </li>
-          <li>
-            csr
-          </li>
-          <li>
-            key
-          </li>
-          <li>
-            keypair
-          </li>
-          <li>
-            secrets
-          </li>
-          <li>
-            secureboot
-            <ul>
-              <li>
-                database
-              </li>
-              <li>
-                pcr
-              </li>
-              <li>
-                uki
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>
-        health
-      </li>
-      <li>
-        image
-        <ul>
-          <li>
-            cache-create
-          </li>
-          <li>
-            <Link to={`/maestro/node/image/default?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>default</Link>
-          </li>
-          <li>
-            <Link to={`/maestro/node/image/list?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>list</Link>
-          </li>
-          <li>
-            pull
-          </li>
-        </ul>
-      </li>
-      <li>
-        inject
-          <ul>
-            <li>
-            serviceaccount
-            </li>
-          </ul>
-      </li>
-      <li>
-        inspect
-        <ul>
-          <li>
-            <Link to={`/maestro/node/inspect/dependencies?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>dependencies</Link>
-          </li>
-        </ul>
-      </li>
-      <li>
-        kubeconfig
-      </li>
-      <li>
-        list
-      </li>
-      <li>
-        <Link to={`/maestro/node/memory?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>memory</Link>
-      </li>
-      <li>
-       meta
-       <ul>
-        <li>
-          delete
-        </li>
-        <li>
-          write
-        </li>
-       </ul>
-      </li>
-      <li>
-        <Link to={`/maestro/node/mounts?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>mounts</Link>
-      </li>
-      <li>
-        <Link to={`/maestro/node/netstat?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>netstat</Link>
-      </li>
-      <li>
-        patch
-      </li>
-      <li>
-        pcap
-      </li>
-      <li>
-        <Link to={`/maestro/node/processes?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>processes</Link>
-      </li>
-      <li>
-        read
-      </li>
-      <li>
-        reboot
-      </li>
-      <li>
-        reset
-      </li>
-      <li>
-        restart
-      </li>
-      <li>
-        rollback
-      </li>
-      <li>
-        rotate-ca
-      </li>
-      <li>
-        <Link to={`/maestro/node/service?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>service</Link>
-      </li>
-      <li>
-        shutdown
-      </li>
-      <li>
-        <Link to={`/maestro/node/stats?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>stats</Link>
-      </li>
-      <li>
-        <SupportDownloadButton cluster={cluster} node={node} />
-      </li>
-      <li>
-        <Link to={`/maestro/node/time?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>time</Link>
-      </li>
-      {}
-      <li>
-        upgrade
-      </li>
-      <li>
-        upgrade-k8s
-      </li>
-      <li>
-        <Link to={`/maestro/node/usage?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>usage</Link>
-      </li>
-      <li>
-        validate
-      </li>
-      <li>
-        <Link to={`/maestro/node/version?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>version</Link>
-      </li>
-      <li>
-        wipe
-        <ul>
-          <li>
-            disk
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </Box>
-  </SectionBox>
+    <SectionBox title="" textAlign="left" paddingTop={2}>
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Clusters', to: '/maestro' },
+          { label: cluster || 'Cluster', to: `/maestro?cluster=${cluster || ''}` },
+          { label: nodeType || 'Node type', to: `/maestro/?cluster=${cluster || ''}&type=${nodeType || ''}` },
+          { label: node || 'Node' },
+        ]}
+        subtitle="Manage node actions and jump to Talos command views."
+        title="Node operations"
+      />
+
+      <Grid container spacing={2}>
+        <Grid item md={6} xs={12}>
+          <ActionCard description="Primary entry points for this node." links={overviewLinks} title="Overview" />
+        </Grid>
+        <Grid item md={6} xs={12}>
+          <ActionCard description="Streaming text outputs from Talos commands." links={textCommandLinks} title="Text commands" />
+        </Grid>
+        <Grid item md={6} xs={12}>
+          <ActionCard description="Tabular command outputs with sorting and pagination." links={tableCommandLinks} title="Table commands" />
+        </Grid>
+        <Grid item md={6} xs={12}>
+          <Card sx={{ height: '100%' }} variant="outlined">
+            <CardContent>
+              <Stack spacing={1.5}>
+                <Typography variant="h6">Support and roadmap</Typography>
+                <SupportDownloadButton cluster={cluster} node={node} />
+                <Typography color="text.secondary" variant="body2">
+                  Planned actions:
+                </Typography>
+                <Stack direction="row" flexWrap="wrap" gap={1}>
+                  {plannedActions.map(action => (
+                    <Chip key={action} label={action} size="small" variant="outlined" />
+                  ))}
+                </Stack>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </SectionBox>
   );
-}
+};
 
 export default NodePage;

@@ -15,3 +15,8 @@
  */
 
 /// <reference types="@kinvolk/headlamp-plugin" />
+
+declare module '*.json' {
+  const value: any;
+  export default value;
+}

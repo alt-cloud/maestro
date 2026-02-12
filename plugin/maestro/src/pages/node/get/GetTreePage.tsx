@@ -1,9 +1,29 @@
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
-import Typography from '@mui/material/Typography';
-import React from 'react';
-import { useMemo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import {
+  Card,
+  CardContent,
+  Grid,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Typography,
+} from '@mui/material';
+import React, { useMemo } from 'react';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
+import PageHeader from '../../shared/ui/PageHeader';
 import resourceTree from './RDTree.json';
+
+interface TreeCommand {
+  command: string;
+  id: string;
+  name: string;
+}
+
+interface TreeCommandGroup {
+  commands: TreeCommand[];
+  name: string;
+}
 
 function GetTreePage() {
   const location = useLocation();
@@ -11,38 +31,55 @@ function GetTreePage() {
     const params = new URLSearchParams(location.search);
     return Object.fromEntries(params.entries());
   }, [location.search]);
+
   const cluster = queryParams.cluster;
   const controlPlane = queryParams.controlplane;
   const node = queryParams.node;
   const nodeType = queryParams.type;
 
+  const commandGroups = Object.entries(resourceTree as Record<string, TreeCommandGroup>);
 
   return (
-    <SectionBox title="Talosctl get page tree" textAlign="center" paddingTop={2}>
-      <Typography variant="h6"><Link to="/maestro">Clusters</Link
-        >&nbsp;/&nbsp;<Link to={`/maestro?cluster=${cluster}`}>{cluster}</Link
-        > &nbsp;/&nbsp;<Link to={`/maestro/?cluster=${cluster}&type=${nodeType}`}>{nodeType}</Link
-        >&nbsp;/&nbsp;<Link to={`/maestro/node?cluster=${cluster}&type=${nodeType}&node=${node}`}>{node}</Link
-        >&nbsp;/&nbsp;get</Typography>
-      <ul>
-        {Object.entries(resourceTree).map(([commandSet, commandGroup]) => (
-          <li key={commandSet}>
-            <strong>{commandGroup.name}:</strong>
-            <ul>
-            {commandGroup.commands.map(command => (
-              <li key={command.id}>
-                <Link
-                  to={`/maestro/node/get/${commandSet}/${command.command}?cluster=${cluster}&controlplane=${controlPlane}&node=${node}&type=${nodeType}`} >
-                {command.name}
-                </Link>
-              </li>
-            ))}
-            </ul>
-          </li>
+    <SectionBox title="" textAlign="left" paddingTop={2}>
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Clusters', to: '/maestro' },
+          { label: cluster || 'Cluster', to: `/maestro?cluster=${cluster || ''}` },
+          { label: nodeType || 'Node type', to: `/maestro/?cluster=${cluster || ''}&type=${nodeType || ''}` },
+          { label: node || 'Node', to: `/maestro/node?cluster=${cluster || ''}&type=${nodeType || ''}&node=${node || ''}` },
+          { label: 'get' },
+        ]}
+        subtitle="Select a Talos get command from the available resource groups."
+        title="Talosctl get"
+      />
+
+      <Grid container spacing={2}>
+        {commandGroups.map(([commandSet, commandGroup]) => (
+          <Grid item key={commandSet} lg={4} md={6} xs={12}>
+            <Card sx={{ height: '100%' }} variant="outlined">
+              <CardContent>
+                <Typography sx={{ mb: 1 }} variant="h6">
+                  {commandGroup.name}
+                </Typography>
+                <List dense disablePadding>
+                  {commandGroup.commands.map(command => (
+                    <ListItem disableGutters disablePadding key={command.id}>
+                      <ListItemButton
+                        component={RouterLink}
+                        to={`/maestro/node/get/${commandSet}/${command.command}?cluster=${cluster}&controlplane=${controlPlane}&node=${node}&type=${nodeType}`}
+                      >
+                        <ListItemText primary={command.name} />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
         ))}
-      </ul>
+      </Grid>
     </SectionBox>
-    );
+  );
 }
 
 export default GetTreePage;

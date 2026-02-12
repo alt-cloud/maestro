@@ -1,4 +1,5 @@
-import React from 'react';
+import { Button } from '@mui/material';
+import React, { useState } from 'react';
 
 interface SupportDownloadButtonProps {
   cluster?: string;
@@ -6,7 +7,10 @@ interface SupportDownloadButtonProps {
 }
 
 const SupportDownloadButton = ({ cluster, node }: SupportDownloadButtonProps) => {
+  const [isDownloading, setIsDownloading] = useState(false);
+
   const handleSupportDownload = async () => {
+    setIsDownloading(true);
     try {
       const talosUrl = `http://localhost:5000/talosctl?cluster=${cluster}&n=${node}&cmd=support`;
       const response = await fetch(talosUrl, {
@@ -18,27 +22,28 @@ const SupportDownloadButton = ({ cluster, node }: SupportDownloadButtonProps) =>
       }
 
       const blob = await response.blob();
-
       const url = window.URL.createObjectURL(blob);
 
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `support_${(node || 'node').split('.').join('_')}.zip`;
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `support_${(node || 'node').split('.').join('_')}.zip`;
 
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
 
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Failed to download ZIP file:', error);
+    } finally {
+      setIsDownloading(false);
     }
   };
 
   return (
-    <button onClick={() => handleSupportDownload()}>
-      support
-    </button>
+    <Button disabled={isDownloading} onClick={handleSupportDownload} size="small" variant="outlined">
+      {isDownloading ? 'Downloading...' : 'Download support bundle'}
+    </Button>
   );
 };
 
