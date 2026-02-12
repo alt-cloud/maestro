@@ -1,5 +1,6 @@
 import { Button } from '@mui/material';
 import React, { useState } from 'react';
+import { buildServerUrl } from '../../../config/server';
 
 interface SupportDownloadButtonProps {
   cluster?: string;
@@ -12,7 +13,7 @@ const SupportDownloadButton = ({ cluster, node }: SupportDownloadButtonProps) =>
   const handleSupportDownload = async () => {
     setIsDownloading(true);
     try {
-      const talosUrl = `http://localhost:5000/talosctl?cluster=${cluster}&n=${node}&cmd=support`;
+      const talosUrl = `${buildServerUrl('/talosctl')}?cluster=${cluster}&n=${node}&cmd=support`;
       const response = await fetch(talosUrl, {
         method: 'GET',
       });

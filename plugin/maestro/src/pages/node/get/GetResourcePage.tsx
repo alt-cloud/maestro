@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { buildServerUrl } from '../../../config/server';
 import PageHeader from '../../shared/ui/PageHeader';
 import RefreshIntervalControl, { IntervalOption } from '../../shared/ui/RefreshIntervalControl';
 
@@ -159,7 +160,7 @@ const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }
 
     const fetchData = async () => {
       try {
-        const talosUrl = `http://localhost:5000/talosctl?cluster=${cluster}&n=${node}&cmd=get&commandSet=${commandSet}&subCommand=${command}`;
+        const talosUrl = `${buildServerUrl('/talosctl')}?cluster=${cluster}&n=${node}&cmd=get&commandSet=${commandSet}&subCommand=${command}`;
         const response = await fetch(talosUrl, {
           method: 'GET',
           headers: {

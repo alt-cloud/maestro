@@ -16,6 +16,7 @@ import {
 import Alert, { AlertColor } from '@mui/material/Alert';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { buildServerUrl } from '../../config/server';
 import PageHeader from '../shared/ui/PageHeader';
 
 function isValidIpWithCidr(value: string) {
@@ -59,7 +60,7 @@ const ScanNetworksPage: React.FC<{}> = () => {
 
     const fetchData = async () => {
       try {
-        const talosUrl = 'http://127.0.0.1:5000/scanNets';
+        const talosUrl = buildServerUrl('/scanNets');
         const response = await fetch(talosUrl, {
           method: 'GET',
           headers: {
@@ -126,7 +127,7 @@ const ScanNetworksPage: React.FC<{}> = () => {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/scanNets', {
+      const response = await fetch(buildServerUrl('/scanNets'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

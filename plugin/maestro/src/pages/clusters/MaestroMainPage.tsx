@@ -17,6 +17,7 @@ import {
   TextField} from '@mui/material';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { buildServerUrl } from '../../config/server';
 import PageHeader from '../shared/ui/PageHeader';
 import RefreshIntervalControl, { IntervalOption } from '../shared/ui/RefreshIntervalControl';
 
@@ -349,7 +350,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
 
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/nodesTree', {
+        const response = await fetch(buildServerUrl('/nodesTree'), {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -475,7 +476,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       return;
     }
     try {
-      const response = await fetch('http://localhost:5000/apply', {
+      const response = await fetch(buildServerUrl('/apply'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(actions),
