@@ -4,11 +4,8 @@ import {
   Paper
 } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import React, { useEffect,useState } from 'react';
-import { useMemo } from 'react';
-import { useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 interface Cluster {
   id: number;
@@ -24,17 +21,20 @@ const INTERVAL_OPTIONS = [
   { label: 'Off', value: null },
 ] as const;
 
+type IntervalValue = typeof INTERVAL_OPTIONS[number]['value'];
+
 function alignInterval(delay) {
-  if (typeof delay === 'undefined' || Number.isNaN(Number(delay)) || Number(delay) <= 0 ) {
-    delay = null;
+  let normalizedDelay = delay;
+  if (typeof normalizedDelay === 'undefined' || Number.isNaN(Number(normalizedDelay)) || Number(normalizedDelay) <= 0 ) {
+    normalizedDelay = null;
   }
   let alignDelay = null;
-  if (delay) {
-    delay = Number(delay) * 1000;
+  if (normalizedDelay) {
+    normalizedDelay = Number(normalizedDelay) * 1000;
     let lastValue = 0;
     for (const option of INTERVAL_OPTIONS) {
       if (option.value === null) break;
-      if (delay <= option.value) {
+      if (normalizedDelay <= option.value) {
         alignDelay = option.value;
         break;
       }
@@ -45,7 +45,7 @@ function alignInterval(delay) {
   return alignDelay;
 }
 
-const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
+const TextCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }) => {
   const [timeout, setTimeout] = useState<IntervalValue>(alignInterval(delay));
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -60,14 +60,14 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
     return Object.fromEntries(params.entries());
   }, [location.search]);
 
-  const path = location.pathname.split('/');
-  const indexNode = path.indexOf('node')
-  const commands = path.slice(indexNode+1)
-  const commandPath = commands.join('/')
-  const fullCommand = commands.join(' ')
+  const pathParts = location.pathname.split('/');
+  const nodePathIndex = pathParts.indexOf('node')
+  const commandParts = pathParts.slice(nodePathIndex + 1)
+  const commandPath = commandParts.join('/')
+  const fullCommand = commandParts.join(' ')
 
   const cluster = queryParams.cluster;
-  const controlplane = queryParams.controlplane;
+  const controlPlane = queryParams.controlplane;
   const node = queryParams.node;
   const nodeType = queryParams.type;
 
@@ -77,8 +77,8 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
 
     const fetchData = async () => {
       try {
-        const talosURL = "http://localhost:5000/talosctl?cluster="+cluster+"&n="+node+"&cmd=" + commandPath;
-        const response = await fetch(talosURL, {
+        const talosUrl = "http://localhost:5000/talosctl?cluster="+cluster+"&n="+node+"&cmd=" + commandPath;
+        const response = await fetch(talosUrl, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -90,8 +90,8 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const restReply: ApiResponse = await response.json();
-        setContent(restReply['content'])
+        const responsePayload: ApiResponse = await response.json();
+        setContent(responsePayload['content'])
       } catch (err: any) {
         if (err.name === 'AbortError') {
           console.debug('Fetch aborted');
@@ -134,7 +134,7 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
   <Typography><Link to="/maestro">Clusters</Link
   >&nbsp;/&nbsp;<Link to={`/maestro?cluster=${cluster}`}>{cluster}</Link
   > &nbsp;/&nbsp;<Link to={`/maestro/?cluster=${cluster}&type=${nodeType}`}>{nodeType}</Link
-  >&nbsp;/&nbsp;<Link to={`/maestro/node?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>{node}</Link
+  >&nbsp;/&nbsp;<Link to={`/maestro/node?cluster=${cluster}&type=${nodeType}&controlplane=${controlPlane}&node=${node}`}>{node}</Link
   >&nbsp;/&nbsp;{fullCommand}</Typography>
     <Paper>
       <div style={{ marginBottom: '16px' }}>
@@ -159,4 +159,4 @@ const TalosTextCmdInfo: React.FC<{ }> = ({ delay }) => {
   );
 }
 
-export default TalosTextCmdInfo;
+export default TextCommandPage;

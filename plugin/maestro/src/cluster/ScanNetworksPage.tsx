@@ -11,18 +11,12 @@ import {
   Snackbar,
   TextField} from '@mui/material';
 import Typography from '@mui/material/Typography';
-import React, { useEffect,useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 
-interface Cluster {
-  id: number;
-  name: string;
-}
-
-function isValidIpWithCidr(str) {
-  if (!str.includes('/')) return false;
-  const [ip, mask] = str.split('/');
+function isValidIpWithCidr(value: string) {
+  if (!value.includes('/')) return false;
+  const [ip, mask] = value.split('/');
   const maskNum = Number(mask);
 
   if (isNaN(maskNum) || maskNum < 0 || maskNum > 32) return false;
@@ -32,15 +26,15 @@ function isValidIpWithCidr(str) {
 
   return ipParts.every(part => {
     const num = Number(part);
-    return !isNaN(num) && num >= 0 && num <= 255 && String(num) === part; // disallow leading zeros
+    return !isNaN(num) && num >= 0 && num <= 255 && String(num) === part;
   });
 }
 
-const scannedNetworls: React.FC<{ }> = ({  }) => {
+const ScanNetworksPage: React.FC<{}> = () => {
   const [inputValue, setInputValue] = useState('');
-  const [scanNets, setScanNets] = useState<Cluster[]>([]);
+  const [scanNetworks, setScanNetworks] = useState<string[]>([]);
   const [error, setError] = useState('');
-  const [errorGet, setErrorGet] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
@@ -52,8 +46,8 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
 
     const fetchData = async () => {
       try {
-        const talosURL = "http://127.0.0.1:5000/scanNets";
-        const response = await fetch(talosURL, {
+        const talosUrl = 'http://127.0.0.1:5000/scanNets';
+        const response = await fetch(talosUrl, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -65,14 +59,14 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const scanNets: ApiResponse = await response.json();
-        setScanNets(scanNets['scanNets'])
+        const payload: any = await response.json();
+        setScanNetworks(payload.scanNets ?? []);
       } catch (err: any) {
         if (err.name === 'AbortError') {
           console.debug('Fetch aborted');
           return;
         }
-        setErrorGet(err.message || 'Failed to load data');
+        setFetchError(err.message || 'Failed to load data');
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -88,8 +82,8 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
   }, []);
 
   if (loading) return <div>Loading cluster map...</div>;
-  if (errorGet) return <div>Error: {errorGet}</div>;
-  if (!scanNets) return <div>No data received</div>;
+  if (fetchError) return <div>Error: {fetchError}</div>;
+  if (!scanNetworks) return <div>No data received</div>;
 
   const handleAdd = () => {
     const value = inputValue.trim();
@@ -103,21 +97,21 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
       return;
     }
 
-    if (scanNets.includes(value)) {
+    if (scanNetworks.includes(value)) {
       setError('This address has already been added');
       return;
     }
-    setScanNets(prev => [...prev, value]);
+    setScanNetworks(prev => [...prev, value]);
     setInputValue('');
     setError('');
   };
 
-  const handleRemove = (ipToRemove) => {
-    setScanNets(prev => prev.filter(ip => ip !== ipToRemove));
+  const handleRemove = (ipToRemove: string) => {
+    setScanNetworks(prev => prev.filter(ip => ip !== ipToRemove));
   };
 
   const handleSubmit = async () => {
-    if (scanNets.length === 0) {
+    if (scanNetworks.length === 0) {
       setSnackbar({ open: true, message: 'Empty network list', severity: 'warning' });
       return;
     }
@@ -128,7 +122,7 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ scanNets })
+        body: JSON.stringify({ scanNets: scanNetworks })
       });
 
       if (response.ok) {
@@ -168,13 +162,13 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
           Add
         </Button>
       </Box>
-      {scanNets.length > 0 && (
+      {scanNetworks.length > 0 && (
         <>
           <Typography variant="subtitle1" sx={{ mb: 1 }}>
             List of scanned networks:
           </Typography>
           <List dense>
-            {scanNets.map((ip) => (
+            {scanNetworks.map((ip) => (
               <ListItem
                 key={ip}
                 secondaryAction={
@@ -195,7 +189,7 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
         variant="contained"
         color="success"
         onClick={handleSubmit}
-        disabled={scanNets.length === 0}
+        disabled={scanNetworks.length === 0}
         sx={{ mt: 2 }}
       >
         Scan
@@ -216,4 +210,4 @@ const scannedNetworls: React.FC<{ }> = ({  }) => {
   );
 }
 
-export default scannedNetworls;
+export default ScanNetworksPage;

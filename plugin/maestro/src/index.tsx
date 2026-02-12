@@ -16,14 +16,14 @@
 
 import { registerRoute, registerSidebarEntry } from '@kinvolk/headlamp-plugin/lib';
 import React from 'react';
-import ScanNets from './cluster/scanNets';
+import ScanNetworksPage from './cluster/ScanNetworksPage';
 import MaestroMainPage from './MaestroMainPage';
-import MaestroNodePage from './node';
-import GetTree from './node/get';
-import GetPage from './node/get/Page';
-import ServiceTableCmdPage from './node/service/cmdPage';
-import TableCmdPage from './node/tableCmdPage';
-import TextCmdPage from './node/textCmdPage';
+import GetResourcePage from './node/get/GetResourcePage';
+import GetTreePage from './node/get/GetTreePage';
+import NodePage from './node/NodePage';
+import ServiceCommandPage from './node/service/ServiceCommandPage';
+import TableCommandPage from './node/TableCommandPage';
+import TextCommandPage from './node/TextCommandPage';
 
 interface SidebarConfig {
   item: string;
@@ -33,7 +33,7 @@ interface SidebarConfig {
 interface MaestroPageRegistrationConfig {
   path: string;
   name: string;
-  Component: React.ComponentType<any>;
+  component: React.ComponentType<any>;
   exact?: boolean;
   sidebar: SidebarConfig;
 }
@@ -42,10 +42,10 @@ interface MaestroResourceRegistrationConfig {
   name: string;
   listPath: string;
   listRouteName: string;
-  ListComponent: React.ComponentType<any>;
+  listComponent: React.ComponentType<any>;
   detailPath?: string;
   detailRouteName?: string;
-  DetailComponent?: React.ComponentType<any>;
+  detailComponent?: React.ComponentType<any>;
   listExact?: boolean;
   detailExact?: boolean;
   sidebar: SidebarConfig;
@@ -56,7 +56,7 @@ const maestroSidebar: SidebarConfig = { item: 'maestro', sidebar: 'myplugin' };
 const clustersSidebar: SidebarConfig = { item: 'Clusters', sidebar: 'HOME' };
 
 function registerMaestroPage(config: MaestroPageRegistrationConfig) {
-  const { path, name, Component, exact = true, sidebar } = config;
+  const { path, name, component: PageComponent, exact = true, sidebar } = config;
   registerRoute({
     path,
     name,
@@ -64,7 +64,7 @@ function registerMaestroPage(config: MaestroPageRegistrationConfig) {
     sidebar,
     useClusterURL: false,
     noAuthRequired: true,
-    component: () => <Component />,
+    component: () => <PageComponent />,
   });
 }
 
@@ -73,10 +73,10 @@ function registerMaestroResource(config: MaestroResourceRegistrationConfig) {
     name,
     listPath,
     listRouteName,
-    ListComponent,
+    listComponent,
     detailPath,
     detailRouteName,
-    DetailComponent,
+    detailComponent,
     listExact = true,
     detailExact = true,
     sidebar,
@@ -98,16 +98,16 @@ function registerMaestroResource(config: MaestroResourceRegistrationConfig) {
   registerMaestroPage({
     path: listPath,
     name: listRouteName,
-    Component: ListComponent,
+    component: listComponent,
     exact: listExact,
     sidebar: resourceSidebar,
   });
 
-  if (detailPath && detailRouteName && DetailComponent) {
+  if (detailPath && detailRouteName && detailComponent) {
     registerMaestroPage({
       path: detailPath,
       name: detailRouteName,
-      Component: DetailComponent,
+      component: detailComponent,
       exact: detailExact,
       sidebar: resourceSidebar,
     });
@@ -123,8 +123,8 @@ registerSidebarEntry({
 });
 
 registerSidebarEntry({
-  name: 'backtoroot',
-  label: 'Back to kubernetes',
+  name: 'backToRoot',
+  label: 'Back to Kubernetes',
   url: '/',
   icon: 'mdi:hexagon',
   sidebar: 'myplugin',
@@ -132,7 +132,7 @@ registerSidebarEntry({
 
 registerSidebarEntry({
   name: 'maestro',
-  label: 'MAESTRO AREA',
+  label: 'Maestro Area',
   url: '/maestro',
   icon: 'mdi:music-note-outline',
   sidebar: 'myplugin',
@@ -142,28 +142,28 @@ registerMaestroResource({
   name: 'Clusters',
   listPath: '/maestro',
   listRouteName: 'maestro_home',
-  ListComponent: MaestroMainPage,
+  listComponent: MaestroMainPage,
   sidebar: homeSidebar,
 });
 
 registerMaestroPage({
   path: '/maestro/cluster',
   name: 'maestro_cluster',
-  Component: MaestroMainPage,
+  component: MaestroMainPage,
   sidebar: clustersSidebar,
 });
 
 registerMaestroPage({
   path: '/maestro/cluster/scanNets',
   name: 'maestro_cluster_scan_nets',
-  Component: ScanNets,
+  component: ScanNetworksPage,
   sidebar: clustersSidebar,
 });
 
 registerMaestroPage({
   path: '/maestro/node',
   name: 'maestro_node',
-  Component: MaestroNodePage,
+  component: NodePage,
   sidebar: maestroSidebar,
 });
 
@@ -171,17 +171,17 @@ registerMaestroResource({
   name: 'NodeGet',
   listPath: '/maestro/node/get',
   listRouteName: 'maestro_node_get_tree',
-  ListComponent: GetTree,
+  listComponent: GetTreePage,
   detailPath: '/maestro/node/get/:commandSet/:command',
   detailRouteName: 'maestro_node_get_resource',
-  DetailComponent: GetPage,
+  detailComponent: GetResourcePage,
   sidebar: maestroSidebar,
 });
 
 registerMaestroPage({
   path: '/maestro/node/service',
   name: 'maestro_node_service',
-  Component: ServiceTableCmdPage,
+  component: ServiceCommandPage,
   sidebar: maestroSidebar,
 });
 
@@ -200,7 +200,7 @@ textCommandRoutes.forEach(route => {
   registerMaestroPage({
     path: route.path,
     name: route.name,
-    Component: TextCmdPage,
+    component: TextCommandPage,
     exact: route.exact,
     sidebar: maestroSidebar,
   });
@@ -225,7 +225,7 @@ tableCommandPaths.forEach(commandPath => {
   registerMaestroPage({
     path: `/maestro/node/${commandPath}`,
     name: `maestro_node_${commandPath.replace('/', '_')}`,
-    Component: TableCmdPage,
+    component: TableCommandPage,
     sidebar: maestroSidebar,
   });
 });

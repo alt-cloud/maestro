@@ -3,11 +3,10 @@ import { Box } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import DownloadZipButton from './support/button';
+import { Link, useLocation } from 'react-router-dom';
+import SupportDownloadButton from './support/SupportDownloadButton';
 
-const MaestroNodePage: React.FC<{ }> = ({  }) => {
+const NodePage: React.FC<{}> = () => {
   const location = useLocation();
   const queryParams = useMemo(() => {
     const params = new URLSearchParams(location.search);
@@ -16,7 +15,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
   const cluster = queryParams.cluster;
   const node = queryParams.node;
   const nodeType = queryParams.type;
-  const isControlPlane = (nodeType == 'controlplane');
+  const isControlPlane = nodeType === 'controlplane';
 
   return (
 <SectionBox title="Node Page" textAlign="left" paddingTop={2}>
@@ -231,7 +230,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         <Link to={`/maestro/node/stats?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>stats</Link>
       </li>
       <li>
-        <DownloadZipButton cluster={cluster} node={node} />
+        <SupportDownloadButton cluster={cluster} node={node} />
       </li>
       <li>
         <Link to={`/maestro/node/time?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>time</Link>
@@ -266,4 +265,4 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
   );
 }
 
-export default MaestroNodePage;
+export default NodePage;

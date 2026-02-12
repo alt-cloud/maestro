@@ -12,11 +12,8 @@ import {
   TableSortLabel
 } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import React, { useEffect,useState } from 'react';
-import { useMemo } from 'react';
-import { useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 
 interface Cluster {
@@ -39,17 +36,20 @@ const INTERVAL_OPTIONS = [
   { label: 'Off', value: null },
 ] as const;
 
+type IntervalValue = typeof INTERVAL_OPTIONS[number]['value'];
+
 function alignInterval(delay) {
-  if (typeof delay === 'undefined' || Number.isNaN(Number(delay)) || Number(delay) <= 0 ) {
-    delay = null;
+  let normalizedDelay = delay;
+  if (typeof normalizedDelay === 'undefined' || Number.isNaN(Number(normalizedDelay)) || Number(normalizedDelay) <= 0 ) {
+    normalizedDelay = null;
   }
   let alignDelay = null;
-  if (delay) {
-    delay = Number(delay) * 1000;
+  if (normalizedDelay) {
+    normalizedDelay = Number(normalizedDelay) * 1000;
     let lastValue = 0;
     for (const option of INTERVAL_OPTIONS) {
       if (option.value === null) break;
-      if (delay <= option.value) {
+      if (normalizedDelay <= option.value) {
         alignDelay = option.value;
         break;
       }
@@ -61,23 +61,82 @@ function alignInterval(delay) {
 }
 
 
-
-function createRows(dataRows) {
-  const columns: Column[] = [];
-  var columnsList;
-  if (dataRows.length == 0)
-    return [ [], [] ]
-  if (Object.keys(columns).length == 0) {
-    columnsList = Object.keys(dataRows[0])
-    for (var columnName of columnsList) {
-      const column: Column = {id: columnName, label: columnName, sortable: true };
-      columns.push(column);
-    }
+function createColumnGroups(resourceRows): { meta: string[]; spec: string[] } {
+  let metadataFields = [];
+  let specFields = [];
+  for (const resourceRow of resourceRows) {
+    const metadataKeys = Object.keys(resourceRow['metadata']);
+    metadataFields = [...new Set([...metadataFields, ...metadataKeys])];
+    const specKeys = Object.keys(resourceRow['spec']);
+    specFields = [...new Set([...specFields, ...specKeys])];
   }
-  return [ columns, dataRows ]
+  const columnGroups = {
+    meta: metadataFields,
+    spec: specFields,
+  };
+  return columnGroups;
 }
 
-const TalosCmdInfo: React.FC<{ }> = ({ delay }) => {
+function createColumns(columnGroups) {
+  const columns: Column[] = [];
+  for (const field of columnGroups['spec']) {
+    const column: Column = {id: 'spec_'+field, label: 'spec.'+field, sortable: true };
+    columns.push(column);
+  }
+  for (const field of columnGroups['meta']) {
+    const column: Column = {id: 'meta_'+field, label: 'meta.'+field, sortable: true };
+    columns.push(column);
+  }
+  return columns;
+}
+
+
+function createRows(columnGroups, dataRows) {
+  const rows = [];
+  for (const dataRow of dataRows) {
+    const row = {};
+    for (const field of columnGroups['spec']) {
+      if (field in dataRow['spec']) {
+        const value = dataRow['spec'][field];
+        let stringValue = '';
+        if (Array.isArray(value)) {
+          if (value.length > 0 && typeof value[0] === 'object')
+            stringValue = JSON.stringify(value, null, 2);
+          else
+            stringValue = value.join("\n");
+        } else if (typeof value === 'object')
+          stringValue = JSON.stringify(value, null, 2);
+        else
+          stringValue = value;
+        row['spec_'+field] = stringValue;
+      } else {
+        row['spec_'+field] = '';
+      }
+    }
+    for (const field of columnGroups['meta']) {
+      if (field in dataRow['metadata']) {
+        const value = dataRow['metadata'][field];
+        let stringValue = '';
+        if (Array.isArray(value)) {
+          if (value.length > 0 && typeof value[0] === 'object')
+            stringValue = JSON.stringify(value, null, 2);
+          else
+            stringValue = value.join("\n");
+        } else if (typeof value === 'object')
+           stringValue = JSON.stringify(value, null, 2);
+        else
+          stringValue = value;
+        row['meta_'+field] = stringValue;
+      } else {
+        row['meta_'+field] = '';
+      }
+    }
+    rows.push(row);
+  }
+  return rows;
+}
+
+const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }) => {
   const [timeout, setTimeout] = useState<IntervalValue>(alignInterval(delay));
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -86,7 +145,9 @@ const TalosCmdInfo: React.FC<{ }> = ({ delay }) => {
   const [orderBy, setOrderBy] = useState<keyof Cluster>('id');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [rows, setRows] = useState<Cluster[]>([]);
-  const [columns, setColumns] = useState<Cluster[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
+  const [columnGroups, setColumnGroups] = useState<{ meta?: string[]; spec?: string[] }>({});
+
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -97,14 +158,11 @@ const TalosCmdInfo: React.FC<{ }> = ({ delay }) => {
     return Object.fromEntries(params.entries());
   }, [location.search]);
 
-  const path = location.pathname.split('/');
-  const indexNode = path.indexOf('node')
-  const commands = path.slice(indexNode+1)
-  const commandPath = commands.join('/')
-  const fullCommand = commands.join(' ')
-
+  const pathParts = location.pathname.split('/');
+  const commandSet = pathParts[pathParts.length-2];
+  const command = pathParts[pathParts.length-1];
   const cluster = queryParams.cluster;
-  const controlplane = queryParams.controlplane;
+  const controlPlane = queryParams.controlplane;
   const node = queryParams.node;
   const nodeType = queryParams.type;
 
@@ -114,8 +172,8 @@ const TalosCmdInfo: React.FC<{ }> = ({ delay }) => {
 
     const fetchData = async () => {
       try {
-        const talosURL = "http://localhost:5000/talosctl?cluster="+cluster+"&n="+node+"&cmd=" + commandPath;
-        const response = await fetch(talosURL, {
+        const talosUrl = "http://localhost:5000/talosctl?cluster="+cluster+"&n="+node+"&cmd=get&commandSet="+commandSet+"&subCommand="+command;
+        const response = await fetch(talosUrl, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -127,10 +185,13 @@ const TalosCmdInfo: React.FC<{ }> = ({ delay }) => {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const clusterRows: ApiResponse = await response.json();
-        const [columns, Rows ] = createRows(clusterRows);
-        setRows(Rows);
-        setColumns(columns);
+        const responseRows: ApiResponse = await response.json();
+        const nextColumnGroups = createColumnGroups(responseRows);
+        setColumnGroups(nextColumnGroups);
+        const nextColumns = createColumns(nextColumnGroups);
+        setColumns(nextColumns);
+        const nextRows = createRows(nextColumnGroups, responseRows);
+        setRows(nextRows);
       } catch (err: any) {
         if (err.name === 'AbortError') {
           console.debug('Fetch aborted');
@@ -143,7 +204,6 @@ const TalosCmdInfo: React.FC<{ }> = ({ delay }) => {
         }
       }
     };
-
     if (timeout === null) {
       fetchData();
       return () => {
@@ -197,8 +257,9 @@ const TalosCmdInfo: React.FC<{ }> = ({ delay }) => {
   <Typography variant="h6"><Link to="/maestro">Clusters</Link
   >&nbsp;/&nbsp;<Link to={`/maestro?cluster=${cluster}`}>{cluster}</Link
   > &nbsp;/&nbsp;<Link to={`/maestro/?cluster=${cluster}&type=${nodeType}`}>{nodeType}</Link
-  >&nbsp;/&nbsp;<Link to={`/maestro/node?cluster=${cluster}&type=${nodeType}&controlplane=${controlplane}&node=${node}`}>{node}</Link
-  >&nbsp;/&nbsp;{fullCommand}</Typography>
+  >&nbsp;/&nbsp;<Link to={`/maestro/node?cluster=${cluster}&type=${nodeType}&controlplane=${controlPlane}&node=${node}`}>{node}</Link
+  >&nbsp;/&nbsp;<Link to={`/maestro/node/get?cluster=${cluster}&type=${nodeType}&controlplane=${controlPlane}&node=${node}`}>get</Link
+  >&nbsp;/&nbsp;{commandSet}&nbsp;/&nbsp;{command}</Typography>
   <Box sx={{ maxHeight: 'calc(100vh - 120px)', overflow: 'auto', whiteSpace: 'pre-wrap' }}>
     <Paper>
       <div style={{ marginBottom: '16px' }}>
@@ -219,6 +280,10 @@ const TalosCmdInfo: React.FC<{ }> = ({ delay }) => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell fontWeight={ 'bold' } colSpan={columnGroups['spec']?.length ?? 0} key='spec'>SPEC</TableCell>
+              <TableCell fontWeight={ 'bold' } colSpan={columnGroups['meta']?.length ?? 0} key='metadata'>METADATA</TableCell>
+            </TableRow>
+            <TableRow>
               {columns.map(column => (
                 <TableCell key={column.id}>
                   {column.sortable ? (
@@ -227,10 +292,10 @@ const TalosCmdInfo: React.FC<{ }> = ({ delay }) => {
                       direction={orderBy === column.id ? order : 'asc'}
                       onClick={() => handleSort(column.id)}
                     >
-                      {column.label}
+                      {column.label.substring(5)}
                     </TableSortLabel>
                   ) : (
-                    column.label
+                    column.label.substring(5)
                   )}
                 </TableCell>
               ))}
@@ -262,4 +327,4 @@ const TalosCmdInfo: React.FC<{ }> = ({ delay }) => {
   );
 }
 
-export default TalosCmdInfo;
+export default GetResourcePage;
