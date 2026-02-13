@@ -297,10 +297,8 @@ function ClusterRows(props) {
   const nodeTypes = props.nodeTypes;
   const clusterNameRowSpans = props.clusterNameRowSpans;
   const isOrphan = clusterName === orphansClusterName;
-  const controlPlaneRows = nodeTypes['controlplanes'];
-  const firstControlPlaneRow = controlPlaneRows.shift();
-  const workerRows = nodeTypes['workers'];
-  const firstWorkerRow = workerRows.shift();
+  const [firstControlPlaneRow, ...controlPlaneRows] = nodeTypes['controlplanes'] ?? [];
+  const [firstWorkerRow, ...workerRows] = nodeTypes['workers'] ?? [];
   return (
     <>
     <ClusterDivider />
