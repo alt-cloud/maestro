@@ -104,7 +104,16 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
 
     const fetchData = async () => {
       try {
-        const talosUrl = `${buildServerUrl('/talosctl')}?cluster=${cluster}&n=${node}&cmd=${commandPath}`;
+        const requestParams = new URLSearchParams();
+        if (cluster) {
+          requestParams.set('cluster', cluster);
+        }
+        if (node) {
+          requestParams.set('n', node);
+        }
+        requestParams.set('cmd', commandPath);
+
+        const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
         const response = await fetch(talosUrl, {
           method: 'GET',
           headers: {
@@ -122,6 +131,7 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
 
         setRows(nextRows);
         setColumns(nextColumns);
+        setError(null);
 
         if (nextColumns.length > 0 && !orderBy) {
           setOrderBy(nextColumns[0].id);
@@ -153,7 +163,7 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
       clearInterval(intervalId);
       controller.abort();
     };
-  }, [cluster, commandPath, node, orderBy, t, timeout]);
+  }, [cluster, commandPath, node, t, timeout]);
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);

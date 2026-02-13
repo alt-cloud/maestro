@@ -26,6 +26,18 @@ interface TreeCommandGroup {
   name: string;
 }
 
+function buildPathWithQuery(pathname: string, params: Record<string, string | undefined>) {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) {
+      query.set(key, value);
+    }
+  });
+
+  const queryString = query.toString();
+  return queryString ? `${pathname}?${queryString}` : pathname;
+}
+
 function GetTreePage() {
   const { t } = useTranslation();
   const location = useLocation();
@@ -38,6 +50,9 @@ function GetTreePage() {
   const controlPlane = queryParams.controlplane;
   const node = queryParams.node;
   const nodeType = queryParams.type;
+  const clusterPageLink = buildPathWithQuery('/maestro', { cluster });
+  const nodeTypePageLink = buildPathWithQuery('/maestro', { cluster, type: nodeType });
+  const nodePageLink = buildPathWithQuery('/maestro/node', { cluster, type: nodeType, node });
 
   const commandGroups = Object.entries(resourceTree as Record<string, TreeCommandGroup>);
 
@@ -46,9 +61,9 @@ function GetTreePage() {
       <PageHeader
         breadcrumbs={[
           { label: t('common.clusters'), to: '/maestro' },
-          { label: cluster || t('common.cluster'), to: `/maestro?cluster=${cluster || ''}` },
-          { label: nodeType || t('common.nodeType'), to: `/maestro/?cluster=${cluster || ''}&type=${nodeType || ''}` },
-          { label: node || t('common.node'), to: `/maestro/node?cluster=${cluster || ''}&type=${nodeType || ''}&node=${node || ''}` },
+          { label: cluster || t('common.cluster'), to: clusterPageLink },
+          { label: nodeType || t('common.nodeType'), to: nodeTypePageLink },
+          { label: node || t('common.node'), to: nodePageLink },
           { label: t('common.get') },
         ]}
         subtitle={t('getTreePage.subtitle')}
@@ -68,7 +83,12 @@ function GetTreePage() {
                     <ListItem disableGutters disablePadding key={command.id}>
                       <ListItemButton
                         component={RouterLink}
-                        to={`/maestro/node/get/${commandSet}/${command.command}?cluster=${cluster}&controlplane=${controlPlane}&node=${node}&type=${nodeType}`}
+                        to={buildPathWithQuery(`/maestro/node/get/${commandSet}/${command.command}`, {
+                          cluster,
+                          controlplane: controlPlane,
+                          node,
+                          type: nodeType,
+                        })}
                       >
                         <ListItemText primary={command.name} />
                       </ListItemButton>

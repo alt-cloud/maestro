@@ -68,21 +68,38 @@ function createRows(dataRows: any[]): [Column[], TableRowData[]] {
 }
 
 interface ServiceCellProps {
-  cluster: string;
+  cluster?: string;
   columnId: string;
-  controlPlane: string;
-  node: string;
-  nodeType: string;
+  controlPlane?: string;
+  node?: string;
+  nodeType?: string;
   value: string;
 }
 
 function ServiceCell({ cluster, columnId, controlPlane, node, nodeType, value }: ServiceCellProps) {
   if (columnId.toLowerCase() === 'service') {
+    const queryParams = new URLSearchParams();
+    if (cluster) {
+      queryParams.set('cluster', cluster);
+    }
+    if (nodeType) {
+      queryParams.set('type', nodeType);
+    }
+    if (controlPlane) {
+      queryParams.set('controlplane', controlPlane);
+    }
+    if (node) {
+      queryParams.set('node', node);
+    }
+    queryParams.set('service', value);
+    const query = queryParams.toString();
+    const encodedService = encodeURIComponent(value);
+
     return (
       <TableCell key={columnId}>
         <Link
           component={RouterLink}
-          to={`/maestro/node/logs/${value}?cluster=${cluster}&type=${nodeType}&controlplane=${controlPlane}&node=${node}&service=${value}`}
+          to={`/maestro/node/logs/${encodedService}${query ? `?${query}` : ''}`}
           underline="hover"
         >
           {value}
@@ -132,7 +149,16 @@ const ServiceCommandPage: React.FC<{ delay?: string | number | null }> = ({ dela
 
     const fetchData = async () => {
       try {
-        const talosUrl = `${buildServerUrl('/talosctl')}?cluster=${cluster}&n=${node}&cmd=${commandPath}`;
+        const requestParams = new URLSearchParams();
+        if (cluster) {
+          requestParams.set('cluster', cluster);
+        }
+        if (node) {
+          requestParams.set('n', node);
+        }
+        requestParams.set('cmd', commandPath);
+
+        const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
         const response = await fetch(talosUrl, {
           method: 'GET',
           headers: {
@@ -150,6 +176,7 @@ const ServiceCommandPage: React.FC<{ delay?: string | number | null }> = ({ dela
 
         setRows(nextRows);
         setColumns(nextColumns);
+        setError(null);
 
         if (nextColumns.length > 0 && !orderBy) {
           setOrderBy(nextColumns[0].id);
@@ -181,7 +208,7 @@ const ServiceCommandPage: React.FC<{ delay?: string | number | null }> = ({ dela
       clearInterval(intervalId);
       controller.abort();
     };
-  }, [cluster, commandPath, node, orderBy, t, timeout]);
+  }, [cluster, commandPath, node, t, timeout]);
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);

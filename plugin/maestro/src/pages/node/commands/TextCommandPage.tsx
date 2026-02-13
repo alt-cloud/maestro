@@ -40,7 +40,16 @@ const TextCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }
 
     const fetchData = async () => {
       try {
-        const talosUrl = `${buildServerUrl('/talosctl')}?cluster=${cluster}&n=${node}&cmd=${commandPath}`;
+        const requestParams = new URLSearchParams();
+        if (cluster) {
+          requestParams.set('cluster', cluster);
+        }
+        if (node) {
+          requestParams.set('n', node);
+        }
+        requestParams.set('cmd', commandPath);
+
+        const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
         const response = await fetch(talosUrl, {
           method: 'GET',
           headers: {
@@ -55,6 +64,7 @@ const TextCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }
 
         const responsePayload = await response.json();
         setContent(String(responsePayload?.content || ''));
+        setError(null);
       } catch (err: any) {
         if (err.name === 'AbortError') {
           return;

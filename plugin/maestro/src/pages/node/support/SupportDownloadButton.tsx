@@ -11,11 +11,20 @@ interface SupportDownloadButtonProps {
 const SupportDownloadButton = ({ cluster, node }: SupportDownloadButtonProps) => {
   const { t } = useTranslation();
   const [isDownloading, setIsDownloading] = useState(false);
+  const canDownload = Boolean(cluster && node);
 
   const handleSupportDownload = async () => {
+    if (!cluster || !node) {
+      return;
+    }
+
     setIsDownloading(true);
     try {
-      const talosUrl = `${buildServerUrl('/talosctl')}?cluster=${cluster}&n=${node}&cmd=support`;
+      const requestParams = new URLSearchParams();
+      requestParams.set('cluster', cluster);
+      requestParams.set('n', node);
+      requestParams.set('cmd', 'support');
+      const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
       const response = await fetch(talosUrl, {
         method: 'GET',
       });
@@ -44,7 +53,7 @@ const SupportDownloadButton = ({ cluster, node }: SupportDownloadButtonProps) =>
   };
 
   return (
-    <Button disabled={isDownloading} onClick={handleSupportDownload} size="small" variant="outlined">
+    <Button disabled={isDownloading || !canDownload} onClick={handleSupportDownload} size="small" variant="outlined">
       {isDownloading ? t('support.downloading') : t('support.downloadBundle')}
     </Button>
   );
