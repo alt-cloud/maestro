@@ -102,6 +102,23 @@ interface PageProps {
   delay?: string | number | null;
 }
 
+function validateClusterName(
+  value: string,
+  existingNames: Set<string>,
+  t: (key: string) => string
+): string | null {
+  const normalizedValue = value.trim();
+  if (normalizedValue.length === 0) {
+    return t('clustersPage.alertNameRequired');
+  }
+
+  if (existingNames.has(normalizedValue.toLowerCase())) {
+    return t('clustersPage.alertNameDuplicate');
+  }
+
+  return null;
+}
+
 function NodeStageSelect(props) {
   const statusOptions = props.statusOptions;
   const node = props.node;
@@ -375,7 +392,8 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
   const [, setIsSubmitDisabled] = useState(true);
   const [timeout, setTimeout] = useState<IntervalValue>(alignRefreshInterval(delay));
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [newClusterName, setNewClusterName] = useState('');
+  const [clusterNameError, setClusterNameError] = useState<string | null>(null);
 
   const [rows, setRows] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -474,6 +492,16 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
     isClusterPage = false;
   }
 
+  const existingClusterNames = new Set(
+    Object.keys(rows)
+      .filter(name => !name.startsWith('_'))
+      .map(name => name.toLowerCase())
+  );
+  const shouldProvideNewClusterName = !isClusterPage && hasOrphans;
+  const nextClusterNameValidationError = shouldProvideNewClusterName
+    ? validateClusterName(newClusterName, existingClusterNames, t)
+    : null;
+
   const clusterNameRowSpans = {};
   selectedNodeStages = {};
   const rowsByClusterName = new Map(Object.entries(filteredRows));
@@ -503,14 +531,14 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
   }
 
   const handleSubmit = async nextSelectedNodeStages => {
-    const newClusterName = inputRef.current?.value;
-    let targetClusterName;
-    if (newClusterName !== undefined) {
-      targetClusterName = inputRef.current?.value;
-      if (targetClusterName.length === 0) {
-        alert(t('clustersPage.alertNameRequired'));
+    let targetClusterName: string | undefined;
+    if (shouldProvideNewClusterName) {
+      const validationError = validateClusterName(newClusterName, existingClusterNames, t);
+      if (validationError) {
+        setClusterNameError(validationError);
         return;
       }
+      targetClusterName = newClusterName.trim();
     } else {
       for (const clusterName in nextSelectedNodeStages) {
         if (clusterName[0] !== '_') {
@@ -518,6 +546,11 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
           break;
         }
       }
+    }
+
+    if (!targetClusterName) {
+      alert(t('clustersPage.alertTargetClusterMissing'));
+      return;
     }
 
     const actions = {};
@@ -550,7 +583,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       return;
     }
 
-    if (newClusterName !== undefined && orphanWorkerCount > 0 && orphanControlPlaneCount === 0) {
+    if (shouldProvideNewClusterName && orphanWorkerCount > 0 && orphanControlPlaneCount === 0) {
       alert(t('clustersPage.alertControlplaneRequired'));
       return;
     }
@@ -625,7 +658,24 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
           {isClusterPage || !hasOrphans ? (
             <div />
           ) : (
-            <TextField defaultValue="" inputRef={inputRef} label={t('clustersPage.clusterNameLabel')} variant="outlined" />
+            <TextField
+              error={Boolean(clusterNameError)}
+              helperText={clusterNameError || t('clustersPage.clusterNameHelper')}
+              label={t('clustersPage.clusterNameLabel')}
+              onBlur={() => {
+                setClusterNameError(validateClusterName(newClusterName, existingClusterNames, t));
+              }}
+              onChange={event => {
+                const value = event.target.value;
+                setNewClusterName(value);
+                if (clusterNameError) {
+                  setClusterNameError(validateClusterName(value, existingClusterNames, t));
+                }
+              }}
+              sx={{ maxWidth: 360 }}
+              value={newClusterName}
+              variant="outlined"
+            />
           )}
 
           {!hasOrphans ? (
@@ -634,6 +684,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
             <Button
               aria-label={t('clustersPage.createClusterAria')}
               color="success"
+              disabled={Boolean(nextClusterNameValidationError)}
               fullWidth
               onClick={() => handleSubmit(selectedNodeStages)}
               sx={{ mt: 3, py: 1.5 }}

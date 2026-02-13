@@ -28,9 +28,12 @@
   },
   "clustersPage": {
     "alertControlplaneRequired": "When creating a new cluster, at least one controlplane node is required.",
+    "alertNameDuplicate": "Cluster name must be unique.",
     "alertNameRequired": "To add a node to a new cluster, enter its name.",
     "alertNoChanges": "No changes",
+    "alertTargetClusterMissing": "Cannot determine target cluster for selected actions.",
     "applyChanges": "Apply Changes",
+    "clusterNameHelper": "Enter a unique cluster name.",
     "clusterNameLabel": "Cluster name",
     "columns": {
       "clusterName": "ClusterName",

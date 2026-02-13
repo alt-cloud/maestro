@@ -28,9 +28,12 @@
   },
   "clustersPage": {
     "alertControlplaneRequired": "При создании нового кластера нужен минимум один узел controlplane.",
+    "alertNameDuplicate": "Имя кластера должно быть уникальным.",
     "alertNameRequired": "Чтобы добавить узел в новый кластер, введите его имя.",
     "alertNoChanges": "Изменений нет",
+    "alertTargetClusterMissing": "Не удалось определить целевой кластер для выбранных действий.",
     "applyChanges": "Применить изменения",
+    "clusterNameHelper": "Введите уникальное имя кластера.",
     "clusterNameLabel": "Имя кластера",
     "columns": {
       "clusterName": "Кластер",
