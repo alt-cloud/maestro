@@ -653,43 +653,52 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
             </TableContainer>
           </FormControl>
 
-          {isClusterPage || !hasOrphans ? (
-            <div />
-          ) : (
-            <TextField
-              error={Boolean(clusterNameError)}
-              helperText={clusterNameError || t('clustersPage.clusterNameHelper')}
-              label={t('clustersPage.clusterNameLabel')}
-              onBlur={() => {
-                setClusterNameError(validateClusterName(newClusterName, existingClusterNames, t));
-              }}
-              onChange={event => {
-                const value = event.target.value;
-                setNewClusterName(value);
-                if (clusterNameError) {
-                  setClusterNameError(validateClusterName(value, existingClusterNames, t));
-                }
-              }}
-              sx={{ maxWidth: 360 }}
-              value={newClusterName}
-              variant="outlined"
-            />
-          )}
-
-          {!hasOrphans ? (
-            <div />
-          ) : (
-            <Button
-              aria-label={t('clustersPage.createClusterAria')}
-              color="success"
-              disabled={Boolean(nextClusterNameValidationError)}
-              fullWidth
-              onClick={() => handleSubmit(selectedNodeStages)}
-              sx={{ mt: 3, py: 1.5 }}
-              variant="contained"
+          {hasOrphans && (
+            <Stack
+              alignItems={{ md: 'flex-start', xs: 'stretch' }}
+              direction={{ md: 'row', xs: 'column' }}
+              justifyContent="space-between"
+              spacing={2}
+              sx={{ mt: 2.5 }}
             >
-              {t('clustersPage.applyChanges')}
-            </Button>
+              {shouldProvideNewClusterName && (
+                <TextField
+                  error={Boolean(clusterNameError)}
+                  helperText={clusterNameError || t('clustersPage.clusterNameHelper')}
+                  label={t('clustersPage.clusterNameLabel')}
+                  onBlur={() => {
+                    setClusterNameError(validateClusterName(newClusterName, existingClusterNames, t));
+                  }}
+                  onChange={event => {
+                    const value = event.target.value;
+                    setNewClusterName(value);
+                    if (clusterNameError) {
+                      setClusterNameError(validateClusterName(value, existingClusterNames, t));
+                    }
+                  }}
+                  sx={{ maxWidth: 420, width: { md: 360, xs: '100%' } }}
+                  value={newClusterName}
+                  variant="outlined"
+                />
+              )}
+
+              <Button
+                aria-label={t('clustersPage.createClusterAria')}
+                color="primary"
+                disabled={Boolean(nextClusterNameValidationError)}
+                onClick={() => handleSubmit(selectedNodeStages)}
+                size="large"
+                sx={{
+                  ml: { md: 'auto' },
+                  minWidth: { md: 220 },
+                  px: 4,
+                  width: { md: 'auto', xs: '100%' },
+                }}
+                variant="contained"
+              >
+                {t('clustersPage.applyChanges')}
+              </Button>
+            </Stack>
           )}
         </form>
       </Paper>
