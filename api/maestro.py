@@ -6,6 +6,22 @@ import yaml
 from pathlib import Path
 import socket
 
+VIRTUALCLUSTERS = ['_Orphans', '_Unknown']
+TALOSNODETYPETOKUBE = {'endpoints': 'controlplanes', 'nodes': 'workers'}
+KUBENODETYPETOTALOS = {'controlplanes': 'endpoints', 'workers': 'nodes'}
+
+def runShellCommand(runCmd, clusterDir):
+  runCmd = 'clusterDir=%s TALOSCONFIG=talosconfig %s' % (clusterDir, runCmd)
+  print('runShellCommand=%s' % runCmd)
+  result = subprocess.run(runCmd,
+    shell=True,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    cwd=clusterDir,
+    encoding='utf-8'
+  )
+  return result
+
 # Функция преобразует табличный формат вывода команд talosctl в формат JSON
 # Список полей и смещение каждого столбца определяется по первой строке заголовка
 # Имена полей приводятся к виду -  Первый символ заглавный, остабные строчные
@@ -66,20 +82,10 @@ def tableToJson(str):
     rows.append(vals)
   return json.dumps(rows, indent=2)
 
-def runShellCommand(runCmd, homedir):
-  print('runShellCommand=', runCmd)
-  result = subprocess.run(runCmd,
-    shell=True,
-    stdout=subprocess.PIPE,
-    cwd='%s/.maestro/' % homedir,
-    encoding='utf-8'
-  )
-  return result
-
 def getDiskName(ip):
   homedir = os.getenv('HOME')
   runCmd = 'talosctl get  discoveredvolume -o json -n %s -e %s -i' % (ip, ip)
-  result = maestro.runShellCommand(runCmd, homedir)
+  result = runShellCommand(runCmd, homedir)
   result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
   for volInfo in result:
     id = volInfo['metadata']['id']
@@ -126,6 +132,13 @@ def nodesList(nmapStr):
     ret[nodeState['ip']] = nodeState
   return ret
 
+def is_port_open(host: str, port: int, timeout: float = 3.0) -> bool:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(timeout)
+    result = sock.connect_ex((host, port))  # возвращает 0 при успехе, иначе errno
+    sock.close()
+    return result == 0
+
 def isMaintenance(ip):
   homedir = os.getenv('HOME')
   runCmd = 'talosctl get  discoveredvolume -o json -n %s -e %s -i' % (ip, ip)
@@ -136,150 +149,221 @@ def isMaintenance(ip):
       return False
   return True
 
-
-def talosgetspec(subcmd, node, insecure):
-  homedir = os.getenv('HOME')
-  runCmd = 'talosctl get %s -e %s -n %s -o json %s' % (subcmd, node, node, insecure)
-  result = runShellCommand(runCmd, homedir)
-  returncode = result.returncode
-  ret = ''
-  if returncode == 0:
-    jsonStr = result.stdout.strip()
-    if len(jsonStr) != 0:
-      jsonDict = json.loads(jsonStr)
-      ret = jsonDict['spec']
-  return [ret, returncode]
-
-def nodeClusterName(node):
-  [spec, returncode] = talosgetspec('info', node, '')
-  # print('clusterName=%s returncode=%d ' % (clusterName, returncode))
-  print('spec=', spec)
-  print('returncode=', returncode)
-  if returncode != 0:
-    clusterName = '_Orphans'
-    insecure = '-i'
-    if not isMaintenance(node):
-      clusterName = '_Unknown'
-  else:
-    clusterName = spec['clusterName']
-    insecure = ''
-  return [insecure, clusterName]
-
-def is_port_open(host: str, port: int, timeout: float = 3.0) -> bool:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(timeout)
-    result = sock.connect_ex((host, port))  # возвращает 0 при успехе, иначе errno
-    sock.close()
-    return result == 0
-
-def refreshTalosconfig():
+def talosgetspec(clusterName, subcmd, node):
   homedir = os.getenv('HOME')
   maestroConfigDir =  '%s/.maestro' % homedir
-  print('refreshTalosconfig:: Before: maestroConfigDir=%s' % maestroConfigDir)
-  talosconfigFile = '%s/talosconfig' % maestroConfigDir
-  if not os.path.exists(talosconfigFile):
-    initTalosconfig()
-  fp = open(talosconfigFile, 'r')
-  talosconfig = yaml.safe_load(fp)
-  fp.close()
-  print('refreshTalosconfig:: Before: talosconfig=%s' % json.dumps(talosconfig, indent=2))
-  newNodes = {'_Orphans': {'endpoints': [], 'nodes': []} , '_Unknown': {'endpoints': [], 'nodes': []} }
-  changed = False
-  for contextName in talosconfig['contexts']:
-    endpoints = talosconfig['contexts'][contextName]['endpoints']\
-      if 'endpoints' in talosconfig['contexts'][contextName] else []
-    print('refreshTalosconfig:: contextName=%s endpoints=%s' % (contextName, json.dumps(endpoints)))
-    for ip in endpoints:
-      if is_port_open(ip, 50000):
-        [insecure, toClusterName] = nodeClusterName(ip)
-        print('refreshTalosconfig:: ip=%s port 50000 open toClusterName=%s insecure=' % (ip, toClusterName), insecure)
-        if toClusterName not in newNodes:
-          newNodes[toClusterName] = {'endpoints': [], 'nodes': []}
-        if is_port_open(ip, 6443): # endpoint остается в endpoint
-          newNodes[toClusterName]['endpoints'].append(ip)
-          print('refreshTalosconfig:: ip=%s port 6443 opened controlplane place in cluster toClusterName=%s ' % (ip, toClusterName))
-          if contextName != toClusterName:
-            changed = True
-        else: # endpoint перешел в node состояние
-          newNodes[toClusterName]['nodes'].append(ip)
-          changed = True
-          print('refreshTalosconfig:: ip=%s port 6443 closed controlplane place as WORKER in cluster toClusterName=%s ' % (ip, toClusterName))
-      else: # endpoint в init режиме
-        if contextName not in newNodes:
-          newNodes[contextName] = {'endpoints': [], 'nodes': []}
-        newNodes[contextName]['endpoints'].append(ip)
-        print('refreshTalosconfig:: ip=%s ports  CLOSED (INIT?) controlplane remain in old cluster contextName=%s ' % (ip, contextName))
-
-    nodes = talosconfig['contexts'][contextName]['nodes']\
-      if 'nodes' in talosconfig['contexts'][contextName] else []
-    print('refreshTalosconfig:: contextName=%s nodes=%s' % (contextName, json.dumps(nodes)))
-    for ip in nodes:
-      if is_port_open(ip, 50000):
-        [insecure, toClusterName] = nodeClusterName(ip)
-        print('refreshTalosconfig:: ip=%s port 50000 open toClusterName=%s insecure=' % (ip, toClusterName), insecure)
-        if toClusterName not in newNodes:
-          newNodes[toClusterName] = {'endpoints': [], 'nodes': []}
-        if is_port_open(ip, 6443): # node перешел в endpoint
-          newNodes[toClusterName]['endpoints'].append(ip)
-          changed = True
-          print('refreshTalosconfig:: ip=%s port 6443 opened worker place AS CONTROLPLANE in cluster toClusterName=%s ' % (ip, toClusterName))
-        else: # node остался node
-          newNodes[toClusterName]['nodes'].append(ip)
-          if contextName != toClusterName:
-            changed = True
-          print('refreshTalosconfig:: ip=%s port 6443 closed worker place in cluster toClusterName=%s ' % (ip, toClusterName))
-      else:  # worker in init mode
-        if contextName not in newNodes:
-          newNodes[contextName] = {'endpoints': [], 'nodes': []}
-        newNodes[contextName]['nodes'].append(ip)
-        print('refreshTalosconfig:: ip=%s ports  CLOSED (INIT?) worker remain in old cluster contextName=%s ' % (ip, contextName))
-
-  # print('refreshTalosconfig:: After:  talosconfig=%s' % json.dumps(talosconfig, indent=2))
-  for clusterName in newNodes:
-    endpoints = list(set(newNodes[clusterName]['endpoints'])) # uniq values
-    if endpoints != newNodes[clusterName]['endpoints']:
-      newNodes[clusterName]['endpoints'] = endpoints
-      changed = True
-    nodes = list(set(newNodes[clusterName]['nodes'])) # uniq values
-    if nodes != newNodes[clusterName]['nodes']:
-      newNodes[clusterName]['nodes'] = nodes
-      changed = True
-  print('refreshTalosconfig:: newNodes=%s' % json.dumps(newNodes, indent=2))
-  print('refreshTalosconfig:: changed=', changed)
-  if changed:
-    print('refreshTalosconfig:: talosctl changed')
-    for clusterName in newNodes:
-      # runShellCommand('talosctl config context %s' % clusterName, homedir)
-      endpoints = newNodes[clusterName]['endpoints']
-      nodes = newNodes[clusterName]['nodes']
-      # print('refreshTalosconfig:: clusterName=%s endpoints:' % (clusterName, endpoints)
-      # print('refreshTalosconfig:: clusterName=%s nodes:' % clusterName, nodes)
-      runShellCommand("yq -yi '.contexts.%s.endpoints=%s' talosconfig" % (clusterName, json.dumps(endpoints)), homedir)
-      runShellCommand("yq -yi '.contexts.%s.nodes=%s' talosconfig" % (clusterName, json.dumps(nodes)), homedir)
+  clusterConfigDir = '%s/%s' % (maestroConfigDir, clusterName)
+  if clusterName == '_Unknown':
+    return [ '-', -1, '']
+  else:
+    ret = '-'
+    insecure = '-i' if clusterName == '_Orphans' else ''
+    runCmd = 'talosctl get %s -e %s -n %s -o json %s' % (subcmd, node, node, insecure)
+    result = runShellCommand(runCmd, clusterConfigDir)
+    returncode = result.returncode
+    if returncode == 0:
+      jsonStr = result.stdout.strip()
+      if len(jsonStr) != 0:
+        jsonDict = json.loads(jsonStr)
+        ret = jsonDict['spec']
+    return [ret, returncode, result.stderr]
 
 def initTalosconfig():
   homedir = os.getenv('HOME')
   maestroConfigDir =  '%s/.maestro' % homedir
-  talosconfigFile = '%s/talosconfig' % maestroConfigDir
-  fp = open(talosconfigFile, 'w')
-  emptyContent = '''context: _Orphans
+  for virtualCluster in VIRTUALCLUSTERS:
+    virtualClusterDir = '%s/%s' % (maestroConfigDir, virtualCluster)
+    virtualClusterDirPath = Path(virtualClusterDir)
+    if not virtualClusterDirPath.exists():
+      os.mkdir(virtualClusterDir)
+      talosconfigFile = '%s/talosconfig' % (virtualClusterDir)
+      fp = open(talosconfigFile, 'w')
+      emptyContent = '''context: %s
 contexts:
-  _Orphans:
+  %s:
     endpoints: []
     nodes: []
-  _Unknown:
-    endpoints: []
-    nodes: []
-'''
-  fp.write(emptyContent)
-  fp.close()
-  start_dir = Path(maestroConfigDir)
-  for item in start_dir.iterdir():
-    print('initTalosconfig:: itemName=%s' % item.name)
-    if item.is_dir():
-      talosconfigFile = '%s/%s/talosconfig' % (maestroConfigDir, item.name)
-      print('initTalosconfig:: DIR=%s talosconfigFile=%s' % (item.name, talosconfigFile))
-      if os.path.exists(talosconfigFile):
-        print('initTalosconfig:: merge subTalosconfig=%s' % talosconfigFile)
-        runCmd = 'talosctl config merge %s' % talosconfigFile
-        runShellCommand(runCmd, homedir)
+''' % (virtualCluster, virtualCluster)
+      fp.write(emptyContent)
+      fp.close()
+  maestroConfigDirPath = Path(maestroConfigDir)
+  realClusterNames = []
+  for maestroDir in maestroConfigDirPath.iterdir():
+    if maestroDir.is_dir():
+      talosconfigFile = '%s/talosconfig' % maestroDir
+      talosconfigFilePath = Path(talosconfigFile)
+      if talosconfigFilePath.is_file():
+        clusterName = maestroDir.name
+        if clusterName not in VIRTUALCLUSTERS:
+          realClusterNames.append(clusterName)
+  return realClusterNames
+
+# Загружает все talosconfig из подкаталогов .maestro
+def loadTalosConfigs():
+  homedir = os.getenv('HOME')
+  maestroConfigDir =  '%s/.maestro' % homedir
+  pathMaestroConfigDir = Path(maestroConfigDir)
+  talosConfigs = {'context': '', 'contexts': {}}
+  realClusterNames = []
+  for maestroDir in pathMaestroConfigDir.iterdir():
+    if maestroDir.is_dir():
+      talosconfigFile = '%s/talosconfig' % maestroDir
+      talosconfigFilePath = Path(talosconfigFile)
+      if talosconfigFilePath.is_file():
+        clusterName = maestroDir.name
+        if clusterName not in VIRTUALCLUSTERS:
+          realClusterNames.append(clusterName)
+        fp = open(talosconfigFile, 'r')
+        clusterTalosconfig = yaml.safe_load(fp)
+        fp.close()
+        talosConfigs['contexts'][clusterName] = clusterTalosconfig['contexts'][clusterName]
+  return talosConfigs
+
+def nodeClusterName(clusterNames, node):
+  homedir = os.getenv('HOME')
+  maestroConfigDir =  '%s/.maestro' % homedir
+  for clusterName in clusterNames:
+    clusterConfigDir = '%s/%s' % (maestroConfigDir, clusterName)
+    runCmd = 'talosctl get info -e %s -n %s -o json' % (node, node)
+    result = runShellCommand(runCmd, clusterConfigDir)
+    returncode = result.returncode
+    if returncode == 0:
+      return clusterName
+  if isMaintenance(node):
+    return '_Orphans'
+  return '_Unknown'
+
+def setNodesInVirtualTaloscontrol(nodes, realClusterNames):
+  homedir = os.getenv('HOME')
+  maestroConfigDir =  '%s/.maestro' % homedir
+  nodesTree = {}
+  for virtualCluster in VIRTUALCLUSTERS + realClusterNames:
+    nodesTree[virtualCluster] = {}
+    for talosNodeType in ['endpoint', 'node']:
+      nodesTree[virtualCluster][talosNodeType] = []
+  for ip in nodes:
+    node = nodes[ip]
+    if node['apidState'] == 'open':
+      clusterName = nodeClusterName(realClusterNames, ip)
+      if True or clusterName in VIRTUALCLUSTERS:
+        if node['kubeState'] == 'open':
+          nodesTree[clusterName]['endpoint'].append(ip)
+        else:
+          if clusterName in realClusterNames:
+            nodesTree[clusterName]['node'].append(ip)
+          elif isMaintenance(ip):
+            nodesTree['_Orphans']['endpoint'].append(ip) # ALL Nodes in Orphans placed in endpoint
+          else:
+            nodesTree['_Unknown']['node'].append(ip)
+        # nodeTypes['workers'].append(ip)
+  print('nodesTree=', json.dumps(nodesTree, indent=4))
+  for virtualCluster in VIRTUALCLUSTERS + realClusterNames:
+    taloscoconfigDir = '%s/%s' % (maestroConfigDir, virtualCluster)
+    for nodeType in [ 'endpoint', 'node']:
+      nodes = nodesTree[virtualCluster][nodeType]
+      runShellCommand("yq -yi '.contexts.%s.%ss=%s' talosconfig" % (virtualCluster, nodeType, json.dumps(nodes)), taloscoconfigDir),
+
+def refreshTalosconfigs():
+  homedir = os.getenv('HOME')
+  maestroConfigDir =  '%s/.maestro' % homedir
+  print('refreshTalosconfig:: Before: maestroConfigDir=%s' % maestroConfigDir)
+  # Загрузить все talosconfigs в один
+  talosconfig = loadTalosConfigs()
+  clustersNames=list(talosconfig['contexts'].keys())
+  realClusterNames = []
+  for clusterName in clustersNames:
+    if clusterName not in VIRTUALCLUSTERS:
+      realClusterNames.append(clusterName)
+  realClusterNames.sort()
+  print('refreshTalosconfig:: Before: talosconfig=%s' % json.dumps(talosconfig, indent=2))
+  print('refreshTalosconfig:: realClusterNames=%s' % json.dumps(realClusterNames))
+  newNodes = {'_Orphans': {'controlplanes': [], 'workers': []} , '_Unknown': {'controlplanes': [], 'workers': []} }
+  changed = True
+  ips = []
+  for clusterName in clustersNames:
+    for talosNodeType in ['endpoints', 'nodes']:
+      # kubeNodeType = TALOSNODETYPETOKUBE[talosNodeType]
+      nodes = talosconfig['contexts'][clusterName][talosNodeType]\
+        if talosNodeType in talosconfig['contexts'][clusterName] else []
+      print('refreshTalosconfig:: clusterName=%s %s=%s' % (clusterName, talosNodeType, json.dumps(nodes)))
+      for ip in nodes:
+        if ip in ips:
+          continue
+        ips.append(ip)
+        nodeStage = '';
+        if is_port_open(ip, 50000):
+          toClusterName = nodeClusterName(realClusterNames, ip)
+          if toClusterName not in newNodes:
+            newNodes[toClusterName] = {}
+          if 'controlplanes'not in newNodes[toClusterName]:
+            newNodes[toClusterName]['controlplanes'] = []
+          if 'workers'not in newNodes[toClusterName]:
+            newNodes[toClusterName]['workers'] = []
+          nodeInfo = {}
+          nodeInfo['ip'] = ip
+          if clusterName != toClusterName:
+            changed = True
+          print('refreshTalosconfig:: ip=%s port 50000 open toClusterName=%s ' % (ip, toClusterName))
+          # if toClusterName not in newNodes:
+          #   newNodes[toClusterName][kubeNodeType] = []
+          if is_port_open(ip, 6443): # endpoint остается в endpoint
+            kubeNodeType = 'controlplanes'
+            # newNodes[toClusterName][].append(ip)
+            print('refreshTalosconfig:: ip=%s port 6443 opened controlplane place in cluster toClusterName=%s ' % (ip, toClusterName))
+          else: # endpoint перешел в node состояние
+            kubeNodeType = 'workers'
+            # newNodes[toClusterName]['workers'].append(ip)
+            changed = True
+            print('refreshTalosconfig:: ip=%s port 6443 closed controlplane place as WORKER in cluster toClusterName=%s ' % (ip, toClusterName))
+        else: # endpoint в init режиме
+          toClusterName = '_Orphans'
+          nodeStage = 'unavialable or installing'
+          # newNodes[clusterName]['controlplanes'].append(ip)
+          print('refreshTalosconfig:: ip=%s ports  CLOSED (INIT?) controlplane remain in old cluster clusterName=%s ' % (ip, clusterName))
+
+        if toClusterName in VIRTUALCLUSTERS:
+          if isMaintenance(ip):
+            nodeStage = 'maintenance'
+          nodeInfo['stage'] = nodeStage if len(nodeStage) > 0 else '-'
+        else:
+          [spec, returncode, err] = talosgetspec(toClusterName, 'machinestatus', ip)
+          if  len(spec) == 0:
+            continue;
+          nodeInfo['stage'] = spec['stage'] if 'stage' in spec else 'unavialable or installing'
+          nodeInfo['status'] = spec['status'] if 'status' in spec else '-'
+          [spec, returncode, err] = talosgetspec(toClusterName, 'nodestatus', ip)
+          if returncode == 0 :
+            nodeInfo['nodeReady'] = spec['nodeReady'] if 'nodeReady' in spec else '-'
+            [spec, returncode, err] =talosgetspec(toClusterName, 'manifeststatus', ip)
+            nodeInfo['manifestsApplied'] = spec['manifestsApplied'] if 'manifestsApplied' in spec else []
+            [spec, returncode, err] =talosgetspec(toClusterName, 'etcdmember', ip)
+            nodeInfo['memberID'] = spec['memberID'] if 'memberID' in spec else '-'
+        newNodes[toClusterName][kubeNodeType].append(nodeInfo)
+
+  print('refreshTalosconfig:: newNodes=%s' + json.dumps(newNodes, indent=2))
+
+  # print('refreshTalosconfig:: newNodes=%s' % json.dumps(newNodes, indent=2))
+  print('refreshTalosconfig:: changed=', changed)
+  if changed:
+    # Rewrite endpoints and nodes list in talosconfig
+    print('refreshTalosconfig:: talosctl changed')
+    for clusterName in newNodes:
+      # runShellCommand('talosctl config context %s' % clusterName, homedir)
+      for talosNodeType in list(TALOSNODETYPETOKUBE.keys()):
+        kubeNodeType = TALOSNODETYPETOKUBE[talosNodeType]
+        nodes = []
+        if kubeNodeType in newNodes[clusterName]:
+          print('refreshTalosconfig:: clusterName=%s kubeNodeType=%s node=%s' % (clusterName, kubeNodeType, json.dumps(newNodes[clusterName][kubeNodeType])))
+          # nodes.append(newNodes[clusterName][kubeNodeType]['ip'])
+          for node in newNodes[clusterName][kubeNodeType]:
+            print('refreshTalosconfig:: node=%s' % json.dumps(node))
+            nodes.append(node['ip'])
+        taloscoconfigDir = '%s/%s' % (maestroConfigDir, clusterName)
+        runShellCommand("yq -yi '.contexts.%s.%s=%s' talosconfig" % (clusterName, talosNodeType,json.dumps(nodes)), taloscoconfigDir)
+        print('refreshTalosconfig:: clusterName=%s %s=%s:' % (clusterName, talosNodeType, json.dumps(nodes)))
+  newNodes['_Orphans']['controlplanes'] = newNodes['_Orphans']['workers']
+  newNodes['_Orphans']['workers'] = []
+  return newNodes
+
+
+
