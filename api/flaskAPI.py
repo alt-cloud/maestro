@@ -5,8 +5,8 @@ import os
 import json
 from flask_cors import CORS
 import yaml
-# import time
 import maestro
+from pathlib import Path
 
 app = Flask(__name__)
 # CORS(app, origins=["http://localhost:3000"])
@@ -27,15 +27,14 @@ def talosctl():
     node = params_dict['n']
     cmd = params_dict['cmd']
     print('CMD="%s"'% cmd)
+    endpoint = '-e %s' % node
     if clusterName[0] != '_':
       insecure = ''
-      endpoint = ''
       # runCmd = 'talosctl config context %s' % clusterName
       # print('setContext=', runCmd)
       # result = maestro.runShellCommand(runCmd, taloscoconfigDir)
     else:
       insecure = '-i'
-      endpoint = '-e %s' % node
     # Передача результатов подкоманд команды get в формате JSON
     if cmd == 'get':
       commandSet = params_dict['commandSet']
@@ -115,7 +114,7 @@ def apply():
   request_json = request.get_json()
   print('JSON=', request_json);
   maestroConfigDir =  os.getenv('HOME') + '/.maestro'
-  talosconfigFile = maestroConfigDir + '/talosconfig'
+  # talosconfigFile = maestroConfigDir + '/talosconfig'
   # if not os.path.isfile(talosconfigFile):
   #   fp = open(talosconfigFile, 'w')
   #   fp.write("context:\ncontexts:\n")
@@ -133,8 +132,8 @@ def apply():
       controlplane =  request_json[clusterName]['controlplane'][0]
       kubeEndpoint = 'https://%s:6443' % controlplane
       patch = '{"machine":{"kernel":{"modules":[{"name":"bridge"}]},"registries":{"config":{"registry.altlinux.org":{"tls":{"insecureSkipVerify":true}}}}}}'
-      runCmd = "talosctl gen config %s %s --install-image altlinux.space/alt-orchestra/installer:v1.10.6 --config-patch '%s' --install-disk %s --output %s" % \
-        (clusterName, kubeEndpoint, patch, installDisk, clusterName)
+      runCmd = "talosctl gen config %s %s --install-image altlinux.space/alt-orchestra/installer:v1.10.6 --config-patch '%s' --install-disk %s" % \
+        (clusterName, kubeEndpoint, patch, installDisk)
       result = maestro.runShellCommand(runCmd, taloscoconfigDir)
       # runCmd = 'talosctl config merge %s/talosconfig' % clusterName
       # result = maestro.runShellCommand(runCmd, taloscoconfigDir)
@@ -143,7 +142,7 @@ def apply():
     runCmd = 'talosctl config  info -o json'
     result = maestro.runShellCommand(runCmd, taloscoconfigDir)
     config = json.loads(result.stdout)
-    emptyCluster = 'endpoints' not in config or len(config['endpoints']) == 0
+    # emptyCluster = 'endpoints' not in config or len(config['endpoints']) == 0
     # print('request_json=%s' % json.dumps(request_json) )
     for action in request_json[clusterName]:
       ips = request_json[clusterName][action]
@@ -173,19 +172,12 @@ def apply():
           runCmd = "talosctl apply-config --config-patch '%s' --insecure -n %s --file %s.yaml" % \
             (patch, ip, action)
           result = maestro.runShellCommand(runCmd, taloscoconfigDir)
-          if emptyCluster and action == 'controlplane':
-            runCmd = '''
-            ( \
-            set -x; \
-            sleep 5;\
-            until nmap %s/32 -p 50000 | grep open; do sleep 5; done;\
-            while talosctl bootstrap -e %s -n %s; do sleep 5; done;\
-            until talosctl health -e %s -n %s; do sleep 5; done;\
-            talosctl -e %s -n %s kubeconfig -f;
-            ) > %s/.maestro/%s/bootstrap_%s.log 2>&1  &
-            ''' % (ip, ip, ip, ip, ip, ip, ip, homedir, clusterName, ip)
-            result = maestro.runShellCommand(runCmd, taloscoconfigDir)
-            emptyCluster = False
+          bootstrapFile = '%s/bootstrap.log' % taloscoconfigDir
+          if action == 'controlplane':
+            if not Path(bootstrapFile).exists():
+              runCmd = '%s/bootstrap.sh %s > %s  2>&1  &' % (maestroConfigDir, ip, bootstrapFile)
+              result = maestro.runShellCommand(runCmd, taloscoconfigDir)
+            # emptyCluster = False
   return {}
 
 @app.route('/scanNets',methods=['GET', 'POST'])
@@ -215,9 +207,18 @@ def scanNets():
   result = maestro.runShellCommand(runCmd, homedir)
   nmapOut = result.stdout
   nodes = maestro.nodesList(nmapOut.strip())
-  print('NODES=', json.dumps(nodes, indent=4))
-  realClusterNames = maestro.initTalosconfig()
-  maestro.setNodesInVirtualTaloscontrol(nodes, realClusterNames)
+  print('NODES1=', json.dumps(nodes, indent=2))
+  nodes = {
+    ip: info for ip, info in nodes.items()
+    if info.get("apidState") == "open"
+  }
+  print('NODES2=', json.dumps(nodes, indent=2))
+  nodeFileName = '%s/nodes.json' % maestroConfigDir
+  fp = open(nodeFileName, 'w')
+  fp.write(json.dumps(nodes, indent=2))
+  fp.close()
+  maestro.initTalosconfig()
+  # maestro.setNodesInVirtualTaloscontrol(nodes, realClusterNames)
   return jsonify({
         "status": "success",
         "message": f"Successfully scanned"
@@ -229,6 +230,11 @@ def nodesTree():
   configDir = homedir + '/.maestro'
   print('\n\n------------------------------------------')
   print('maestro.refreshTalosconfigs:: Call')
+  for virtualCluster in maestro.VIRTUALCLUSTERS:
+    virtualClusterDir = '%s/%s' % (configDir, virtualCluster)
+    if not Path(virtualClusterDir).is_dir():
+      maestro.initTalosconfig()
+      break
   nodesTree = maestro.refreshTalosconfigs()
   print('nodesTree:: RESULT=%s' % json.dumps(nodesTree, indent=2))
   return nodesTree

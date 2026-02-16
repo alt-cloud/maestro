@@ -237,7 +237,7 @@ function NodeCols(pars) {
       {isUnknownClusterName ?
         <span>{node}</span>
       :
-      <Link key={node} to={`${href}?cluster=${pars.clusterName}&node=${node}&type=${nodeType}`} >
+      <Link key={node} to={`${href}?cluster=${pars.clusterName}&node=${node}&controlplane=${node}&type=${nodeType}`} >
         {node}
       </Link>
       }

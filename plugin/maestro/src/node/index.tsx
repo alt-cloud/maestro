@@ -32,16 +32,16 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
   <Box sx={{ maxHeight: 'calc(100vh - 120px)', overflow: 'auto', whiteSpace: 'pre-wrap' }}>
     <ul>
       <li>
-        <Link to={`/maestro/node/get?cluster=${cluster}&type=${nodeType}&node=${node}`}>get</Link>
+        <Link to={`/maestro/node/get?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>get</Link>
       </li>
       <li>
-        <Link to={`/maestro/node/containers?cluster=${cluster}&type=${nodeType}&node=${node}`}>containers</Link>
+        <Link to={`/maestro/node/containers?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>containers</Link>
       </li>
       <li>
         dashboard
       </li>
       <li>
-        <Link to={`/maestro/node/dmesg?cluster=${cluster}&type=${nodeType}&node=${node}`}>dmesg</Link>
+        <Link to={`/maestro/node/dmesg?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>dmesg</Link>
       </li>
       <li>
         edit
@@ -79,7 +79,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
             leave
           </li>
           <li>
-            <Link to={`/maestro/node/etcd/members?cluster=${cluster}&type=${nodeType}&node=${node}`}>members</Link>
+            <Link to={`/maestro/node/etcd/members?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>members</Link>
           </li>
           <li>
             remove-member
@@ -88,7 +88,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
             snapshot
           </li>
           <li>
-            <Link to={`/maestro/node/etcd/status?cluster=${cluster}&type=${nodeType}&node=${node}`}>status</Link>
+            <Link to={`/maestro/node/etcd/status?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>status</Link>
           </li>
         </ul>
       </li>
@@ -146,10 +146,10 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
             cache-create
           </li>
           <li>
-            <Link to={`/maestro/node/image/default?cluster=${cluster}&type=${nodeType}&node=${node}`}>default</Link>
+            <Link to={`/maestro/node/image/default?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>default</Link>
           </li>
           <li>
-            <Link to={`/maestro/node/image/list?cluster=${cluster}&type=${nodeType}&node=${node}`}>list</Link>
+            <Link to={`/maestro/node/image/list?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>list</Link>
           </li>
           <li>
             pull
@@ -168,7 +168,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         inspect
         <ul>
           <li>
-            <Link to={`/maestro/node/inspect/dependencies?cluster=${cluster}&type=${nodeType}&node=${node}`}>dependencies</Link>
+            <Link to={`/maestro/node/inspect/dependencies?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>dependencies</Link>
           </li>
         </ul>
       </li>
@@ -195,7 +195,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
       </li>
 {*/}
       <li>
-        <Link to={`/maestro/node/memory?cluster=${cluster}&type=${nodeType}&node=${node}`}>memory</Link>
+        <Link to={`/maestro/node/memory?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>memory</Link>
       </li>
       <li>
        meta
@@ -209,10 +209,10 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
        </ul>
       </li>
       <li>
-        <Link to={`/maestro/node/mounts?cluster=${cluster}&type=${nodeType}&node=${node}`}>mounts</Link>
+        <Link to={`/maestro/node/mounts?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>mounts</Link>
       </li>
       <li>
-        <Link to={`/maestro/node/netstat?cluster=${cluster}&type=${nodeType}&node=${node}`}>netstat</Link>
+        <Link to={`/maestro/node/netstat?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>netstat</Link>
       </li>
       <li>
         patch
@@ -221,7 +221,7 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         pcap
       </li>
       <li>
-        <Link to={`/maestro/node/processes?cluster=${cluster}&type=${nodeType}&node=${node}`}>processes</Link>
+        <Link to={`/maestro/node/processes?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>processes</Link>
       </li>
       <li>
         read
@@ -242,19 +242,19 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         rotate-ca
       </li>
       <li>
-        <Link to={`/maestro/node/service?cluster=${cluster}&type=${nodeType}&node=${node}`}>service</Link>
+        <Link to={`/maestro/node/service?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>service</Link>
       </li>
       <li>
         shutdown
       </li>
       <li>
-        <Link to={`/maestro/node/stats?cluster=${cluster}&type=${nodeType}&node=${node}`}>stats</Link>
+        <Link to={`/maestro/node/stats?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>stats</Link>
       </li>
       <li>
         <DownloadZipButton cluster={cluster} node={node} />
       </li>
       <li>
-        <Link to={`/maestro/node/time?cluster=${cluster}&type=${nodeType}&node=${node}`}>time</Link>
+        <Link to={`/maestro/node/time?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>time</Link>
       </li>
       {/* */}
       <li>
@@ -264,13 +264,13 @@ const MaestroNodePage: React.FC<{ }> = ({  }) => {
         upgrade-k8s
       </li>
       <li>
-        <Link to={`/maestro/node/usage?cluster=${cluster}&type=${nodeType}&node=${node}`}>usage</Link>
+        <Link to={`/maestro/node/usage?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>usage</Link>
       </li>
       <li>
         validate
       </li>
       <li>
-        <Link to={`/maestro/node/version?cluster=${cluster}&type=${nodeType}&node=${node}`}>version</Link>
+        <Link to={`/maestro/node/version?cluster=${cluster}&type=${nodeType}&node=${node}&controlplane=${node}`}>version</Link>
       </li>
       <li>
         wipe
