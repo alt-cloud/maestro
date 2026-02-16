@@ -18,8 +18,9 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Typography,
 } from '@mui/material';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { buildServerUrl } from '../../config/server';
 import PageHeader from '../shared/ui/PageHeader';
@@ -421,7 +422,8 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
     [t]
   );
   const [timeout, setTimeout] = useState<IntervalValue>(alignRefreshInterval(delay));
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [refreshTick, setRefreshTick] = useState(0);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null);
   const [newClusterName, setNewClusterName] = useState('');
   const [clusterNameError, setClusterNameError] = useState<string | null>(null);
   const [selectedNodeStages, setSelectedNodeStages] = useState<SelectedNodeStages>({});
@@ -557,6 +559,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
         const responseRows = await response.json();
         setRows(responseRows);
         setError(null);
+        setLastUpdatedAt(new Date());
       } catch (err: any) {
         if (err.name === 'AbortError') {
           return;
@@ -578,12 +581,11 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
 
     fetchData();
     const id = setInterval(fetchData, timeout);
-    intervalRef.current = id;
     return () => {
       clearInterval(id);
       controller.abort();
     };
-  }, [t, timeout]);
+  }, [t, timeout, refreshTick]);
 
   if (loading) {
     return (
@@ -675,7 +677,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       });
 
       if (response.ok) {
-        setTimeout(alignRefreshInterval('5'));
+        setRefreshTick(current => current + 1);
       } else {
         console.error(t('clustersPage.sendError'));
       }
@@ -696,10 +698,20 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       />
       <Paper sx={{ p: 2 }} variant="outlined">
         <Stack direction={{ sm: 'row', xs: 'column' }} justifyContent="space-between" spacing={1.5} sx={{ mb: 2 }}>
-          <RefreshIntervalControl onChange={setTimeout} options={intervalOptions} value={timeout} />
-          <Button component={Link} size="small" to="/maestro/cluster/scanNets" variant="contained">
-            {t('clustersPage.scanNetworks')}
-          </Button>
+          <Stack spacing={0.5}>
+            <RefreshIntervalControl onChange={setTimeout} options={intervalOptions} value={timeout} />
+            <Typography color="text.secondary" variant="caption">
+              {t('clustersPage.lastUpdated')}: {lastUpdatedAt ? lastUpdatedAt.toLocaleTimeString() : t('common.unknown')}
+            </Typography>
+          </Stack>
+          <Stack direction={{ sm: 'row', xs: 'column' }} spacing={1}>
+            <Button onClick={() => setRefreshTick(current => current + 1)} size="small" variant="outlined">
+              {t('clustersPage.refreshNow')}
+            </Button>
+            <Button component={Link} size="small" to="/maestro/cluster/scanNets" variant="contained">
+              {t('clustersPage.scanNetworks')}
+            </Button>
+          </Stack>
         </Stack>
         <form>
           <FormControl fullWidth margin="normal" required>

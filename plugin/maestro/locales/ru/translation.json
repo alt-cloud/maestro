@@ -35,6 +35,7 @@
     "applyChanges": "Применить изменения",
     "clusterNameHelper": "Введите уникальное имя кластера.",
     "clusterNameLabel": "Имя кластера",
+    "lastUpdated": "Последнее обновление",
     "columns": {
       "clusterName": "Кластер",
       "ip": "IP",
@@ -48,6 +49,7 @@
     },
     "createClusterAria": "Создать кластер",
     "loadingClusterList": "Загрузка списка кластеров...",
+    "refreshNow": "Обновить сейчас",
     "netError": "Ошибка сети",
     "scanNetworks": "Сканировать сети",
     "sendError": "Ошибка отправки запроса",
