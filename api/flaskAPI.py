@@ -114,11 +114,6 @@ def apply():
   request_json = request.get_json()
   print('JSON=', request_json);
   maestroConfigDir =  os.getenv('HOME') + '/.maestro'
-  # talosconfigFile = maestroConfigDir + '/talosconfig'
-  # if not os.path.isfile(talosconfigFile):
-  #   fp = open(talosconfigFile, 'w')
-  #   fp.write("context:\ncontexts:\n")
-  #   fp.close()
   for clusterName in request_json:
     taloscoconfigDir = '%s/%s' % (maestroConfigDir, clusterName)
     # print("clusterName=%s" % clusterName)
@@ -135,10 +130,6 @@ def apply():
       runCmd = "talosctl gen config %s %s --install-image altlinux.space/alt-orchestra/installer:v1.10.6 --config-patch '%s' --install-disk %s" % \
         (clusterName, kubeEndpoint, patch, installDisk)
       result = maestro.runShellCommand(runCmd, taloscoconfigDir)
-      # runCmd = 'talosctl config merge %s/talosconfig' % clusterName
-      # result = maestro.runShellCommand(runCmd, taloscoconfigDir)
-    # runCmd = 'talosctl config context %s' % clusterName
-    # result = maestro.runShellCommand(runCmd, taloscoconfigDir)
     runCmd = 'talosctl config  info -o json'
     result = maestro.runShellCommand(runCmd, taloscoconfigDir)
     config = json.loads(result.stdout)
