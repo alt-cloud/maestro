@@ -406,6 +406,7 @@ function ClusterRows(props) {
 
 const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
   const { t } = useTranslation();
+  const failedToLoadDataText = t('common.failedToLoadData');
   const intervalOptions = useMemo(() => getRefreshIntervalOptions(t), [t]);
   const clusterColumns: Column[] = useMemo(
     () => [
@@ -564,7 +565,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
         if (err.name === 'AbortError') {
           return;
         }
-        setError(err.message || t('common.failedToLoadData'));
+        setError(err.message || failedToLoadDataText);
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -585,7 +586,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       clearInterval(id);
       controller.abort();
     };
-  }, [t, timeout, refreshTick]);
+  }, [failedToLoadDataText, timeout, refreshTick]);
 
   if (loading) {
     return (
