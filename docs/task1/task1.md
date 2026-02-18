@@ -1,21 +1,22 @@
-# Описание страницы `pages/clusters/factory.tsx`
+# Описание страницы 
 
 ## REST-интерфейсы используемые страницей
 
-```
-http://localhost:3000/factory
-```
-и REST-интерфейса по URL:
+Страница конфигурирования разворачивания располашается в `pages/clusters/factory.tsx` и доступна по URL `http://localhost:3000/maestro/cluster/factory` и использует 
+два REST-интерфейса по `URLs`:
+- `http://localhost:5000/factory` - получение текущих вариантов разворачивания;
+- `http://localhost:5000/apply` - создание controlplane.yaml, worker.yaml для выбранного или сформированного разворачивания и создания  узлов Alt Orchestra кластера.
 
-```
-http://localhost:5000/factory
-```
-Номера портов параметризируется.
+Номера портов параметризируется при вызове плагина maestro и REST/API интерфейса.
 
-Обращение к странице `pages/clusters/factory.tsx` по URL `
-http://localhost:3000/maestro/factory` со страницы `
-http://localhost:3000/maestro/`  проходит через запрос `POST`. В теле запроса 
-запроса передает JSON-структура формата:
+На гассальной странице разворачивания кластеров добавляется элемент `select`, в котором отображаются варианты разворачивания (по умолчанию default).
+
+Пользователь 
+- выбирает существующий вариант разворачивания;
+- переводит все или часть узлов кластеров из состояния `maintenance` в состяния `controlplane` или `worker`.
+- нажимает кнопку  `Apply`.
+
+После нажатия кнопки странице `factory.tsx` через запрос `POST`передается JSON-структура формата:
 
 ```
 {
@@ -40,11 +41,60 @@ http://localhost:3000/maestro/`  проходит через запрос `POST`
   "deploymentVariant": "NVidia"
 }
 ```
-Страница делает REST-запрос по URL:
+
+## Вид страницы
+
+На странице `pages/clusters/factory.tsx`
 
 ```
-http://localhost:5000/deploymentsVariants
+http://localhost:3000/factory
 ```
+![image](images/pageView.png)
+
+отображаются:
+
+- Кнопка "Отмена" для возврата на предыдущую страницу
+- Поле Select "Варианты разворачивания"
+- Input полу "Имя варианта разворачивания"
+- Поле Select для выбора версий ALT Orchestra (см 
+  [https://factory.altlinux.space/?platform=metal\&target=metal](https://factory.altlinux.space/?platform=metal&target=metal)
+  )
+- Поле Select для выбора архитектуры (amd64, arm64) (см 
+  [https://factory.altlinux.space/?platform=metal\&target=metal&version=1.10.8.0](https://factory.altlinux.space/?platform=metal&target=metal&version=1.10.8.0)
+  )
+- Поле Extensions для выбора набора расширений (см 
+  [https://factory.altlinux.space/?arch=amd64\&platform=metal&target=metal&version=1.10.8.0](https://factory.altlinux.space/?arch=amd64&platform=metal&target=metal&version=1.10.8.0)
+  )
+- Поле Customization для указания параметров вызова ядра (см
+  https://factory.altlinux.space/?arch=amd64\&extensions=-&platform=metal&target
+  metal&version=1.10.8.0)
+- Поле Select для выбора CNI
+
+В конце отображаются три секции для добавления патч файлов:
+
+- `common` \- патчи применимые для файлов `controlplane.yaml`, `worker.yaml`
+- `controlplane` \- патчи применимые для файла `controlplane.yaml`
+- `worker` \- - патчи применимые для файла ` worker.yaml`
+
+Для передачи запроса на странице присутствует кнопка `Apply`.
+
+В каждой секции отображается кнопка `+` для добавления патчей для указанной
+секции. Описание патчей может быть в yaml или json формате (см 
+<https://docs.siderolabs.com/talos/v1.9/configure-your-talos-cluster/system-configuration/patching>
+). 
+
+
+Если пользователь меняет хотя бы одно поле, то поле `Вариант разворачивания`
+становится пустым и пользователь до передачи запроса должен ввести уникальное
+имя этого поля.
+
+При нажатии кнопки `Apply` через запрос POST передаются введенные значения по
+URL  `http://localhost:5000/apply`.
+
+# Описание REST-интерфейса получения вариантов разворачивания
+
+Страница делает REST-запрос по URL `http://localhost:5000/factory`.
+
 В ответ возвращается в формате JSON:
 
 - список текущих вариантов разворачивания (`deploymentsVariants`)
@@ -128,67 +178,4 @@ http://localhost:5000/deploymentsVariants
 }
 ```
 
-## Вид страницы
-
-На странице `pages/clusters/factory.tsx`
-
-```
-http://localhost:3000/factory
-```
-![image](images/pageView.png)
-
-отображаются:
-
-- Кнопка "Отмена" для возврата на предыдущую страницу
-- Поле Select "Варианты разворачивания"
-- Input полу "Имя варианта разворачивания"
-- Поле Select для выбора версий ALT Orchestra (см 
-  [https://factory.altlinux.space/?platform=metal\&target=metal](https://factory.altlinux.space/?platform=metal&target=metal)
-  )
-- Поле Select для выбора архитектуры (amd64, arm64) (см 
-  [https://factory.altlinux.space/?platform=metal\&target=metal&version=1.10.8.0](https://factory.altlinux.space/?platform=metal&target=metal&version=1.10.8.0)
-  )
-- Поле Extensions для выбора набора расширений (см 
-  [https://factory.altlinux.space/?arch=amd64\&platform=metal&target=metal&version=1.10.8.0](https://factory.altlinux.space/?arch=amd64&platform=metal&target=metal&version=1.10.8.0)
-  )
-- Поле Customization для указания параметров вызова ядра (см
-  https://factory.altlinux.space/?arch=amd64\&extensions=-&platform=metal&target
-  metal&version=1.10.8.0)
-- Поле Select для выбора CNI
-
-В конце отображаются три секции для добавления патч файлов:
-
-- `common` \- патчи применимые для файлов `controlplane.yaml`, `worker.yaml`
-- `controlplane` \- патчи применимые для файла `controlplane.yaml`
-- `worker` \- - патчи применимые для файла ` worker.yaml`
-
-Для передачи запроса на странице присутствует кнопка `Apply`.
-
-В каждой секции отображается кнопка `\+` для добавления патчей для указанной
-секции. Описание патчей может быть в yaml или json формате (см 
-<https://docs.siderolabs.com/talos/v1.9/configure-your-talos-cluster/system-configuration/patching>
-) Проверять корректность заполнения в React коде будет наверно затруднительно.
-Там что корректность возможно будем проверять при вызове REST интерфейса
-
-```
-http://localhost:5000/factory
-```
-по окончании заполнения всех полей. Интерфейс может вернуть коды ошибок в
-которых указываются строки и позиции встреченных ошибок, Еще желательно было бы
-для каждого patch'а вводить его имя и добавить возможность выбирать содержимое
-уже введенных до этого патчей.
-
-Если параметр `deploymentVariant` не указывается по умолчанию отображается
-вариант `default` со стандартными значениями полей:
-
-- список версий ALT оркестра - максимальная версия
-- schematics - 376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba
-- cni - последняя версия flannel
-
-Если пользователь меняет хотя бы одно поле, то поле `Вариант разворачивания`
-становится пустым и пользователь до передачи запроса должен ввести уникальное
-имя этого поля.
-
-При нажатии кнопки `Apply` через запрос POST передаются введенные значения по
-URL  `http://localhost:5000/apply`.
-
+# Описание  REST-интерфейса разворачиания узлов кластера
