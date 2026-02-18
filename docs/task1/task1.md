@@ -1,4 +1,6 @@
-Описание страницы `pages/clusters/factory.tsx`
+# Описание страницы `pages/clusters/factory.tsx`
+
+## REST-интерфейсы используемые страницей
 
 ```
 http://localhost:3000/factory
@@ -125,6 +127,9 @@ http://localhost:5000/deploymentsVariants
   }
 }
 ```
+
+## Вид страницы
+
 На странице `pages/clusters/factory.tsx`
 
 ```
