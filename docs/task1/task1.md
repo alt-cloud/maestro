@@ -54,21 +54,28 @@ http://localhost:3000/factory
 отображаются:
 
 - Кнопка "Отмена" для возврата на предыдущую страницу
-- Поле Select "Варианты разворачивания"
-- Input полу "Имя варианта разворачивания"
-- Поле Select для выбора версий ALT Orchestra (см 
+
+- Input поле "Текущий вариант" - имя варианта разворачивания переданное параметорм (по умолчанию в режиме только на чтение) или имя введенное пользователем после изменения параметров разворачивания перечисленных ниже. 
+
+- Поле Select "Варианты разворачивания" - при изменении значения производится обращение к http://localhost:5000/factory для получения указанного варианта разворачивания и перезаполнением нижеописанных полей. 
+
+- Поле Select "Версия ALT Orchestra" для выбора версий ALT Orchestra (см 
   [https://factory.altlinux.space/?platform=metal\&target=metal](https://factory.altlinux.space/?platform=metal&target=metal)
   )
-- Поле Select для выбора архитектуры (amd64, arm64) (см 
+
+- Поле Select "Архитектура" для выбора архитектуры (amd64, arm64) (см 
   [https://factory.altlinux.space/?platform=metal\&target=metal&version=1.10.8.0](https://factory.altlinux.space/?platform=metal&target=metal&version=1.10.8.0)
   )
-- Поле Extensions для выбора набора расширений (см 
+
+- Поле "Расширения" для выбора набора расширений (см 
   [https://factory.altlinux.space/?arch=amd64\&platform=metal&target=metal&version=1.10.8.0](https://factory.altlinux.space/?arch=amd64&platform=metal&target=metal&version=1.10.8.0)
   )
-- Поле Customization для указания параметров вызова ядра (см
+
+- Поле "Кастомизация ядра" для указания параметров вызова ядра (см
   https://factory.altlinux.space/?arch=amd64\&extensions=-&platform=metal&target
   metal&version=1.10.8.0)
-- Поле Select для выбора CNI
+
+- Поле Select "CNI" для выбора CNI (Container Network Interface)
 
 В конце отображаются три секции для добавления патч файлов:
 
@@ -76,17 +83,15 @@ http://localhost:3000/factory
 - `controlplane` \- патчи применимые для файла `controlplane.yaml`
 - `worker` \- - патчи применимые для файла ` worker.yaml`
 
-Для передачи запроса на странице присутствует кнопка `Apply`.
-
 В каждой секции отображается кнопка `+` для добавления патчей для указанной
 секции. Описание патчей может быть в yaml или json формате (см 
 <https://docs.siderolabs.com/talos/v1.9/configure-your-talos-cluster/system-configuration/patching>
 ). 
 
+Для передачи запроса на странице присутствует кнопка `Apply`.
 
-Если пользователь меняет хотя бы одно поле, то поле `Вариант разворачивания`
-становится пустым и пользователь до передачи запроса должен ввести уникальное
-имя этого поля.
+Если пользователь меняет хотя бы одно поле, то поле `Текущий вариант`
+становится пустым, включается режим возможности изменения поля и пользователь до передачи запроса должен ввести уникальное имя этого поля.
 
 При нажатии кнопки `Apply` через запрос POST передаются введенные значения по
 URL  `http://localhost:5000/apply`.
