@@ -53,29 +53,31 @@ http://localhost:3000/factory
 
 отображаются:
 
-- Кнопка "Отмена" для возврата на предыдущую страницу
+- Кнопка *Отмена* для возврата на предыдущую страницу
 
-- Input поле "Текущий вариант" - имя варианта разворачивания переданное параметорм (по умолчанию в режиме только на чтение) или имя введенное пользователем после изменения параметров разворачивания перечисленных ниже. 
+- Input поле *Текущий вариант* - имя варианта разворачивания переданное параметорм (по умолчанию в режиме только на чтение) или имя введенное пользователем после изменения параметров разворачивания перечисленных ниже. 
 
-- Поле Select "Варианты разворачивания" - при изменении значения производится обращение к http://localhost:5000/factory для получения указанного варианта разворачивания и перезаполнением нижеописанных полей. 
+- Поле Select *Варианты разворачивания* - при изменении значения производится обращение к http://localhost:5000/factory для получения указанного варианта разворачивания и перезаполнением нижеописанных полей. 
 
-- Поле Select "Версия ALT Orchestra" для выбора версий ALT Orchestra (см 
+- Поле Select *Версия ALT Orchestra* для выбора версий ALT Orchestra (см 
   [https://factory.altlinux.space/?platform=metal\&target=metal](https://factory.altlinux.space/?platform=metal&target=metal)
   )
 
-- Поле Select "Архитектура" для выбора архитектуры (amd64, arm64) (см 
+- Поле Select *Архитектура* для выбора архитектуры (amd64, arm64) (см 
   [https://factory.altlinux.space/?platform=metal\&target=metal&version=1.10.8.0](https://factory.altlinux.space/?platform=metal&target=metal&version=1.10.8.0)
   )
 
-- Поле "Расширения" для выбора набора расширений (см 
+- Поле *Расширения* для выбора набора расширений (см 
   [https://factory.altlinux.space/?arch=amd64\&platform=metal&target=metal&version=1.10.8.0](https://factory.altlinux.space/?arch=amd64&platform=metal&target=metal&version=1.10.8.0)
   )
 
-- Поле "Кастомизация ядра" для указания параметров вызова ядра (см
+- Поле *Кастомизация ядра* для указания параметров вызова ядра (см
   https://factory.altlinux.space/?arch=amd64\&extensions=-&platform=metal&target
   metal&version=1.10.8.0)
 
-- Поле Select "CNI" для выбора CNI (Container Network Interface)
+- Поле Select *CNI* для выбора CNI (Container Network Interface)
+
+- Поле *Имя образа installer* является альтернативным перечисленным выше полям. Если это поле заполняется обращение к image-factory для получения имени образа формата  `factory.altlinux.space/metal-installer/<uid>:v<version>` не производится. Используется указанное имя образа. 
 
 В конце отображаются три секции для добавления патч файлов:
 
