@@ -51,16 +51,24 @@ def apply():
                 '{"machine":{"kernel":{"modules":[{"name":"bridge"}]},'
                 '"registries":{"config":{"registry.altlinux.org":{"tls":{"insecureSkipVerify":true}}}}}}'
             )
-            run_cmd = (
-                f"talosctl gen config {cluster_name} {kube_endpoint} "
-                "--install-image altlinux.space/alt-orchestra/installer:v1.10.6 "
-                f"--config-patch '{patch}' --install-disk {install_disk}"
-            )
-            result = maestro.run_shell_command(run_cmd, talosconfig_dir)
+            command = [
+                "talosctl",
+                "gen",
+                "config",
+                cluster_name,
+                kube_endpoint,
+                "--install-image",
+                "altlinux.space/alt-orchestra/installer:v1.10.6",
+                "--config-patch",
+                patch,
+                "--install-disk",
+                install_disk,
+            ]
+            result = maestro.run_command(command, talosconfig_dir)
             if result.returncode != 0:
                 return jsonify({"error": result.stderr.strip() or "Failed to generate cluster talosconfig"}), 502
 
-        config_result = maestro.run_shell_command("talosctl config info -o json", talosconfig_dir)
+        config_result = maestro.run_command(["talosctl", "config", "info", "-o", "json"], talosconfig_dir)
         if config_result.returncode != 0:
             return jsonify({"error": config_result.stderr.strip() or "Failed to read talos config"}), 502
 
@@ -79,8 +87,8 @@ def apply():
             points = config[field_name] if field_name in config and config[field_name] else []
             points = list(set(points + list(add_points[action])))
 
-            run_cmd = f"talosctl config {node_type} {' '.join(points)}"
-            result = maestro.run_shell_command(run_cmd, talosconfig_dir)
+            command = ["talosctl", "config", node_type, *points]
+            result = maestro.run_command(command, talosconfig_dir)
             if result.returncode != 0:
                 return jsonify({"error": result.stderr.strip() or f"Failed to update {field_name}"}), 502
 
@@ -90,11 +98,18 @@ def apply():
                 except RuntimeError as err:
                     return jsonify({"error": str(err)}), 502
                 patch = f'{{"machine":{{"install":{{"disk":"{install_disk}"}}}}}}'
-                run_cmd = (
-                    f"talosctl apply-config --config-patch '{patch}' "
-                    f"--insecure -n {ip} --file {action}.yaml"
-                )
-                result = maestro.run_shell_command(run_cmd, talosconfig_dir)
+                command = [
+                    "talosctl",
+                    "apply-config",
+                    "--config-patch",
+                    patch,
+                    "--insecure",
+                    "-n",
+                    ip,
+                    "--file",
+                    f"{action}.yaml",
+                ]
+                result = maestro.run_command(command, talosconfig_dir)
                 if result.returncode != 0:
                     return jsonify({"error": result.stderr.strip() or f"Failed to apply config on {ip}"}), 502
 
@@ -102,9 +117,13 @@ def apply():
                     bootstrap_file = os.path.join(talosconfig_dir, "bootstrap.log")
                     if not Path(bootstrap_file).exists():
                         bootstrap_script = os.path.join(maestro_config_dir, "bootstrap.sh")
-                        run_cmd = f"{bootstrap_script} {ip} > {bootstrap_file} 2>&1 &"
-                        result = maestro.run_shell_command(run_cmd, talosconfig_dir)
-                        if result.returncode != 0:
-                            return jsonify({"error": result.stderr.strip() or "Failed to start bootstrap"}), 502
+                        try:
+                            maestro.start_background_command(
+                                [bootstrap_script, ip],
+                                talosconfig_dir,
+                                bootstrap_file,
+                            )
+                        except OSError as err:
+                            return jsonify({"error": f"Failed to start bootstrap: {err}"}), 502
 
     return jsonify({})

@@ -43,9 +43,6 @@ def talosctl():
     except ValueError as err:
         return jsonify({"error": str(err)}), 400
 
-    endpoint = f"-e {node}"
-    insecure = "" if not cluster_name.startswith("_") else "-i"
-
     if cmd == "get":
         missing = _missing_query_params(params, ("subCommand",))
         if missing:
@@ -57,8 +54,20 @@ def talosctl():
         except ValueError as err:
             return jsonify({"error": str(err)}), 400
 
-        run_cmd = f"talosctl get {sub_command} -o json -n {node} {endpoint} {insecure}"
-        result = maestro.run_shell_command(run_cmd, talosconfig_dir)
+        command = [
+            "talosctl",
+            "get",
+            sub_command,
+            "-o",
+            "json",
+            "-n",
+            node,
+            "-e",
+            node,
+        ]
+        if cluster_name.startswith("_"):
+            command.append("-i")
+        result = maestro.run_command(command, talosconfig_dir)
         if result.returncode != 0:
             return jsonify({"error": result.stderr.strip() or "talosctl get command failed"}), 502
 
@@ -77,8 +86,8 @@ def talosctl():
 
     if is_table_command(cmd):
         table_cmd = cmd.replace("/", " ")
-        run_cmd = f"talosctl {table_cmd} -n {node} {endpoint}"
-        result = maestro.run_shell_command(run_cmd, talosconfig_dir)
+        command = ["talosctl", *table_cmd.split(), "-n", node, "-e", node]
+        result = maestro.run_command(command, talosconfig_dir)
         if result.returncode != 0:
             return jsonify({"error": result.stderr.strip() or "talosctl table command failed"}), 502
         table_json = maestro.table_to_json(result.stdout)
@@ -89,8 +98,8 @@ def talosctl():
         support_file = f"support_{node.replace('.', '_')}.zip"
         support_path = os.path.join(tmp_dir, support_file)
 
-        run_cmd = f"talosctl support -O {support_path} -n {node} {endpoint}"
-        result = maestro.run_shell_command(run_cmd, talosconfig_dir)
+        command = ["talosctl", "support", "-O", support_path, "-n", node, "-e", node]
+        result = maestro.run_command(command, talosconfig_dir)
         if result.returncode != 0 or not os.path.exists(support_path):
             shutil.rmtree(tmp_dir, ignore_errors=True)
             return jsonify({"error": result.stderr.strip() or "Failed to generate support bundle"}), 502
@@ -109,8 +118,8 @@ def talosctl():
 
     if is_text_command(cmd):
         text_cmd = cmd.replace("/", " ")
-        run_cmd = f"talosctl {text_cmd} -n {node} {endpoint}"
-        result = maestro.run_shell_command(run_cmd, talosconfig_dir)
+        command = ["talosctl", *text_cmd.split(), "-n", node, "-e", node]
+        result = maestro.run_command(command, talosconfig_dir)
         if result.returncode != 0:
             return jsonify({"error": result.stderr.strip() or "talosctl text command failed"}), 502
         return jsonify({"content": result.stdout})

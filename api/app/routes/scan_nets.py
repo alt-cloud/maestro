@@ -37,8 +37,8 @@ def scan_nets():
     with open(scan_nets_file, "w", encoding="utf-8") as file_pointer:
         json.dump({"scanNets": scan_networks}, file_pointer, indent=2)
 
-    run_cmd = "nmap -p 50000,6443 " + " ".join(scan_networks)
-    result = maestro.run_shell_command(run_cmd, get_home_dir())
+    command = ["nmap", "-p", "50000,6443", *scan_networks]
+    result = maestro.run_command(command, get_home_dir())
     if result.returncode != 0:
         return jsonify({"error": result.stderr.strip() or "nmap failed"}), 502
 

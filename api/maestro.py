@@ -1,5 +1,6 @@
 import json
 import os
+import shlex
 import socket
 import subprocess
 from pathlib import Path
@@ -16,17 +17,45 @@ def _parse_json_stream(raw_output: str) -> list[dict[str, Any]]:
     return json.loads(normalized)
 
 
-def run_shell_command(run_cmd: str, cluster_dir: str) -> subprocess.CompletedProcess[str]:
-    command = f"clusterDir={cluster_dir} TALOSCONFIG=talosconfig {run_cmd}"
-    print(f"run_shell_command={command}")
+def _build_command_env(cluster_dir: str) -> dict[str, str]:
+    env = os.environ.copy()
+    env["clusterDir"] = cluster_dir
+    env["TALOSCONFIG"] = "talosconfig"
+    return env
+
+
+def run_command(args: list[str], cluster_dir: str) -> subprocess.CompletedProcess[str]:
+    if not args:
+        raise ValueError("Command arguments cannot be empty")
+
+    print(f"run_command cwd={cluster_dir} args={shlex.join(args)}")
     return subprocess.run(
-        command,
-        shell=True,
+        args,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         cwd=cluster_dir,
         encoding="utf-8",
+        env=_build_command_env(cluster_dir),
     )
+
+
+def start_background_command(args: list[str], cluster_dir: str, output_file: str) -> None:
+    if not args:
+        raise ValueError("Command arguments cannot be empty")
+
+    print(
+        "start_background_command "
+        f"cwd={cluster_dir} args={shlex.join(args)} output_file={output_file}"
+    )
+    with open(output_file, "ab") as file_pointer:
+        subprocess.Popen(
+            args,
+            cwd=cluster_dir,
+            env=_build_command_env(cluster_dir),
+            stdout=file_pointer,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
 
 
 def table_to_json(text: str) -> str:
@@ -89,8 +118,19 @@ def table_to_json(text: str) -> str:
 
 def get_disk_name(ip: str) -> str:
     home_dir = os.getenv("HOME", "")
-    run_cmd = f"talosctl get discoveredvolume -o json -n {ip} -e {ip} -i"
-    result = run_shell_command(run_cmd, home_dir)
+    command = [
+        "talosctl",
+        "get",
+        "discoveredvolume",
+        "-o",
+        "json",
+        "-n",
+        ip,
+        "-e",
+        ip,
+        "-i",
+    ]
+    result = run_command(command, home_dir)
 
     if result.returncode != 0:
         err = result.stderr.strip() or result.stdout.strip() or "talosctl discoveredvolume command failed"
@@ -163,8 +203,19 @@ def is_port_open(host: str, port: int, timeout: float = 3.0) -> bool:
 
 def is_maintenance(ip: str) -> bool:
     home_dir = os.getenv("HOME", "")
-    run_cmd = f"talosctl get discoveredvolume -o json -n {ip} -e {ip} -i"
-    result = run_shell_command(run_cmd, home_dir)
+    command = [
+        "talosctl",
+        "get",
+        "discoveredvolume",
+        "-o",
+        "json",
+        "-n",
+        ip,
+        "-e",
+        ip,
+        "-i",
+    ]
+    result = run_command(command, home_dir)
     print(f"is_maintenance:: returncode={result.returncode}")
     if result.returncode != 0:
         return False
@@ -192,9 +243,20 @@ def talos_get_spec(cluster_name: str, sub_cmd: str, node: str) -> tuple[Any, int
         return "-", -1, ""
 
     result_spec: Any = "-"
-    insecure = "-i" if cluster_name == "_Orphans" else ""
-    run_cmd = f"talosctl get {sub_cmd} -e {node} -n {node} -o json {insecure}"
-    result = run_shell_command(run_cmd, cluster_config_dir)
+    command = [
+        "talosctl",
+        "get",
+        sub_cmd,
+        "-e",
+        node,
+        "-n",
+        node,
+        "-o",
+        "json",
+    ]
+    if cluster_name == "_Orphans":
+        command.append("-i")
+    result = run_command(command, cluster_config_dir)
 
     if result.returncode == 0:
         json_str = result.stdout.strip()
@@ -255,8 +317,18 @@ def node_cluster_name(cluster_names: list[str], node: str) -> str:
     maestro_config_dir = f"{home_dir}/.maestro"
     for cluster_name in cluster_names:
         cluster_config_dir = f"{maestro_config_dir}/{cluster_name}"
-        run_cmd = f"talosctl get info -e {node} -n {node} -o json"
-        result = run_shell_command(run_cmd, cluster_config_dir)
+        command = [
+            "talosctl",
+            "get",
+            "info",
+            "-e",
+            node,
+            "-n",
+            node,
+            "-o",
+            "json",
+        ]
+        result = run_command(command, cluster_config_dir)
         if result.returncode == 0:
             return cluster_name
     if is_maintenance(node):
@@ -392,10 +464,8 @@ def refresh_talosconfigs() -> dict[str, dict[str, list[dict[str, Any]]]]:
 
                 talosconfig_dir = f"{maestro_config_dir}/{cluster_name}"
                 if node_ips:
-                    run_shell_command(
-                        f"talosctl config {talos_node_type[:-1]} {' '.join(node_ips)}",
-                        talosconfig_dir,
-                    )
+                    command = ["talosctl", "config", talos_node_type[:-1], *node_ips]
+                    run_command(command, talosconfig_dir)
                 print(
                     "refresh_talosconfigs:: "
                     f"cluster_name={cluster_name} {talos_node_type}={json.dumps(node_ips)}"
