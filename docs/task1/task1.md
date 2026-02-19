@@ -87,7 +87,11 @@ http://localhost:5000/deploymentsVariants
   "schematics": [
     {
       "376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba": {
-        "customization": {}
+        "customization": {},
+        "image": "altlinux.space/alt-orchestra/installer:v1.10.6",
+        "patches": {
+          "common": ["setHostname.yaml"]
+        }
       }
     },
     {
@@ -99,6 +103,9 @@ http://localhost:5000/deploymentsVariants
               "alt-orchestra/nvidia-container-toolkit"
             ]
           }
+        },
+        "patches": {
+          "worker": ["tuneNVidiaCard.json"]
         }
       }
     }
@@ -123,6 +130,7 @@ http://localhost:5000/deploymentsVariants
     "worker": []
   }
 }
+
 ```
 На странице `pages/clusters/factory.tsx`
 
