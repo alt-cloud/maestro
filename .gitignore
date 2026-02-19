@@ -37,6 +37,23 @@ plugin/maestro/node_modules/
 plugin/maestro/dist/
 plugin/maestro/src/.kube/
 
+# API (Flask/Python)
+api/__pycache__/
+api/.venv/
+api/venv/
+api/.pytest_cache/
+api/.mypy_cache/
+api/.ruff_cache/
+api/.coverage
+api/.coverage.*
+api/htmlcov/
+api/instance/
+api/.flaskenv
+api/.env
+api/.env.*
+api/*.log
+api/**/*.log
+
 # OS noise
 .DS_Store
 Thumbs.db
