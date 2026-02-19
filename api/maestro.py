@@ -44,9 +44,6 @@ def tableToJson(str):
     columnName = column.title()
     shifts[columnName] = {}
     start = head[shift:].find(column) + shift
-    # print ('SHIFT=%d TAIL=%s  ' % (shift, head[shift:, columnName, ]))
-    # print("columnName=%s prevColumn=%s" % (columnName, prevColumn))
-    # print(shifts)
     if prevColumn:
       if start - shifts[prevColumn]['start'] - len(prevColumn) == 1:
         mergedColumnName = prevColumn + columnName
@@ -63,10 +60,8 @@ def tableToJson(str):
     else:
       prevColumn = columnName
       shifts[columnName]['start'] = start
-    # print('prevColumn=', prevColumn)
     shift = start
   shifts[columnName]['end'] = -1
-  # print(shifts)
   rows = []
   for row in body:
     if len(row) == 0:
@@ -112,7 +107,6 @@ def nodesList(nmapStr):
   for line in nmapStrs:
     if line[0:prefixLen] == prefix:
       print(line)
-      # if len(nodeState) > 0 and nodeState['apidState'] == 'open':
       if len(nodeState) > 0:
         ret[nodeState['ip']] = nodeState
       nodeState = {}
@@ -144,7 +138,6 @@ def isMaintenance(ip):
   runCmd = 'talosctl get  discoveredvolume -o json -n %s -e %s -i' % (ip, ip)
   result = runShellCommand(runCmd, homedir)
   print('isMaintenance:: returncode=%s' % json.dumps(result.returncode))
-  # print('isMaintenance:: stdout=%s' % json.dumps(result.stdout))
   if result.returncode != 0:
     return False
   result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
@@ -267,7 +260,6 @@ def refreshTalosconfigs():
       print('refreshTalosconfig:: ip=%s port 50000 open toClusterName=%s ' % (ip, toClusterName))
       if is_port_open(ip, 6443): # endpoint remains a controlplane endpoint
         kubeNodeType = 'controlplanes'
-        # newNodes[toClusterName][].append(ip)
         print('refreshTalosconfig:: ip=%s port 6443 opened controlplane place in cluster toClusterName=%s ' % (ip, toClusterName))
       else: # node state
         kubeNodeType = 'workers'
@@ -299,24 +291,20 @@ def refreshTalosconfigs():
 
   print('refreshTalosconfig:: newNodes=%s' + json.dumps(newNodes, indent=2))
 
-  # print('refreshTalosconfig:: newNodes=%s' % json.dumps(newNodes, indent=2))
   print('refreshTalosconfig:: changed=', changed)
   if changed:
     # Rewrite endpoints and nodes list in talosconfig
     print('refreshTalosconfig:: talosctl changed')
     for clusterName in newNodes:
-      # runShellCommand('talosctl config context %s' % clusterName, homedir)
       for talosNodeType in list(TALOSNODETYPETOKUBE.keys()):
         kubeNodeType = TALOSNODETYPETOKUBE[talosNodeType]
         nodes = []
         if kubeNodeType in newNodes[clusterName]:
           print('refreshTalosconfig:: clusterName=%s kubeNodeType=%s node=%s' % (clusterName, kubeNodeType, json.dumps(newNodes[clusterName][kubeNodeType])))
-          # nodes.append(newNodes[clusterName][kubeNodeType]['ip'])
           for node in newNodes[clusterName][kubeNodeType]:
             print('refreshTalosconfig:: node=%s' % json.dumps(node))
             nodes.append(node['ip'])
         taloscoconfigDir = '%s/%s' % (maestroConfigDir, clusterName)
-        # runShellCommand("yq -yi '.contexts.%s.%s=%s' talosconfig" % (clusterName, talosNodeType,json.dumps(nodes)), taloscoconfigDir)
         if len(nodes) > 0:
           runShellCommand('talosctl config %s %s'  % \
             (talosNodeType[0:-1], ' '.join(nodes)), taloscoconfigDir)
