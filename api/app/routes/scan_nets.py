@@ -1,4 +1,3 @@
-import ipaddress
 import json
 import os
 
@@ -6,16 +5,9 @@ from flask import Blueprint, jsonify, request
 
 import maestro
 from app.services.paths import get_home_dir, get_maestro_config_dir
+from app.services.validators import validate_scan_networks
 
 scan_nets_bp = Blueprint("scan_nets", __name__)
-
-
-def _is_valid_scan_network(value: str) -> bool:
-    try:
-        ipaddress.ip_network(value, strict=False)
-        return True
-    except ValueError:
-        return False
 
 
 @scan_nets_bp.route("/scanNets", methods=["GET", "POST"])
@@ -37,13 +29,10 @@ def scan_nets():
     if not isinstance(payload, dict):
         return jsonify({"error": "JSON object payload is required"}), 400
 
-    scan_networks = payload.get("scanNets")
-    if not isinstance(scan_networks, list):
-        return jsonify({"error": "'scanNets' must be a list"}), 400
-
-    invalid_networks = [value for value in scan_networks if not isinstance(value, str) or not _is_valid_scan_network(value)]
-    if invalid_networks:
-        return jsonify({"error": "Invalid network format", "invalid": invalid_networks}), 400
+    try:
+        scan_networks = validate_scan_networks(payload.get("scanNets"))
+    except ValueError as err:
+        return jsonify({"error": str(err)}), 400
 
     with open(scan_nets_file, "w", encoding="utf-8") as file_pointer:
         json.dump({"scanNets": scan_networks}, file_pointer, indent=2)

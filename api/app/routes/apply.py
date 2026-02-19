@@ -7,6 +7,7 @@ from flask import Blueprint, jsonify, request
 
 import maestro
 from app.services.paths import get_cluster_config_dir, get_maestro_config_dir
+from app.services.validators import validate_apply_actions, validate_cluster_name
 
 apply_bp = Blueprint("apply", __name__)
 
@@ -23,29 +24,27 @@ def apply():
     maestro_config_dir = get_maestro_config_dir()
 
     for cluster_name, actions in payload.items():
-        if not isinstance(actions, dict):
-            continue
+        try:
+            validate_cluster_name(cluster_name)
+            normalized_actions = validate_apply_actions(actions)
+            talosconfig_dir = get_cluster_config_dir(cluster_name)
+        except ValueError as err:
+            return jsonify({"error": str(err)}), 400
 
-        talosconfig_dir = get_cluster_config_dir(cluster_name)
+        controlplanes = normalized_actions.get("controlplane") or []
+        workers = normalized_actions.get("worker") or []
+        if not controlplanes and not workers:
+            return jsonify({"error": f"No nodes provided for cluster {cluster_name}"}), 400
 
         if not os.path.isdir(talosconfig_dir):
-            if not actions:
-                continue
-
-            first_action = next(iter(actions))
-            first_action_ips = actions.get(first_action) or []
-            if not first_action_ips:
-                continue
-
-            try:
-                install_disk = maestro.get_disk_name(first_action_ips[0])
-            except RuntimeError as err:
-                return jsonify({"error": str(err)}), 502
-            os.mkdir(talosconfig_dir)
-
-            controlplanes = actions.get("controlplane") or []
             if not controlplanes:
                 return jsonify({"error": f"Missing controlplane node for cluster {cluster_name}"}), 400
+
+            try:
+                install_disk = maestro.get_disk_name(controlplanes[0])
+            except RuntimeError as err:
+                return jsonify({"error": str(err)}), 502
+            os.makedirs(talosconfig_dir, exist_ok=True)
 
             kube_endpoint = f"https://{controlplanes[0]}:6443"
             patch = (
@@ -70,29 +69,22 @@ def apply():
         except json.JSONDecodeError as err:
             return jsonify({"error": f"Invalid talos config JSON: {err}"}), 502
 
-        for action, ips in actions.items():
-            if not isinstance(ips, list):
-                continue
+        for action, ips in normalized_actions.items():
+            add_points: dict[str, list[Any]] = {
+                "controlplane": controlplanes,
+                "worker": list(workers) + list(controlplanes),
+            }
+            node_type = "endpoint" if action == "controlplane" else "node"
+            field_name = f"{node_type}s"
+            points = config[field_name] if field_name in config and config[field_name] else []
+            points = list(set(points + list(add_points[action])))
 
-            if action in ("controlplane", "worker"):
-                add_points: dict[str, list[Any]] = {
-                    "controlplane": actions.get("controlplane") or [],
-                    "worker": list(actions.get("worker") or []) + list(actions.get("controlplane") or []),
-                }
-                node_type = "endpoint" if action == "controlplane" else "node"
-                field_name = f"{node_type}s"
-                points = config[field_name] if field_name in config and config[field_name] else []
-                points = list(set(points + list(add_points[action])))
-
-                run_cmd = f"talosctl config {node_type} {' '.join(points)}"
-                result = maestro.run_shell_command(run_cmd, talosconfig_dir)
-                if result.returncode != 0:
-                    return jsonify({"error": result.stderr.strip() or f"Failed to update {field_name}"}), 502
+            run_cmd = f"talosctl config {node_type} {' '.join(points)}"
+            result = maestro.run_shell_command(run_cmd, talosconfig_dir)
+            if result.returncode != 0:
+                return jsonify({"error": result.stderr.strip() or f"Failed to update {field_name}"}), 502
 
             for ip in ips:
-                if action not in ("controlplane", "worker"):
-                    continue
-
                 try:
                     install_disk = maestro.get_disk_name(ip)
                 except RuntimeError as err:

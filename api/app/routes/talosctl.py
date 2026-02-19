@@ -6,7 +6,14 @@ from flask import Blueprint, jsonify, request, send_file
 import maestro
 from app.services.parsers import parse_talos_json_stream
 from app.services.paths import get_cluster_config_dir
-from app.services.validators import is_table_command, is_text_command
+from app.services.validators import (
+    is_table_command,
+    is_text_command,
+    validate_cluster_name,
+    validate_ip_address,
+    validate_talos_command,
+    validate_talos_subcommand,
+)
 
 talosctl_bp = Blueprint("talosctl", __name__)
 
@@ -25,7 +32,15 @@ def talosctl():
     cluster_name = params["cluster"]
     node = params["n"]
     cmd = params["cmd"]
-    talosconfig_dir = get_cluster_config_dir(cluster_name)
+
+    try:
+        validate_cluster_name(cluster_name)
+        validate_ip_address(node, "n")
+        validate_talos_command(cmd)
+        talosconfig_dir = get_cluster_config_dir(cluster_name)
+    except ValueError as err:
+        return jsonify({"error": str(err)}), 400
+
     endpoint = f"-e {node}"
     insecure = "" if not cluster_name.startswith("_") else "-i"
 
@@ -35,6 +50,11 @@ def talosctl():
             return jsonify({"error": f"Missing required query parameters: {', '.join(missing)}"}), 400
 
         sub_command = params["subCommand"]
+        try:
+            validate_talos_subcommand(sub_command)
+        except ValueError as err:
+            return jsonify({"error": str(err)}), 400
+
         run_cmd = f"talosctl get {sub_command} -o json -n {node} {endpoint} {insecure}"
         result = maestro.run_shell_command(run_cmd, talosconfig_dir)
         if result.returncode != 0:
