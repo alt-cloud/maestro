@@ -1,7 +1,9 @@
 import json
 import os
+import shutil
+import tempfile
 
-from flask import Blueprint, jsonify, request, send_file
+from flask import Blueprint, after_this_request, jsonify, request, send_file
 
 import maestro
 from app.services.parsers import parse_talos_json_stream
@@ -83,17 +85,20 @@ def talosctl():
         return table_json, 200, {"Content-Type": "application/json"}
 
     if cmd == "support":
-        tmp_dir = os.path.join("/tmp", f"talossupport_{os.getpid()}")
-        os.makedirs(tmp_dir, exist_ok=True)
+        tmp_dir = tempfile.mkdtemp(prefix=f"talossupport_{os.getpid()}_")
         support_file = f"support_{node.replace('.', '_')}.zip"
         support_path = os.path.join(tmp_dir, support_file)
-        if os.path.exists(support_path):
-            os.remove(support_path)
 
         run_cmd = f"talosctl support -O {support_path} -n {node} {endpoint}"
         result = maestro.run_shell_command(run_cmd, talosconfig_dir)
         if result.returncode != 0 or not os.path.exists(support_path):
+            shutil.rmtree(tmp_dir, ignore_errors=True)
             return jsonify({"error": result.stderr.strip() or "Failed to generate support bundle"}), 502
+
+        @after_this_request
+        def cleanup_support_artifacts(response):
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+            return response
 
         return send_file(
             support_path,
