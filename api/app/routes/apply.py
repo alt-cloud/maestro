@@ -37,7 +37,10 @@ def apply():
             if not first_action_ips:
                 continue
 
-            install_disk = maestro.getDiskName(first_action_ips[0])
+            try:
+                install_disk = maestro.getDiskName(first_action_ips[0])
+            except RuntimeError as err:
+                return jsonify({"error": str(err)}), 502
             os.mkdir(talosconfig_dir)
 
             controlplanes = actions.get("controlplane") or []
@@ -90,7 +93,10 @@ def apply():
                 if action not in ("controlplane", "worker"):
                     continue
 
-                install_disk = maestro.getDiskName(ip)
+                try:
+                    install_disk = maestro.getDiskName(ip)
+                except RuntimeError as err:
+                    return jsonify({"error": str(err)}), 502
                 patch = f'{{"machine":{{"install":{{"disk":"{install_disk}"}}}}}}'
                 run_cmd = (
                     f"talosctl apply-config --config-patch '{patch}' "

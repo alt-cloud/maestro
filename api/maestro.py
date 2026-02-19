@@ -81,13 +81,31 @@ def getDiskName(ip):
   homedir = os.getenv('HOME')
   runCmd = f'talosctl get  discoveredvolume -o json -n {ip} -e {ip} -i'
   result = runShellCommand(runCmd, homedir)
-  result = json.loads('[' + result.stdout.replace("}\n{","},{") + ']')
-  for volInfo in result:
-    id = volInfo['metadata']['id']
-    if id[0:4] == 'loop' or id[0:2] == 'sr':
+
+  if result.returncode != 0:
+    err = result.stderr.strip() or result.stdout.strip() or 'talosctl discoveredvolume command failed'
+    raise RuntimeError(f'Failed to detect install disk for node {ip}: {err}')
+
+  raw_output = (result.stdout or '').strip()
+  if not raw_output:
+    raise RuntimeError(f'Failed to detect install disk for node {ip}: empty talosctl output')
+
+  try:
+    volumes = json.loads('[' + raw_output.replace("}\n{", "},{") + ']')
+  except json.JSONDecodeError as err:
+    raise RuntimeError(f'Failed to parse discovered volumes for node {ip}: {err}') from err
+
+  for volInfo in volumes:
+    metadata = volInfo.get('metadata', {})
+    spec = volInfo.get('spec', {})
+    disk_id = metadata.get('id', '')
+    if disk_id.startswith('loop') or disk_id.startswith('sr'):
       continue
-    disk = volInfo['spec']['dev_path']
-    return disk
+    disk = spec.get('dev_path')
+    if disk:
+      return disk
+
+  raise RuntimeError(f'Failed to detect install disk for node {ip}: no suitable disk found')
 
 # Parses nmap output and builds a list of node IP addresses
 # (with DNS names when available) that expose ports 50000 (apid) and 6443 (kubeAPI).
