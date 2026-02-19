@@ -49,11 +49,11 @@ def scan_nets():
         json.dump({"scanNets": scan_networks}, file_pointer, indent=2)
 
     run_cmd = "nmap -p 50000,6443 " + " ".join(scan_networks)
-    result = maestro.runShellCommand(run_cmd, get_home_dir())
+    result = maestro.run_shell_command(run_cmd, get_home_dir())
     if result.returncode != 0:
         return jsonify({"error": result.stderr.strip() or "nmap failed"}), 502
 
-    nodes = maestro.nodesList(result.stdout.strip())
+    nodes = maestro.nodes_list(result.stdout.strip())
     nodes = {
         ip: info for ip, info in nodes.items() if info.get("apidState") == "open"
     }
@@ -62,5 +62,5 @@ def scan_nets():
     with open(nodes_file, "w", encoding="utf-8") as file_pointer:
         json.dump(nodes, file_pointer, indent=2)
 
-    maestro.initTalosconfig()
+    maestro.init_talosconfig()
     return jsonify({"status": "success", "message": "Successfully scanned"}), 200

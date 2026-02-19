@@ -14,10 +14,10 @@ def nodes_tree():
     config_dir = get_maestro_config_dir()
     os.makedirs(config_dir, exist_ok=True)
 
-    for virtual_cluster in maestro.VIRTUALCLUSTERS:
+    for virtual_cluster in maestro.VIRTUAL_CLUSTERS:
         virtual_cluster_dir = os.path.join(config_dir, virtual_cluster)
         if not Path(virtual_cluster_dir).is_dir():
-            maestro.initTalosconfig()
+            maestro.init_talosconfig()
             break
 
-    return jsonify(maestro.refreshTalosconfigs())
+    return jsonify(maestro.refresh_talosconfigs())

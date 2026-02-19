@@ -38,7 +38,7 @@ def apply():
                 continue
 
             try:
-                install_disk = maestro.getDiskName(first_action_ips[0])
+                install_disk = maestro.get_disk_name(first_action_ips[0])
             except RuntimeError as err:
                 return jsonify({"error": str(err)}), 502
             os.mkdir(talosconfig_dir)
@@ -57,11 +57,11 @@ def apply():
                 "--install-image altlinux.space/alt-orchestra/installer:v1.10.6 "
                 f"--config-patch '{patch}' --install-disk {install_disk}"
             )
-            result = maestro.runShellCommand(run_cmd, talosconfig_dir)
+            result = maestro.run_shell_command(run_cmd, talosconfig_dir)
             if result.returncode != 0:
                 return jsonify({"error": result.stderr.strip() or "Failed to generate cluster talosconfig"}), 502
 
-        config_result = maestro.runShellCommand("talosctl config info -o json", talosconfig_dir)
+        config_result = maestro.run_shell_command("talosctl config info -o json", talosconfig_dir)
         if config_result.returncode != 0:
             return jsonify({"error": config_result.stderr.strip() or "Failed to read talos config"}), 502
 
@@ -85,7 +85,7 @@ def apply():
                 points = list(set(points + list(add_points[action])))
 
                 run_cmd = f"talosctl config {node_type} {' '.join(points)}"
-                result = maestro.runShellCommand(run_cmd, talosconfig_dir)
+                result = maestro.run_shell_command(run_cmd, talosconfig_dir)
                 if result.returncode != 0:
                     return jsonify({"error": result.stderr.strip() or f"Failed to update {field_name}"}), 502
 
@@ -94,7 +94,7 @@ def apply():
                     continue
 
                 try:
-                    install_disk = maestro.getDiskName(ip)
+                    install_disk = maestro.get_disk_name(ip)
                 except RuntimeError as err:
                     return jsonify({"error": str(err)}), 502
                 patch = f'{{"machine":{{"install":{{"disk":"{install_disk}"}}}}}}'
@@ -102,7 +102,7 @@ def apply():
                     f"talosctl apply-config --config-patch '{patch}' "
                     f"--insecure -n {ip} --file {action}.yaml"
                 )
-                result = maestro.runShellCommand(run_cmd, talosconfig_dir)
+                result = maestro.run_shell_command(run_cmd, talosconfig_dir)
                 if result.returncode != 0:
                     return jsonify({"error": result.stderr.strip() or f"Failed to apply config on {ip}"}), 502
 
@@ -111,7 +111,7 @@ def apply():
                     if not Path(bootstrap_file).exists():
                         bootstrap_script = os.path.join(maestro_config_dir, "bootstrap.sh")
                         run_cmd = f"{bootstrap_script} {ip} > {bootstrap_file} 2>&1 &"
-                        result = maestro.runShellCommand(run_cmd, talosconfig_dir)
+                        result = maestro.run_shell_command(run_cmd, talosconfig_dir)
                         if result.returncode != 0:
                             return jsonify({"error": result.stderr.strip() or "Failed to start bootstrap"}), 502
 

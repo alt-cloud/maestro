@@ -36,7 +36,7 @@ def talosctl():
 
         sub_command = params["subCommand"]
         run_cmd = f"talosctl get {sub_command} -o json -n {node} {endpoint} {insecure}"
-        result = maestro.runShellCommand(run_cmd, talosconfig_dir)
+        result = maestro.run_shell_command(run_cmd, talosconfig_dir)
         if result.returncode != 0:
             return jsonify({"error": result.stderr.strip() or "talosctl get command failed"}), 502
 
@@ -56,10 +56,10 @@ def talosctl():
     if is_table_command(cmd):
         table_cmd = cmd.replace("/", " ")
         run_cmd = f"talosctl {table_cmd} -n {node} {endpoint}"
-        result = maestro.runShellCommand(run_cmd, talosconfig_dir)
+        result = maestro.run_shell_command(run_cmd, talosconfig_dir)
         if result.returncode != 0:
             return jsonify({"error": result.stderr.strip() or "talosctl table command failed"}), 502
-        table_json = maestro.tableToJson(result.stdout)
+        table_json = maestro.table_to_json(result.stdout)
         return table_json, 200, {"Content-Type": "application/json"}
 
     if cmd == "support":
@@ -71,7 +71,7 @@ def talosctl():
             os.remove(support_path)
 
         run_cmd = f"talosctl support -O {support_path} -n {node} {endpoint}"
-        result = maestro.runShellCommand(run_cmd, talosconfig_dir)
+        result = maestro.run_shell_command(run_cmd, talosconfig_dir)
         if result.returncode != 0 or not os.path.exists(support_path):
             return jsonify({"error": result.stderr.strip() or "Failed to generate support bundle"}), 502
 
@@ -85,7 +85,7 @@ def talosctl():
     if is_text_command(cmd):
         text_cmd = cmd.replace("/", " ")
         run_cmd = f"talosctl {text_cmd} -n {node} {endpoint}"
-        result = maestro.runShellCommand(run_cmd, talosconfig_dir)
+        result = maestro.run_shell_command(run_cmd, talosconfig_dir)
         if result.returncode != 0:
             return jsonify({"error": result.stderr.strip() or "talosctl text command failed"}), 502
         return jsonify({"content": result.stdout})
