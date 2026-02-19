@@ -22,11 +22,11 @@ def runShellCommand(runCmd, clusterDir):
   )
   return result
 
-# Функция преобразует табличный формат вывода команд talosctl в формат JSON
-# Список полей и смещение каждого столбца определяется по первой строке заголовка
-# Имена полей приводятся к виду -  Первый символ заглавный, остабные строчные
-# Поддерживаются заголовки с одним пробелом внутри (типа LOCAL ADDRESS).
-# В этом слцчае формируется один заголовок с именем LocalAddress
+# Converts talosctl table output to JSON.
+# Field names and column offsets are inferred from the first header line.
+# Field names are normalized: first letter uppercase, remaining letters lowercase.
+# Headers with one inner space (for example, LOCAL ADDRESS) are supported.
+# In that case, one merged header named LocalAddress is created.
 def tableToJson(str):
   nHead = str.find("\n")
   head = str[0:nHead]
@@ -94,9 +94,9 @@ def getDiskName(ip):
     disk = volInfo['spec']['dev_path']
     return disk
 
-# Функция анализирует вывод команды nmap и определеяет список IP адресов узлов (с DNS именамиб если они имеются),
-# которые слушают порты 50000 (сервис apid) и 6443 (kubeAPI).
-# Функция возвращает список узлов в формате
+# Parses nmap output and builds a list of node IP addresses
+# (with DNS names when available) that expose ports 50000 (apid) and 6443 (kubeAPI).
+# Returns nodes in the following format:
 # {
 #   <IP>: {'dns': '' or dnsName', 'ip: <IP>, 'kubeState': <open, closed, ...>, 'apidState': <open, closed, ...>},
 #   ...
@@ -135,7 +135,7 @@ def nodesList(nmapStr):
 def is_port_open(host: str, port: int, timeout: float = 3.0) -> bool:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(timeout)
-    result = sock.connect_ex((host, port))  # возвращает 0 при успехе, иначе errno
+    result = sock.connect_ex((host, port))  # returns 0 on success, otherwise errno
     sock.close()
     return result == 0
 
@@ -192,7 +192,7 @@ contexts:
       fp.close()
   maestroConfigDirPath = Path(maestroConfigDir)
 
-# Загружает все talosconfig из подкаталогов .maestro
+# Loads all talosconfig files from subdirectories in .maestro.
 def loadTalosConfigs():
   homedir = os.getenv('HOME')
   maestroConfigDir =  '%s/.maestro' % homedir
@@ -231,7 +231,7 @@ def refreshTalosconfigs():
   homedir = os.getenv('HOME')
   maestroConfigDir =  '%s/.maestro' % homedir
   print('refreshTalosconfig:: Before: maestroConfigDir=%s' % maestroConfigDir)
-  # Загрузить все talosconfigs в один
+  # Load all talosconfigs into one structure.
   talosconfig = loadTalosConfigs()
   clustersNames=list(talosconfig['contexts'].keys())
   realClusterNames = []
@@ -265,15 +265,15 @@ def refreshTalosconfigs():
       if clusterName != toClusterName:
         changed = True
       print('refreshTalosconfig:: ip=%s port 50000 open toClusterName=%s ' % (ip, toClusterName))
-      if is_port_open(ip, 6443): # endpoint остается в endpoint
+      if is_port_open(ip, 6443): # endpoint remains a controlplane endpoint
         kubeNodeType = 'controlplanes'
         # newNodes[toClusterName][].append(ip)
         print('refreshTalosconfig:: ip=%s port 6443 opened controlplane place in cluster toClusterName=%s ' % (ip, toClusterName))
-      else: # node состояние
+      else: # node state
         kubeNodeType = 'workers'
         changed = True
         print('refreshTalosconfig:: ip=%s port 6443 closed controlplane place as WORKER in cluster toClusterName=%s ' % (ip, toClusterName))
-    else: # endpoint в init режиме
+    else: # endpoint in initialization state
       kubeNodeType = 'controlplanes'
       toClusterName = '_Orphans'
       nodeStage = 'unavialable or installing'
