@@ -38,10 +38,7 @@ http://localhost:3000/maestro/`  проходит через запрос `POST`
   "deploymentVariant": "NVidia"
 }
 ```
-Страница делает REST-запрос по URL:
-
-```
-http://localhost:5000/deploymentsVariants
+Страница делает REST-запрос по URL `http://localhost:5000/deploymentsVariants`.
 
 В ответ возвращается в формате JSON:
 
@@ -130,8 +127,8 @@ http://localhost:5000/deploymentsVariants
     "worker": []
   }
 }
-
 ```
+
 На странице `pages/clusters/factory.tsx`
 
 ```
