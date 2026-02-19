@@ -250,10 +250,27 @@ def refreshTalosconfigs():
     if clusterName not in VIRTUALCLUSTERS:
       realClusterNames.append(clusterName)
   realClusterNames.sort()
+
+  previousNodePlacement = {}
+  for sourceClusterName, context in talosconfig['contexts'].items():
+    endpoints = context.get('endpoints') or []
+    nodes = context.get('nodes') or []
+    for endpointIp in endpoints:
+      previousNodePlacement[endpointIp] = {
+        'clusterName': sourceClusterName,
+        'kubeNodeType': 'controlplanes',
+      }
+    for nodeIp in nodes:
+      if nodeIp not in previousNodePlacement:
+        previousNodePlacement[nodeIp] = {
+          'clusterName': sourceClusterName,
+          'kubeNodeType': 'workers',
+        }
+
   print(f'refreshTalosconfig:: Before: talosconfig={json.dumps(talosconfig, indent=2)}')
   print(f'refreshTalosconfig:: realClusterNames={json.dumps(realClusterNames)}')
   newNodes = {'_Orphans': {'controlplanes': [], 'workers': []} , '_Unknown': {'controlplanes': [], 'workers': []} }
-  changed = True
+  changed = False
   nodeFileName = f'{maestroConfigDir}/nodes.json'
   nodes = {}
   if os.path.exists(nodeFileName):
@@ -261,10 +278,16 @@ def refreshTalosconfigs():
     nodes = json.load(fp)
     fp.close()
 
+  processedIps = set()
   for ip in list(nodes.keys()):
+    processedIps.add(ip)
     nodeStage = '';
     nodeInfo = {}
     nodeInfo['ip'] = ip
+    previousPlacement = previousNodePlacement.get(ip, {})
+    fromClusterName = previousPlacement.get('clusterName')
+    fromKubeNodeType = previousPlacement.get('kubeNodeType')
+
     if is_port_open(ip, 50000):
       toClusterName = nodeClusterName(realClusterNames, ip)
       if toClusterName not in newNodes:
@@ -273,8 +296,6 @@ def refreshTalosconfigs():
         newNodes[toClusterName]['controlplanes'] = []
       if 'workers'not in newNodes[toClusterName]:
         newNodes[toClusterName]['workers'] = []
-      if clusterName != toClusterName:
-        changed = True
       print(f'refreshTalosconfig:: ip={ip} port 50000 open toClusterName={toClusterName} ')
       if is_port_open(ip, 6443): # endpoint remains a controlplane endpoint
         kubeNodeType = 'controlplanes'
@@ -287,7 +308,13 @@ def refreshTalosconfigs():
       kubeNodeType = 'controlplanes'
       toClusterName = '_Orphans'
       nodeStage = 'unavialable or installing'
-      print(f'refreshTalosconfig:: ip={ip} ports  CLOSED (INIT?) controlplane remain in old cluster clusterName={clusterName} ')
+      print(
+        f'refreshTalosconfig:: ip={ip} ports  CLOSED (INIT?) controlplane remain in old cluster clusterName={fromClusterName if fromClusterName else "-"} '
+      )
+
+    if fromClusterName != toClusterName or fromKubeNodeType != kubeNodeType:
+      changed = True
+
     if toClusterName in VIRTUALCLUSTERS:
       if isMaintenance(ip):
         nodeStage = 'maintenance'
@@ -306,6 +333,10 @@ def refreshTalosconfigs():
         [spec, returncode, err] =talosgetspec(toClusterName, 'etcdmember', ip)
         nodeInfo['memberID'] = spec['memberID'] if 'memberID' in spec else '-'
     newNodes[toClusterName][kubeNodeType].append(nodeInfo)
+
+  previousIps = set(previousNodePlacement.keys())
+  if previousIps != processedIps:
+    changed = True
 
   print(f'refreshTalosconfig:: newNodes={json.dumps(newNodes, indent=2)}')
 
