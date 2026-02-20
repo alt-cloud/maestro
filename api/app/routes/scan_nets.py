@@ -1,7 +1,7 @@
 import json
 import os
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 
 import maestro
 from app.services.paths import get_home_dir, get_maestro_config_dir
@@ -38,7 +38,16 @@ def scan_nets():
         json.dump({"scanNets": scan_networks}, file_pointer, indent=2)
 
     command = ["nmap", "-p", "50000,6443", *scan_networks]
-    result = maestro.run_command(command, get_home_dir())
+    nmap_timeout_seconds = float(current_app.config["NMAP_COMMAND_TIMEOUT_SECONDS"])
+    try:
+        result = maestro.run_command(
+            command,
+            get_home_dir(),
+            timeout_seconds=nmap_timeout_seconds,
+        )
+    except maestro.CommandTimeoutError as err:
+        return jsonify({"error": str(err)}), 504
+
     if result.returncode != 0:
         return jsonify({"error": result.stderr.strip() or "nmap failed"}), 502
 

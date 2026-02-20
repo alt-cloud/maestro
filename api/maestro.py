@@ -12,6 +12,14 @@ VIRTUAL_CLUSTERS = ["_Orphans", "_Unknown"]
 TALOS_NODE_TYPE_TO_KUBE = {"endpoints": "controlplanes", "nodes": "workers"}
 
 
+class CommandTimeoutError(RuntimeError):
+    def __init__(self, args: list[str], timeout_seconds: float):
+        command = shlex.join(args)
+        super().__init__(f"Command timed out after {timeout_seconds:.1f}s: {command}")
+        self.command = command
+        self.timeout_seconds = timeout_seconds
+
+
 def _parse_json_stream(raw_output: str) -> list[dict[str, Any]]:
     normalized = f"[{raw_output.replace('}\n{', '},{')}]"
     return json.loads(normalized)
@@ -24,19 +32,31 @@ def _build_command_env(cluster_dir: str) -> dict[str, str]:
     return env
 
 
-def run_command(args: list[str], cluster_dir: str) -> subprocess.CompletedProcess[str]:
+def run_command(
+    args: list[str],
+    cluster_dir: str,
+    timeout_seconds: float | None = None,
+) -> subprocess.CompletedProcess[str]:
     if not args:
         raise ValueError("Command arguments cannot be empty")
+    if timeout_seconds is not None and timeout_seconds <= 0:
+        raise ValueError("timeout_seconds must be greater than zero")
 
-    print(f"run_command cwd={cluster_dir} args={shlex.join(args)}")
-    return subprocess.run(
-        args,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        cwd=cluster_dir,
-        encoding="utf-8",
-        env=_build_command_env(cluster_dir),
-    )
+    timeout_info = f" timeout={timeout_seconds}s" if timeout_seconds is not None else ""
+    print(f"run_command cwd={cluster_dir} args={shlex.join(args)}{timeout_info}")
+    try:
+        return subprocess.run(
+            args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd=cluster_dir,
+            encoding="utf-8",
+            env=_build_command_env(cluster_dir),
+            timeout=timeout_seconds,
+        )
+    except subprocess.TimeoutExpired as err:
+        effective_timeout = timeout_seconds if timeout_seconds is not None else float(err.timeout or 0.0)
+        raise CommandTimeoutError(args, effective_timeout) from err
 
 
 def start_background_command(args: list[str], cluster_dir: str, output_file: str) -> None:
@@ -116,7 +136,7 @@ def table_to_json(text: str) -> str:
     return json.dumps(rows, indent=2)
 
 
-def get_disk_name(ip: str) -> str:
+def get_disk_name(ip: str, timeout_seconds: float | None = None) -> str:
     home_dir = os.getenv("HOME", "")
     command = [
         "talosctl",
@@ -130,7 +150,7 @@ def get_disk_name(ip: str) -> str:
         ip,
         "-i",
     ]
-    result = run_command(command, home_dir)
+    result = run_command(command, home_dir, timeout_seconds=timeout_seconds)
 
     if result.returncode != 0:
         err = result.stderr.strip() or result.stdout.strip() or "talosctl discoveredvolume command failed"
@@ -201,7 +221,7 @@ def is_port_open(host: str, port: int, timeout: float = 3.0) -> bool:
     return result == 0
 
 
-def is_maintenance(ip: str) -> bool:
+def is_maintenance(ip: str, timeout_seconds: float | None = None) -> bool:
     home_dir = os.getenv("HOME", "")
     command = [
         "talosctl",
@@ -215,7 +235,7 @@ def is_maintenance(ip: str) -> bool:
         ip,
         "-i",
     ]
-    result = run_command(command, home_dir)
+    result = run_command(command, home_dir, timeout_seconds=timeout_seconds)
     print(f"is_maintenance:: returncode={result.returncode}")
     if result.returncode != 0:
         return False
@@ -235,7 +255,12 @@ def is_maintenance(ip: str) -> bool:
     return True
 
 
-def talos_get_spec(cluster_name: str, sub_cmd: str, node: str) -> tuple[dict[str, Any], int, str]:
+def talos_get_spec(
+    cluster_name: str,
+    sub_cmd: str,
+    node: str,
+    timeout_seconds: float | None = None,
+) -> tuple[dict[str, Any], int, str]:
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = f"{home_dir}/.maestro"
     cluster_config_dir = f"{maestro_config_dir}/{cluster_name}"
@@ -256,7 +281,7 @@ def talos_get_spec(cluster_name: str, sub_cmd: str, node: str) -> tuple[dict[str
     ]
     if cluster_name == "_Orphans":
         command.append("-i")
-    result = run_command(command, cluster_config_dir)
+    result = run_command(command, cluster_config_dir, timeout_seconds=timeout_seconds)
 
     if result.returncode == 0:
         json_str = result.stdout.strip()
@@ -317,7 +342,11 @@ def load_talos_configs() -> dict[str, dict[str, Any]]:
     return talos_configs
 
 
-def node_cluster_name(cluster_names: list[str], node: str) -> str:
+def node_cluster_name(
+    cluster_names: list[str],
+    node: str,
+    timeout_seconds: float | None = None,
+) -> str:
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = f"{home_dir}/.maestro"
     for cluster_name in cluster_names:
@@ -333,15 +362,18 @@ def node_cluster_name(cluster_names: list[str], node: str) -> str:
             "-o",
             "json",
         ]
-        result = run_command(command, cluster_config_dir)
+        result = run_command(command, cluster_config_dir, timeout_seconds=timeout_seconds)
         if result.returncode == 0:
             return cluster_name
-    if is_maintenance(node):
+    if is_maintenance(node, timeout_seconds=timeout_seconds):
         return "_Orphans"
     return "_Unknown"
 
 
-def refresh_talosconfigs() -> dict[str, dict[str, list[dict[str, Any]]]]:
+def refresh_talosconfigs(
+    command_timeout_seconds: float | None = None,
+    port_check_timeout_seconds: float = 3.0,
+) -> dict[str, dict[str, list[dict[str, Any]]]]:
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = f"{home_dir}/.maestro"
     print(f"refresh_talosconfigs:: before maestro_config_dir={maestro_config_dir}")
@@ -392,14 +424,18 @@ def refresh_talosconfigs() -> dict[str, dict[str, list[dict[str, Any]]]]:
         from_cluster_name = previous_placement.get("cluster_name")
         from_kube_node_type = previous_placement.get("kube_node_type")
 
-        if is_port_open(ip, 50000):
-            to_cluster_name = node_cluster_name(real_cluster_names, ip)
+        if is_port_open(ip, 50000, timeout=port_check_timeout_seconds):
+            to_cluster_name = node_cluster_name(
+                real_cluster_names,
+                ip,
+                timeout_seconds=command_timeout_seconds,
+            )
             new_nodes.setdefault(to_cluster_name, {})
             new_nodes[to_cluster_name].setdefault("controlplanes", [])
             new_nodes[to_cluster_name].setdefault("workers", [])
 
             print(f"refresh_talosconfigs:: ip={ip} port 50000 open to_cluster_name={to_cluster_name}")
-            if is_port_open(ip, 6443):
+            if is_port_open(ip, 6443, timeout=port_check_timeout_seconds):
                 kube_node_type = "controlplanes"
                 print(
                     f"refresh_talosconfigs:: ip={ip} port 6443 opened controlplane in cluster {to_cluster_name}"
@@ -423,24 +459,44 @@ def refresh_talosconfigs() -> dict[str, dict[str, list[dict[str, Any]]]]:
             changed = True
 
         if to_cluster_name in VIRTUAL_CLUSTERS:
-            if is_maintenance(ip):
+            if is_maintenance(ip, timeout_seconds=command_timeout_seconds):
                 node_stage = "maintenance"
             node_info["stage"] = node_stage if node_stage else "-"
         else:
-            machine_spec, return_code, _ = talos_get_spec(to_cluster_name, "machinestatus", ip)
+            machine_spec, return_code, _ = talos_get_spec(
+                to_cluster_name,
+                "machinestatus",
+                ip,
+                timeout_seconds=command_timeout_seconds,
+            )
             if return_code != 0 or not machine_spec:
                 continue
 
             node_info["stage"] = machine_spec.get("stage", "unavailable or installing")
             node_info["status"] = machine_spec.get("status", "-")
 
-            node_status_spec, return_code, _ = talos_get_spec(to_cluster_name, "nodestatus", ip)
+            node_status_spec, return_code, _ = talos_get_spec(
+                to_cluster_name,
+                "nodestatus",
+                ip,
+                timeout_seconds=command_timeout_seconds,
+            )
             if return_code == 0 and node_status_spec:
                 node_info["nodeReady"] = node_status_spec.get("nodeReady", "-")
-                manifest_spec, _, _ = talos_get_spec(to_cluster_name, "manifeststatus", ip)
+                manifest_spec, _, _ = talos_get_spec(
+                    to_cluster_name,
+                    "manifeststatus",
+                    ip,
+                    timeout_seconds=command_timeout_seconds,
+                )
                 manifests_applied = manifest_spec.get("manifestsApplied", []) if manifest_spec else []
                 node_info["manifestsApplied"] = manifests_applied if isinstance(manifests_applied, list) else []
-                etcd_member_spec, _, _ = talos_get_spec(to_cluster_name, "etcdmember", ip)
+                etcd_member_spec, _, _ = talos_get_spec(
+                    to_cluster_name,
+                    "etcdmember",
+                    ip,
+                    timeout_seconds=command_timeout_seconds,
+                )
                 node_info["memberID"] = etcd_member_spec.get("memberID", "-") if etcd_member_spec else "-"
 
         new_nodes[to_cluster_name][kube_node_type].append(node_info)
@@ -469,7 +525,11 @@ def refresh_talosconfigs() -> dict[str, dict[str, list[dict[str, Any]]]]:
                 talosconfig_dir = f"{maestro_config_dir}/{cluster_name}"
                 if node_ips:
                     command = ["talosctl", "config", talos_node_type[:-1], *node_ips]
-                    run_command(command, talosconfig_dir)
+                    run_command(
+                        command,
+                        talosconfig_dir,
+                        timeout_seconds=command_timeout_seconds,
+                    )
                 print(
                     "refresh_talosconfigs:: "
                     f"cluster_name={cluster_name} {talos_node_type}={json.dumps(node_ips)}"

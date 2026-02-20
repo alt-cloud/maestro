@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 
 import maestro
 from app.services.paths import get_cluster_config_dir, get_maestro_config_dir
@@ -22,6 +22,7 @@ def apply():
         return jsonify({"error": "JSON object payload is required"}), 400
 
     maestro_config_dir = get_maestro_config_dir()
+    talos_timeout_seconds = float(current_app.config["TALOS_COMMAND_TIMEOUT_SECONDS"])
 
     for cluster_name, actions in payload.items():
         try:
@@ -41,9 +42,13 @@ def apply():
                 return jsonify({"error": f"Missing controlplane node for cluster {cluster_name}"}), 400
 
             try:
-                install_disk = maestro.get_disk_name(controlplanes[0])
-            except RuntimeError as err:
-                return jsonify({"error": str(err)}), 502
+                install_disk = maestro.get_disk_name(
+                    controlplanes[0],
+                    timeout_seconds=talos_timeout_seconds,
+                )
+            except (RuntimeError, maestro.CommandTimeoutError) as err:
+                status = 504 if isinstance(err, maestro.CommandTimeoutError) else 502
+                return jsonify({"error": str(err)}), status
             os.makedirs(talosconfig_dir, exist_ok=True)
 
             kube_endpoint = f"https://{controlplanes[0]}:6443"
@@ -64,11 +69,25 @@ def apply():
                 "--install-disk",
                 install_disk,
             ]
-            result = maestro.run_command(command, talosconfig_dir)
+            try:
+                result = maestro.run_command(
+                    command,
+                    talosconfig_dir,
+                    timeout_seconds=talos_timeout_seconds,
+                )
+            except maestro.CommandTimeoutError as err:
+                return jsonify({"error": str(err)}), 504
             if result.returncode != 0:
                 return jsonify({"error": result.stderr.strip() or "Failed to generate cluster talosconfig"}), 502
 
-        config_result = maestro.run_command(["talosctl", "config", "info", "-o", "json"], talosconfig_dir)
+        try:
+            config_result = maestro.run_command(
+                ["talosctl", "config", "info", "-o", "json"],
+                talosconfig_dir,
+                timeout_seconds=talos_timeout_seconds,
+            )
+        except maestro.CommandTimeoutError as err:
+            return jsonify({"error": str(err)}), 504
         if config_result.returncode != 0:
             return jsonify({"error": config_result.stderr.strip() or "Failed to read talos config"}), 502
 
@@ -88,15 +107,26 @@ def apply():
             points = list(set(points + list(add_points[action])))
 
             command = ["talosctl", "config", node_type, *points]
-            result = maestro.run_command(command, talosconfig_dir)
+            try:
+                result = maestro.run_command(
+                    command,
+                    talosconfig_dir,
+                    timeout_seconds=talos_timeout_seconds,
+                )
+            except maestro.CommandTimeoutError as err:
+                return jsonify({"error": str(err)}), 504
             if result.returncode != 0:
                 return jsonify({"error": result.stderr.strip() or f"Failed to update {field_name}"}), 502
 
             for ip in ips:
                 try:
-                    install_disk = maestro.get_disk_name(ip)
-                except RuntimeError as err:
-                    return jsonify({"error": str(err)}), 502
+                    install_disk = maestro.get_disk_name(
+                        ip,
+                        timeout_seconds=talos_timeout_seconds,
+                    )
+                except (RuntimeError, maestro.CommandTimeoutError) as err:
+                    status = 504 if isinstance(err, maestro.CommandTimeoutError) else 502
+                    return jsonify({"error": str(err)}), status
                 patch = f'{{"machine":{{"install":{{"disk":"{install_disk}"}}}}}}'
                 command = [
                     "talosctl",
@@ -109,7 +139,14 @@ def apply():
                     "--file",
                     f"{action}.yaml",
                 ]
-                result = maestro.run_command(command, talosconfig_dir)
+                try:
+                    result = maestro.run_command(
+                        command,
+                        talosconfig_dir,
+                        timeout_seconds=talos_timeout_seconds,
+                    )
+                except maestro.CommandTimeoutError as err:
+                    return jsonify({"error": str(err)}), 504
                 if result.returncode != 0:
                     return jsonify({"error": result.stderr.strip() or f"Failed to apply config on {ip}"}), 502
 

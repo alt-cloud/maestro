@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, current_app, jsonify
 
 import maestro
 from app.services.paths import get_maestro_config_dir
@@ -20,4 +20,14 @@ def nodes_tree():
             maestro.init_talosconfig()
             break
 
-    return jsonify(maestro.refresh_talosconfigs())
+    talos_timeout_seconds = float(current_app.config["TALOS_COMMAND_TIMEOUT_SECONDS"])
+    port_check_timeout_seconds = float(current_app.config["PORT_CHECK_TIMEOUT_SECONDS"])
+    try:
+        return jsonify(
+            maestro.refresh_talosconfigs(
+                command_timeout_seconds=talos_timeout_seconds,
+                port_check_timeout_seconds=port_check_timeout_seconds,
+            )
+        )
+    except maestro.CommandTimeoutError as err:
+        return jsonify({"error": str(err)}), 504
