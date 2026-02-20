@@ -1,4 +1,14 @@
 #!/bin/sh
 set -eu
 
-apt-get install -y python3 python3-module-flask python3-module-flask-cors talosctl nmap yq
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+API_DIR="$(dirname "$SCRIPT_DIR")"
+VENV_DIR="$API_DIR/.venv"
+
+apt-get install -y python3 python3-pip python3-venv talosctl nmap yq
+
+python3 -m venv "$VENV_DIR"
+# shellcheck disable=SC1091
+. "$VENV_DIR/bin/activate"
+pip install -U pip
+pip install -r "$API_DIR/requirements.txt"

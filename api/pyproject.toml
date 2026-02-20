@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "maestro-api"
+version = "0.1.0"
+description = "Maestro backend API for the Headlamp plugin."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  { name = "Alexander Burmatov", email = "thatman@altlinux.org" },
+  { name = "Alexey Kostarev", email = "kaf@altlinux.org" },
+]
+dependencies = [
+  "Flask>=3.0,<4.0",
+  "Flask-Cors>=4.0,<5.0",
+  "PyYAML>=6.0,<7.0",
+]
+
+[project.scripts]
+maestro-api = "run:main"
+
+[tool.setuptools]
+py-modules = ["maestro", "run"]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
