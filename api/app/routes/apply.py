@@ -23,6 +23,7 @@ def apply():
 
     maestro_config_dir = get_maestro_config_dir()
     talos_timeout_seconds = float(current_app.config["TALOS_COMMAND_TIMEOUT_SECONDS"])
+    talos_verify_certificates = bool(current_app.config["TALOS_VERIFY_CERTIFICATES"])
 
     for cluster_name, actions in payload.items():
         try:
@@ -45,6 +46,7 @@ def apply():
                 install_disk = maestro.get_disk_name(
                     controlplanes[0],
                     timeout_seconds=talos_timeout_seconds,
+                    verify_certificates=talos_verify_certificates,
                 )
             except (RuntimeError, maestro.CommandTimeoutError) as err:
                 status = 504 if isinstance(err, maestro.CommandTimeoutError) else 502
@@ -74,6 +76,7 @@ def apply():
                     command,
                     talosconfig_dir,
                     timeout_seconds=talos_timeout_seconds,
+                    verify_certificates=talos_verify_certificates,
                 )
             except maestro.CommandTimeoutError as err:
                 return jsonify({"error": str(err)}), 504
@@ -85,6 +88,7 @@ def apply():
                 ["talosctl", "config", "info", "-o", "json"],
                 talosconfig_dir,
                 timeout_seconds=talos_timeout_seconds,
+                verify_certificates=talos_verify_certificates,
             )
         except maestro.CommandTimeoutError as err:
             return jsonify({"error": str(err)}), 504
@@ -112,6 +116,7 @@ def apply():
                     command,
                     talosconfig_dir,
                     timeout_seconds=talos_timeout_seconds,
+                    verify_certificates=talos_verify_certificates,
                 )
             except maestro.CommandTimeoutError as err:
                 return jsonify({"error": str(err)}), 504
@@ -123,6 +128,7 @@ def apply():
                     install_disk = maestro.get_disk_name(
                         ip,
                         timeout_seconds=talos_timeout_seconds,
+                        verify_certificates=talos_verify_certificates,
                     )
                 except (RuntimeError, maestro.CommandTimeoutError) as err:
                     status = 504 if isinstance(err, maestro.CommandTimeoutError) else 502
@@ -144,6 +150,7 @@ def apply():
                         command,
                         talosconfig_dir,
                         timeout_seconds=talos_timeout_seconds,
+                        verify_certificates=talos_verify_certificates,
                     )
                 except maestro.CommandTimeoutError as err:
                     return jsonify({"error": str(err)}), 504

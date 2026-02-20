@@ -22,11 +22,13 @@ def nodes_tree():
 
     talos_timeout_seconds = float(current_app.config["TALOS_COMMAND_TIMEOUT_SECONDS"])
     port_check_timeout_seconds = float(current_app.config["PORT_CHECK_TIMEOUT_SECONDS"])
+    talos_verify_certificates = bool(current_app.config["TALOS_VERIFY_CERTIFICATES"])
     try:
         return jsonify(
             maestro.refresh_talosconfigs(
                 command_timeout_seconds=talos_timeout_seconds,
                 port_check_timeout_seconds=port_check_timeout_seconds,
+                verify_certificates=talos_verify_certificates,
             )
         )
     except maestro.CommandTimeoutError as err:

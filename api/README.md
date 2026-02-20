@@ -48,6 +48,7 @@ Environment variables:
 - `MAESTRO_API_PORT` (default: `5000`)
 - `MAESTRO_API_DEBUG` (default: `false`)
 - `MAESTRO_CORS_ORIGINS` (default: `*`)
+- `MAESTRO_TALOS_VERIFY_CERTIFICATES` (default: `true`)
 - `MAESTRO_TALOS_COMMAND_TIMEOUT_SECONDS` (default: `30.0`)
 - `MAESTRO_NMAP_COMMAND_TIMEOUT_SECONDS` (default: `120.0`)
 - `MAESTRO_PORT_CHECK_TIMEOUT_SECONDS` (default: `3.0`)
