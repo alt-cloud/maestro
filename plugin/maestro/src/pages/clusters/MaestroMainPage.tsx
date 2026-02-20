@@ -239,7 +239,17 @@ function NodeColumns(props) {
   const cols = props.cols;
   const t = props.t;
   if (cols === undefined) {
-    return (<TableCell>-</TableCell>);
+    return (
+      <>
+        <TableCell>-</TableCell>
+        <TableCell>-</TableCell>
+        <TableCell>-</TableCell>
+        <TableCell>-</TableCell>
+        <TableCell>-</TableCell>
+        <TableCell>-</TableCell>
+        <TableCell>-</TableCell>
+      </>
+    );
   }
   const nodeType = props.nodeType;
   const node = cols['ip'];
