@@ -552,8 +552,13 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
 
   useEffect(() => {
     const controller = new AbortController();
+    let isFetching = false;
 
     const fetchData = async () => {
+      if (isFetching || controller.signal.aborted) {
+        return;
+      }
+      isFetching = true;
       try {
         const response = await fetch(buildServerUrl('/nodesTree'), {
           method: 'GET',
@@ -580,6 +585,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
         if (!controller.signal.aborted) {
           setLoading(false);
         }
+        isFetching = false;
       }
     };
 

@@ -129,8 +129,13 @@ const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }
 
   useEffect(() => {
     const controller = new AbortController();
+    let isFetching = false;
 
     const fetchData = async () => {
+      if (isFetching || controller.signal.aborted) {
+        return;
+      }
+      isFetching = true;
       try {
         const requestParams = new URLSearchParams();
         if (cluster) {
@@ -178,6 +183,7 @@ const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }
         if (!controller.signal.aborted) {
           setLoading(false);
         }
+        isFetching = false;
       }
     };
 
