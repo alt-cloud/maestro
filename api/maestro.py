@@ -235,14 +235,14 @@ def is_maintenance(ip: str) -> bool:
     return True
 
 
-def talos_get_spec(cluster_name: str, sub_cmd: str, node: str) -> tuple[Any, int, str]:
+def talos_get_spec(cluster_name: str, sub_cmd: str, node: str) -> tuple[dict[str, Any], int, str]:
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = f"{home_dir}/.maestro"
     cluster_config_dir = f"{maestro_config_dir}/{cluster_name}"
     if cluster_name == "_Unknown":
-        return "-", -1, ""
+        return {}, -1, ""
 
-    result_spec: Any = "-"
+    result_spec: dict[str, Any] = {}
     command = [
         "talosctl",
         "get",
@@ -261,8 +261,13 @@ def talos_get_spec(cluster_name: str, sub_cmd: str, node: str) -> tuple[Any, int
     if result.returncode == 0:
         json_str = result.stdout.strip()
         if json_str:
-            json_dict = json.loads(json_str)
-            result_spec = json_dict["spec"]
+            try:
+                json_dict = json.loads(json_str)
+            except json.JSONDecodeError as err:
+                return {}, result.returncode, f"{result.stderr.strip()} JSON parse error: {err}".strip()
+            spec = json_dict.get("spec")
+            if isinstance(spec, dict):
+                result_spec = spec
 
     return result_spec, result.returncode, result.stderr
 
@@ -423,21 +428,20 @@ def refresh_talosconfigs() -> dict[str, dict[str, list[dict[str, Any]]]]:
             node_info["stage"] = node_stage if node_stage else "-"
         else:
             machine_spec, return_code, _ = talos_get_spec(to_cluster_name, "machinestatus", ip)
-            if len(machine_spec) == 0:
+            if return_code != 0 or not machine_spec:
                 continue
 
-            node_info["stage"] = machine_spec["stage"] if "stage" in machine_spec else "unavailable or installing"
-            node_info["status"] = machine_spec["status"] if "status" in machine_spec else "-"
+            node_info["stage"] = machine_spec.get("stage", "unavailable or installing")
+            node_info["status"] = machine_spec.get("status", "-")
 
             node_status_spec, return_code, _ = talos_get_spec(to_cluster_name, "nodestatus", ip)
-            if return_code == 0:
-                node_info["nodeReady"] = node_status_spec["nodeReady"] if "nodeReady" in node_status_spec else "-"
+            if return_code == 0 and node_status_spec:
+                node_info["nodeReady"] = node_status_spec.get("nodeReady", "-")
                 manifest_spec, _, _ = talos_get_spec(to_cluster_name, "manifeststatus", ip)
-                node_info["manifestsApplied"] = (
-                    manifest_spec["manifestsApplied"] if "manifestsApplied" in manifest_spec else []
-                )
+                manifests_applied = manifest_spec.get("manifestsApplied", []) if manifest_spec else []
+                node_info["manifestsApplied"] = manifests_applied if isinstance(manifests_applied, list) else []
                 etcd_member_spec, _, _ = talos_get_spec(to_cluster_name, "etcdmember", ip)
-                node_info["memberID"] = etcd_member_spec["memberID"] if "memberID" in etcd_member_spec else "-"
+                node_info["memberID"] = etcd_member_spec.get("memberID", "-") if etcd_member_spec else "-"
 
         new_nodes[to_cluster_name][kube_node_type].append(node_info)
 
