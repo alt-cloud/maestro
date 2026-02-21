@@ -113,6 +113,7 @@ function ServiceCell({ cluster, columnId, controlPlane, node, nodeType, value }:
 
 const ServiceCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }) => {
   const { t } = useTranslation();
+  const failedToLoadDataText = t('common.failedToLoadData');
   const intervalOptions = useMemo(() => getRefreshIntervalOptions(t), [t]);
   const [timeout, setTimeout] = useState<IntervalValue>(alignRefreshInterval(delay));
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -190,7 +191,7 @@ const ServiceCommandPage: React.FC<{ delay?: string | number | null }> = ({ dela
         if (err.name === 'AbortError') {
           return;
         }
-        setError(err.message || t('common.failedToLoadData'));
+        setError(err.message || failedToLoadDataText);
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -214,7 +215,7 @@ const ServiceCommandPage: React.FC<{ delay?: string | number | null }> = ({ dela
       clearInterval(intervalId);
       controller.abort();
     };
-  }, [cluster, commandPath, node, t, timeout]);
+  }, [cluster, commandPath, node, failedToLoadDataText, timeout]);
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);

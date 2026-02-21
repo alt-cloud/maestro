@@ -98,6 +98,7 @@ function createRows(columnGroups: ColumnGroups, dataRows: any[]): TableRowData[]
 
 const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }) => {
   const { t } = useTranslation();
+  const failedToLoadDataText = t('common.failedToLoadData');
   const intervalOptions = useMemo(() => getRefreshIntervalOptions(t), [t]);
   const [timeout, setTimeout] = useState<IntervalValue>(alignRefreshInterval(delay));
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -178,7 +179,7 @@ const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }
         if (err.name === 'AbortError') {
           return;
         }
-        setError(err.message || t('common.failedToLoadData'));
+        setError(err.message || failedToLoadDataText);
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -202,7 +203,7 @@ const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }
       clearInterval(intervalId);
       controller.abort();
     };
-  }, [cluster, command, commandSet, node, t, timeout]);
+  }, [cluster, command, commandSet, node, failedToLoadDataText, timeout]);
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);

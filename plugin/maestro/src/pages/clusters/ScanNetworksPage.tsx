@@ -44,6 +44,7 @@ interface SnackbarState {
 
 const ScanNetworksPage: React.FC<{}> = () => {
   const { t } = useTranslation();
+  const failedToLoadDataText = t('common.failedToLoadData');
   const [inputValue, setInputValue] = useState('');
   const [scanNetworks, setScanNetworks] = useState<string[]>([]);
   const [formError, setFormError] = useState('');
@@ -81,7 +82,7 @@ const ScanNetworksPage: React.FC<{}> = () => {
         if (err.name === 'AbortError') {
           return;
         }
-        setFetchError(err.message || t('common.failedToLoadData'));
+        setFetchError(err.message || t(failedToLoadDataText));
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -94,7 +95,7 @@ const ScanNetworksPage: React.FC<{}> = () => {
     return () => {
       controller.abort();
     };
-  }, [t]);
+  }, [failedToLoadDataText]);
 
   const handleAdd = () => {
     const value = inputValue.trim();

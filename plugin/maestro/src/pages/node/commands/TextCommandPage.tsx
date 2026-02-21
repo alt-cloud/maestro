@@ -10,6 +10,7 @@ import { alignRefreshInterval, getRefreshIntervalOptions, IntervalValue } from '
 
 const TextCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }) => {
   const { t } = useTranslation();
+  const failedToLoadDataText = t('common.failedToLoadData');
   const intervalOptions = useMemo(() => getRefreshIntervalOptions(t), [t]);
   const [timeout, setTimeout] = useState<IntervalValue>(alignRefreshInterval(delay));
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -74,7 +75,7 @@ const TextCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }
         if (err.name === 'AbortError') {
           return;
         }
-        setError(err.message || t('common.failedToLoadData'));
+        setError(err.message || failedToLoadDataText);
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -98,7 +99,7 @@ const TextCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }
       clearInterval(intervalId);
       controller.abort();
     };
-  }, [cluster, commandPath, node, t, timeout]);
+  }, [cluster, commandPath, node, failedToLoadDataText, timeout]);
 
   return (
     <SectionBox title="" textAlign="left" paddingTop={2}>
