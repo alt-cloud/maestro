@@ -245,8 +245,8 @@
       {
         "id": "processors",
         "aliases": "cpus cpu processor",
-        "command": "cpus",
-        "name": "cpus"
+        "command": "processors",
+        "name": "processors"
       },
       {
         "id": "systeminformations",
@@ -487,8 +487,8 @@
       {
         "id": "namespaces",
         "aliases": "ns namespace",
-        "command": "ns",
-        "name": "ns"
+        "command": "namespace",
+        "name": "namespace"
       },
       {
         "id": "resourcedefinitions",
