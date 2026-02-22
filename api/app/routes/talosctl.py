@@ -81,7 +81,8 @@ def talosctl():
             return jsonify({"error": str(err)}), 504
         if result.returncode != 0:
             return jsonify({"error": result.stderr.strip() or "talosctl get command failed"}), 502
-
+        if len(result.stdout.strip()) == 0:
+            result.stdout = '{}'
         try:
             rows = parse_talos_json_stream(result.stdout)
         except json.JSONDecodeError as err:
