@@ -132,12 +132,17 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const responseRows = await response.json();
+        let responseRows = await response.json();
+        if (responseRows.length == 2 && responseRows[0].length > 0 && responseRows[0][0] == '[') {
+          setError(responseRows[1]);
+          responseRows = JSON.parse(responseRows[0])
+        } else {
+          setError(null);
+        }
         const [nextColumns, nextRows] = createRows(responseRows);
 
         setRows(nextRows);
         setColumns(nextColumns);
-        setError(null);
 
         if (nextColumns.length > 0 && !orderBy) {
           setOrderBy(nextColumns[0].id);
@@ -217,11 +222,7 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
           <RefreshIntervalControl onChange={setTimeout} options={intervalOptions} value={timeout} />
         </Box>
 
-        {loading && <Alert severity="info">{t('common.loadingCommandOutput')}</Alert>}
-        {error && <Alert severity="error">{error}</Alert>}
-        {!loading && !error && rows.length === 0 && <Alert severity="warning">{t('common.noDataReceived')}</Alert>}
-
-        {!loading && !error && rows.length > 0 && (
+        {!loading && rows.length > 0 && (
           <>
             <TableContainer sx={{ maxHeight: 'calc(100vh - 320px)' }}>
               <Table size="small" stickyHeader>
@@ -267,6 +268,9 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
             />
           </>
         )}
+        {loading && <Alert severity="info">{t('common.loadingCommandOutput')}</Alert>}
+        {error && <Alert severity="error">{error}</Alert>}
+        {!loading && !error && rows.length === 0 && <Alert severity="warning">{t('common.noDataReceived')}</Alert>}
       </Paper>
     </SectionBox>
   );

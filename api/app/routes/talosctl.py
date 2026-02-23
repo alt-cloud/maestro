@@ -108,9 +108,9 @@ def talosctl():
             )
         except maestro.CommandTimeoutError as err:
             return jsonify({"error": str(err)}), 504
-        if result.returncode != 0 and table_cmd not in [ 'usage' , 'time']:
-            return jsonify({"error": result.stderr.strip() or "talosctl table command failed"}), 502
         table_json = maestro.table_to_json(result.stdout)
+        if result.returncode != 0 :
+            table_json = [ table_json, result.stderr ]
         return table_json, 200, {"Content-Type": "application/json"}
 
     if cmd == "support":
