@@ -79,7 +79,6 @@ const NodePage: React.FC<{}> = () => {
   const overviewLinks: CommandLink[] = [
     { label: t('nodePage.links.getResources'), path: buildPath('/maestro/node/get') },
     { label: t('nodePage.links.services'), path: buildPath('/maestro/node/service') },
-    { label: t('nodePage.links.serviceLogs'), path: buildPath('/maestro/node/logs') },
     { label: t('nodePage.links.containers'), path: buildPath('/maestro/node/containers') },
   ];
 
