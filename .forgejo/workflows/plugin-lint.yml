@@ -1,0 +1,33 @@
+name: Plugin Lint
+
+on:
+  pull_request:
+    paths:
+      - 'plugin/maestro/**'
+      - '.forgejo/workflows/plugin-lint.yml'
+
+jobs:
+  plugin-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: plugin/maestro/package-lock.json
+
+      - name: Install dependencies
+        working-directory: plugin/maestro
+        run: npm ci
+
+      - name: Run plugin lint
+        working-directory: plugin/maestro
+        run: npm run lint
+
+      - name: Run plugin typecheck
+        working-directory: plugin/maestro
+        run: npm run tsc
