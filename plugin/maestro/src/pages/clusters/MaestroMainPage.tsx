@@ -31,31 +31,26 @@ const clusterStatusOptions: StatusOption[] = [
   {
     value: 'running',
     labelKey: 'clustersPage.stages.running',
-    itemColor: '#e8f5e9',
     markerColor: '#2e7d32',
   },
   {
     value: 'restart',
     labelKey: 'clustersPage.stages.restart',
-    itemColor: '#fff8e1',
     markerColor: '#ed6c02',
   },
   {
     value: 'reboot',
     labelKey: 'clustersPage.stages.reboot',
-    itemColor: '#fff8e1',
     markerColor: '#ed6c02',
   },
   {
     value: 'shutdown',
     labelKey: 'clustersPage.stages.shutdown',
-    itemColor: '#fff8e1',
     markerColor: '#ed6c02',
   },
   {
     value: 'reset',
     labelKey: 'clustersPage.stages.reset',
-    itemColor: '#ffebee',
     markerColor: '#d32f2f',
   },
 ];
@@ -63,19 +58,16 @@ const orphanStatusOptions: StatusOption[] = [
   {
     value: 'maintenance',
     labelKey: 'clustersPage.stages.maintenance',
-    itemColor: '#e8f5e9',
     markerColor: '#ed6c02',
   },
   {
     value: 'controlplane',
     labelKey: 'clustersPage.stages.controlplane',
-    itemColor: '#e8f5e9',
     markerColor: '#2e7d32',
   },
   {
     value: 'worker',
     labelKey: 'clustersPage.stages.worker',
-    itemColor: '#e8f5e9',
     markerColor: '#2e7d32',
   },
 ];
@@ -93,7 +85,6 @@ interface Column {
 interface StatusOption {
   value: string;
   labelKey: string;
-  itemColor: string;
   markerColor: string;
 }
 
@@ -159,13 +150,16 @@ function NodeStageSelect(props) {
           key={option.value}
           value={option.value}
           sx={{
-            backgroundColor: option.itemColor,
+            color: 'text.primary',
             '&:hover': {
-              backgroundColor: `${option.itemColor}`,
+              backgroundColor: 'action.hover',
             },
             '&.Mui-selected': {
-              backgroundColor: option.itemColor,
-              fontWeight: 'bold',
+              backgroundColor: 'action.selected',
+              fontWeight: 600,
+            },
+            '&.Mui-selected:hover': {
+              backgroundColor: 'action.selected',
             },
             display: 'flex',
             alignItems: 'center',
