@@ -44,7 +44,6 @@ def talosctl():
         return jsonify({"error": str(err)}), 400
 
     talos_timeout_seconds = float(current_app.config["TALOS_COMMAND_TIMEOUT_SECONDS"])
-    talos_verify_certificates = bool(current_app.config["TALOS_VERIFY_CERTIFICATES"])
 
     if cmd == "get":
         missing = _missing_query_params(params, ("subCommand",))
@@ -75,7 +74,6 @@ def talosctl():
                 command,
                 talosconfig_dir,
                 timeout_seconds=talos_timeout_seconds,
-                verify_certificates=talos_verify_certificates,
             )
         except maestro.CommandTimeoutError as err:
             return jsonify({"error": str(err)}), 504
@@ -104,7 +102,6 @@ def talosctl():
                 command,
                 talosconfig_dir,
                 timeout_seconds=talos_timeout_seconds,
-                verify_certificates=talos_verify_certificates,
             )
         except maestro.CommandTimeoutError as err:
             return jsonify({"error": str(err)}), 504
@@ -124,7 +121,6 @@ def talosctl():
                 command,
                 talosconfig_dir,
                 timeout_seconds=talos_timeout_seconds,
-                verify_certificates=talos_verify_certificates,
             )
         except maestro.CommandTimeoutError as err:
             return jsonify({"error": str(err)}), 504
@@ -152,7 +148,6 @@ def talosctl():
                 command,
                 talosconfig_dir,
                 timeout_seconds=talos_timeout_seconds,
-                verify_certificates=talos_verify_certificates,
             )
         except maestro.CommandTimeoutError as err:
             return jsonify({"error": str(err)}), 504

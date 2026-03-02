@@ -32,36 +32,21 @@ def _build_command_env(cluster_dir: str) -> dict[str, str]:
     return env
 
 
-def _with_optional_insecure_flag(args: list[str], verify_certificates: bool) -> list[str]:
-    if verify_certificates:
-        return list(args)
-    if not args or args[0] != "talosctl":
-        return list(args)
-    if "--insecure" in args or "-i" in args:
-        return list(args)
-    return [args[0], "--insecure", *args[1:]]
-
-
 def run_command(
     args: list[str],
     cluster_dir: str,
     timeout_seconds: float | None = None,
-    verify_certificates: bool = True,
 ) -> subprocess.CompletedProcess[str]:
     if not args:
         raise ValueError("Command arguments cannot be empty")
     if timeout_seconds is not None and timeout_seconds <= 0:
         raise ValueError("timeout_seconds must be greater than zero")
 
-    prepared_args = _with_optional_insecure_flag(args, verify_certificates)
     timeout_info = f" timeout={timeout_seconds}s" if timeout_seconds is not None else ""
-    print(
-        f"run_command cwd={cluster_dir} verify_certificates={verify_certificates} "
-        f"args={shlex.join(prepared_args)}{timeout_info}"
-    )
+    print(f"run_command cwd={cluster_dir} args={shlex.join(args)}{timeout_info}")
     try:
         return subprocess.run(
-            prepared_args,
+            args,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             cwd=cluster_dir,
@@ -71,7 +56,7 @@ def run_command(
         )
     except subprocess.TimeoutExpired as err:
         effective_timeout = timeout_seconds if timeout_seconds is not None else float(err.timeout or 0.0)
-        raise CommandTimeoutError(prepared_args, effective_timeout) from err
+        raise CommandTimeoutError(args, effective_timeout) from err
 
 
 def start_background_command(args: list[str], cluster_dir: str, output_file: str) -> None:
@@ -151,11 +136,7 @@ def table_to_json(text: str) -> str:
     return json.dumps(rows, indent=2)
 
 
-def get_disk_name(
-    ip: str,
-    timeout_seconds: float | None = None,
-    verify_certificates: bool = True,
-) -> str:
+def get_disk_name(ip: str, timeout_seconds: float | None = None) -> str:
     home_dir = os.getenv("HOME", "")
     command = [
         "talosctl",
@@ -169,12 +150,7 @@ def get_disk_name(
         ip,
         "-i",
     ]
-    result = run_command(
-        command,
-        home_dir,
-        timeout_seconds=timeout_seconds,
-        verify_certificates=verify_certificates,
-    )
+    result = run_command(command, home_dir, timeout_seconds=timeout_seconds)
 
     if result.returncode != 0:
         err = result.stderr.strip() or result.stdout.strip() or "talosctl discoveredvolume command failed"
@@ -245,11 +221,7 @@ def is_port_open(host: str, port: int, timeout: float = 3.0) -> bool:
     return result == 0
 
 
-def is_maintenance(
-    ip: str,
-    timeout_seconds: float | None = None,
-    verify_certificates: bool = True,
-) -> bool:
+def is_maintenance(ip: str, timeout_seconds: float | None = None) -> bool:
     home_dir = os.getenv("HOME", "")
     command = [
         "talosctl",
@@ -263,12 +235,7 @@ def is_maintenance(
         ip,
         "-i",
     ]
-    result = run_command(
-        command,
-        home_dir,
-        timeout_seconds=timeout_seconds,
-        verify_certificates=verify_certificates,
-    )
+    result = run_command(command, home_dir, timeout_seconds=timeout_seconds)
     print(f"is_maintenance:: returncode={result.returncode}")
     if result.returncode != 0:
         return False
@@ -293,7 +260,6 @@ def talos_get_spec(
     sub_cmd: str,
     node: str,
     timeout_seconds: float | None = None,
-    verify_certificates: bool = True,
 ) -> tuple[dict[str, Any], int, str]:
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = f"{home_dir}/.maestro"
@@ -315,12 +281,7 @@ def talos_get_spec(
     ]
     if cluster_name == "_Orphans":
         command.append("-i")
-    result = run_command(
-        command,
-        cluster_config_dir,
-        timeout_seconds=timeout_seconds,
-        verify_certificates=verify_certificates,
-    )
+    result = run_command(command, cluster_config_dir, timeout_seconds=timeout_seconds)
 
     if result.returncode == 0:
         json_str = result.stdout.strip()
@@ -385,7 +346,6 @@ def node_cluster_name(
     cluster_names: list[str],
     node: str,
     timeout_seconds: float | None = None,
-    verify_certificates: bool = True,
 ) -> str:
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = f"{home_dir}/.maestro"
@@ -402,19 +362,10 @@ def node_cluster_name(
             "-o",
             "json",
         ]
-        result = run_command(
-            command,
-            cluster_config_dir,
-            timeout_seconds=timeout_seconds,
-            verify_certificates=verify_certificates,
-        )
+        result = run_command(command, cluster_config_dir, timeout_seconds=timeout_seconds)
         if result.returncode == 0:
             return cluster_name
-    if is_maintenance(
-        node,
-        timeout_seconds=timeout_seconds,
-        verify_certificates=verify_certificates,
-    ):
+    if is_maintenance(node, timeout_seconds=timeout_seconds):
         return "_Orphans"
     return "_Unknown"
 
@@ -422,7 +373,6 @@ def node_cluster_name(
 def refresh_talosconfigs(
     command_timeout_seconds: float | None = None,
     port_check_timeout_seconds: float = 3.0,
-    verify_certificates: bool = True,
 ) -> dict[str, dict[str, list[dict[str, Any]]]]:
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = f"{home_dir}/.maestro"
@@ -479,7 +429,6 @@ def refresh_talosconfigs(
                 real_cluster_names,
                 ip,
                 timeout_seconds=command_timeout_seconds,
-                verify_certificates=verify_certificates,
             )
             new_nodes.setdefault(to_cluster_name, {})
             new_nodes[to_cluster_name].setdefault("controlplanes", [])
@@ -510,11 +459,7 @@ def refresh_talosconfigs(
             changed = True
 
         if to_cluster_name in VIRTUAL_CLUSTERS:
-            if is_maintenance(
-                ip,
-                timeout_seconds=command_timeout_seconds,
-                verify_certificates=verify_certificates,
-            ):
+            if is_maintenance(ip, timeout_seconds=command_timeout_seconds):
                 node_stage = "maintenance"
             node_info["stage"] = node_stage if node_stage else "-"
         else:
@@ -523,7 +468,6 @@ def refresh_talosconfigs(
                 "machinestatus",
                 ip,
                 timeout_seconds=command_timeout_seconds,
-                verify_certificates=verify_certificates,
             )
             if return_code != 0 or not machine_spec:
                 continue
@@ -536,7 +480,6 @@ def refresh_talosconfigs(
                 "nodestatus",
                 ip,
                 timeout_seconds=command_timeout_seconds,
-                verify_certificates=verify_certificates,
             )
             if return_code == 0 and node_status_spec:
                 node_info["nodeReady"] = node_status_spec.get("nodeReady", "-")
@@ -545,7 +488,6 @@ def refresh_talosconfigs(
                     "manifeststatus",
                     ip,
                     timeout_seconds=command_timeout_seconds,
-                    verify_certificates=verify_certificates,
                 )
                 manifests_applied = manifest_spec.get("manifestsApplied", []) if manifest_spec else []
                 node_info["manifestsApplied"] = manifests_applied if isinstance(manifests_applied, list) else []
@@ -554,7 +496,6 @@ def refresh_talosconfigs(
                     "etcdmember",
                     ip,
                     timeout_seconds=command_timeout_seconds,
-                    verify_certificates=verify_certificates,
                 )
                 node_info["memberID"] = etcd_member_spec.get("memberID", "-") if etcd_member_spec else "-"
 
@@ -588,7 +529,6 @@ def refresh_talosconfigs(
                         command,
                         talosconfig_dir,
                         timeout_seconds=command_timeout_seconds,
-                        verify_certificates=verify_certificates,
                     )
                 print(
                     "refresh_talosconfigs:: "
