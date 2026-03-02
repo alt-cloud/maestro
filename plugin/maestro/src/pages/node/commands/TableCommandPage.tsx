@@ -133,9 +133,9 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
         }
 
         let responseRows = await response.json();
-        if (responseRows.length == 2 && responseRows[0].length > 0 && responseRows[0][0] == '[') {
+        if (responseRows.length === 2 && responseRows[0].length > 0 && responseRows[0][0] === '[') {
           setError(responseRows[1]);
-          responseRows = JSON.parse(responseRows[0])
+          responseRows = JSON.parse(responseRows[0]);
         } else {
           setError(null);
         }
