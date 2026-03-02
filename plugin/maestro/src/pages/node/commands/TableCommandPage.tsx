@@ -27,6 +27,15 @@ interface Column {
   sortable?: boolean;
 }
 
+function normalizeErrorMessage(value: unknown): string {
+  const text = String(value ?? '');
+  return text
+    .replace(/\r\n/g, '\n')
+    .replace(/\\r\\n/g, '\n')
+    .replace(/\\n/g, '\n')
+    .replace(/\\t/g, '\t');
+}
+
 function normalizeRowValue(value: unknown): string {
   if (value === null || typeof value === 'undefined') {
     return '';
@@ -134,7 +143,7 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
 
         let responseRows = await response.json();
         if (responseRows.length === 2 && responseRows[0].length > 0 && responseRows[0][0] === '[') {
-          setError(responseRows[1]);
+          setError(normalizeErrorMessage(responseRows[1]));
           responseRows = JSON.parse(responseRows[0]);
         } else {
           setError(null);
@@ -151,7 +160,7 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
         if (err.name === 'AbortError') {
           return;
         }
-        setError(err.message || failedToLoadDataText);
+        setError(normalizeErrorMessage(err.message || failedToLoadDataText));
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -269,7 +278,11 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
           </>
         )}
         {loading && <Alert severity="info">{t('common.loadingCommandOutput')}</Alert>}
-        {error && <Alert severity="error">{error}</Alert>}
+        {error && (
+          <Alert severity="error" sx={{ '& .MuiAlert-message': { whiteSpace: 'pre-wrap' } }}>
+            {error}
+          </Alert>
+        )}
         {!loading && !error && rows.length === 0 && <Alert severity="warning">{t('common.noDataReceived')}</Alert>}
       </Paper>
     </SectionBox>
