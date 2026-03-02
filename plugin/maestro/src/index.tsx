@@ -167,14 +167,17 @@ registerMaestroPage({
   sidebar: maestroSidebar,
 });
 
-registerMaestroResource({
-  name: 'NodeGet',
-  listPath: '/maestro/node/get',
-  listRouteName: 'maestro_node_get_tree',
-  listComponent: GetTreePage,
-  detailPath: '/maestro/node/get/:commandSet/:command',
-  detailRouteName: 'maestro_node_get_resource',
-  detailComponent: GetResourcePage,
+registerMaestroPage({
+  path: '/maestro/node/get',
+  name: 'maestro_node_get_tree',
+  component: GetTreePage,
+  sidebar: maestroSidebar,
+});
+
+registerMaestroPage({
+  path: '/maestro/node/get/:commandSet/:command',
+  name: 'maestro_node_get_resource',
+  component: GetResourcePage,
   sidebar: maestroSidebar,
 });
 
