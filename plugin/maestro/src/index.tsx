@@ -132,7 +132,7 @@ registerSidebarEntry({
 
 registerSidebarEntry({
   name: 'maestro',
-  label: 'Maestro Area',
+  label: 'Maestro',
   url: '/maestro',
   icon: 'mdi:music-note-outline',
   sidebar: 'myplugin',
