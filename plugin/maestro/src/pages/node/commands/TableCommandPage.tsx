@@ -75,6 +75,25 @@ function createRows(dataRows: any[]): [Column[], TableRowData[]] {
   return [columns, rows];
 }
 
+function toBytes(fullStr, numStr) {
+  const scaleStr = fullStr.substr(numStr.length).trim().toUpperCase()
+  const num = parseInt(numStr, 10);
+  if (scaleStr.length == 0)
+    return num;
+  switch (scaleStr) {
+    case 'KB': return num * 1000;
+      break;
+    case 'MB': return num * 1000000;
+      break;
+    case 'GB': return num * 1000000000;
+      break;
+    case 'TB': return num * 1000000000000;
+      break;
+    default:
+      return num;
+  }
+}
+
 const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }) => {
   const { t } = useTranslation();
   const failedToLoadDataText = t('common.failedToLoadData');
@@ -202,12 +221,13 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
   };
 
   const sortedRows = [...rows].sort((a, b) => {
-    const left = String(a[orderBy] ?? '');
-    const right = String(b[orderBy] ?? '');
+    let left = String(a[orderBy] ?? '');
+    let right = String(b[orderBy] ?? '');
 
     // Extract the number from the beginning of the string, if there is one.
-    const matchLeft = left.match(/^(\d+)/);
-    const matchRight = right.match(/^(\d+)/);
+    const numberRegex = /^(\d+\.?\d*|\.\d+)/;
+    const matchLeft = left.match(numberRegex);
+    const matchRight = right.match(numberRegex);
 
     const hasNumLeft = matchLeft !== null;
     const hasNumRight = matchRight !== null;
@@ -216,10 +236,9 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
 
     // Both lines start with numbers - numeric comparison
     if (hasNumLeft && hasNumRight) {
-      const numLeft = parseInt(matchLeft[1], 10);
-      const numRight = parseInt(matchRight[1], 10);
+      const numLeft = toBytes(left, matchLeft[1]);
+      const numRight = toBytes(right, matchRight[1]);
       comparison = numLeft - numRight;
-
       // If the numbers are equal, we compare the rest of the string
       if (comparison === 0) {
         comparison = left.localeCompare(right);
