@@ -236,9 +236,39 @@ const ServiceCommandPage: React.FC<{ delay?: string | number | null }> = ({ dela
     const left = String(a[orderBy] ?? '');
     const right = String(b[orderBy] ?? '');
 
-    if (left < right) return order === 'asc' ? -1 : 1;
-    if (left > right) return order === 'asc' ? 1 : -1;
-    return 0;
+    // Extract the number from the beginning of the string, if there is one.
+    const matchLeft = left.match(/^(\d+)/);
+    const matchRight = right.match(/^(\d+)/);
+
+    const hasNumLeft = matchLeft !== null;
+    const hasNumRight = matchRight !== null;
+
+    let comparison = 0;
+
+    // Both lines start with numbers - numeric comparison
+    if (hasNumLeft && hasNumRight) {
+      const numLeft = parseInt(matchLeft[1], 10);
+      const numRight = parseInt(matchRight[1], 10);
+      comparison = numLeft - numRight;
+
+      // If the numbers are equal, we compare the rest of the string
+      if (comparison === 0) {
+        comparison = left.localeCompare(right);
+      }
+    }
+    // Only one line starts with a number - the number takes precedence
+    else if (hasNumLeft) {
+      comparison = -1;
+    } else if (hasNumRight) {
+      comparison = 1;
+    }
+    //Both without numbers - text comparison
+    else {
+      comparison = left.localeCompare(right);
+    }
+
+    // We take into account the sorting direction
+    return order === 'asc' ? comparison : -comparison;
   });
 
   const paginatedRows = sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
