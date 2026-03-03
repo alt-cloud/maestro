@@ -52,8 +52,9 @@ interface MaestroResourceRegistrationConfig {
 }
 
 const homeSidebar: SidebarConfig = { item: 'maestroplugin', sidebar: 'HOME' };
-const maestroSidebar: SidebarConfig = { item: 'maestro', sidebar: 'myplugin' };
 const clustersSidebar: SidebarConfig = { item: 'Clusters', sidebar: 'HOME' };
+const scanNetworksSidebar: SidebarConfig = { item: 'ScanNetworks', sidebar: 'HOME' };
+const nodeSidebar: SidebarConfig = { item: 'maestroplugin', sidebar: 'HOME' };
 
 function registerMaestroPage(config: MaestroPageRegistrationConfig) {
   const { path, name, component: PageComponent, exact = true, sidebar } = config;
@@ -122,28 +123,20 @@ registerSidebarEntry({
   sidebar: 'HOME',
 });
 
-registerSidebarEntry({
-  name: 'backToRoot',
-  label: 'Back to Kubernetes',
-  url: '/',
-  icon: 'mdi:hexagon',
-  sidebar: 'myplugin',
-});
-
-registerSidebarEntry({
-  name: 'maestro',
-  label: 'Maestro',
-  url: '/maestro',
-  icon: 'mdi:music-note-outline',
-  sidebar: 'myplugin',
-});
-
 registerMaestroResource({
   name: 'Clusters',
   listPath: '/maestro',
   listRouteName: 'maestro_home',
   listComponent: MaestroMainPage,
   sidebar: homeSidebar,
+});
+
+registerSidebarEntry({
+  name: 'ScanNetworks',
+  label: 'Scan networks',
+  url: '/maestro/cluster/scanNets',
+  parent: 'maestroplugin',
+  sidebar: 'HOME',
 });
 
 registerMaestroPage({
@@ -157,35 +150,35 @@ registerMaestroPage({
   path: '/maestro/cluster/scanNets',
   name: 'maestro_cluster_scan_nets',
   component: ScanNetworksPage,
-  sidebar: clustersSidebar,
+  sidebar: scanNetworksSidebar,
 });
 
 registerMaestroPage({
   path: '/maestro/node',
   name: 'maestro_node',
   component: NodePage,
-  sidebar: maestroSidebar,
+  sidebar: nodeSidebar,
 });
 
 registerMaestroPage({
   path: '/maestro/node/get',
   name: 'maestro_node_get_tree',
   component: GetTreePage,
-  sidebar: maestroSidebar,
+  sidebar: nodeSidebar,
 });
 
 registerMaestroPage({
   path: '/maestro/node/get/:commandSet/:command',
   name: 'maestro_node_get_resource',
   component: GetResourcePage,
-  sidebar: maestroSidebar,
+  sidebar: nodeSidebar,
 });
 
 registerMaestroPage({
   path: '/maestro/node/service',
   name: 'maestro_node_service',
   component: ServiceCommandPage,
-  sidebar: maestroSidebar,
+  sidebar: nodeSidebar,
 });
 
 const textCommandRoutes = [
@@ -205,7 +198,7 @@ textCommandRoutes.forEach(route => {
     name: route.name,
     component: TextCommandPage,
     exact: route.exact,
-    sidebar: maestroSidebar,
+    sidebar: nodeSidebar,
   });
 });
 
@@ -229,6 +222,6 @@ tableCommandPaths.forEach(commandPath => {
     path: `/maestro/node/${commandPath}`,
     name: `maestro_node_${commandPath.replace('/', '_')}`,
     component: TableCommandPage,
-    sidebar: maestroSidebar,
+    sidebar: nodeSidebar,
   });
 });
