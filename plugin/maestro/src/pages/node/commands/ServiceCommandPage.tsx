@@ -20,53 +20,7 @@ import { buildServerUrl } from '../../../config/server';
 import PageHeader from '../../shared/ui/PageHeader';
 import RefreshIntervalControl from '../../shared/ui/RefreshIntervalControl';
 import { alignRefreshInterval, getRefreshIntervalOptions, IntervalValue } from '../../shared/ui/refreshIntervals';
-import parseSizeToBytes from '../../shared/utils/parseSizeToBytes';
-type TableRowData = Record<string, string>;
-
-interface Column {
-  id: string;
-  label: string;
-  sortable?: boolean;
-}
-
-function normalizeRowValue(value: unknown): string {
-  if (value === null || typeof value === 'undefined') {
-    return '';
-  }
-
-  if (Array.isArray(value)) {
-    return value.map(item => (typeof item === 'string' ? item : JSON.stringify(item))).join('\n');
-  }
-
-  if (typeof value === 'object') {
-    return JSON.stringify(value, null, 2);
-  }
-
-  return String(value);
-}
-
-function createRows(dataRows: any[]): [Column[], TableRowData[]] {
-  if (dataRows.length === 0) {
-    return [[], []];
-  }
-
-  const columnNames = Object.keys(dataRows[0]);
-  const columns: Column[] = columnNames.map(columnName => ({
-    id: columnName,
-    label: columnName,
-    sortable: true,
-  }));
-
-  const rows = dataRows.map(row => {
-    const normalizedRow: TableRowData = {};
-    columnNames.forEach(columnName => {
-      normalizedRow[columnName] = normalizeRowValue(row[columnName]);
-    });
-    return normalizedRow;
-  });
-
-  return [columns, rows];
-}
+import { Column, createFlatRows, sortTableRows, TableRowData } from '../../shared/utils/tableUtils';
 
 interface ServiceCellProps {
   cluster?: string;
@@ -179,7 +133,7 @@ const ServiceCommandPage: React.FC<{ delay?: string | number | null }> = ({ dela
         }
 
         const responseRows = await response.json();
-        const [nextColumns, nextRows] = createRows(responseRows);
+        const [nextColumns, nextRows] = createFlatRows(responseRows);
 
         setRows(nextRows);
         setColumns(nextColumns);
@@ -233,39 +187,7 @@ const ServiceCommandPage: React.FC<{ delay?: string | number | null }> = ({ dela
     setOrderBy(property);
   };
 
-  const sortedRows = [...rows].sort((a, b) => {
-    const left = String(a[orderBy] ?? '');
-    const right = String(b[orderBy] ?? '');
-    const leftNumericValue = parseSizeToBytes(left);
-    const rightNumericValue = parseSizeToBytes(right);
-
-    const hasNumericLeft = leftNumericValue !== null;
-    const hasNumericRight = rightNumericValue !== null;
-
-    let comparison = 0;
-
-    // Both lines start with numbers, so we compare as numeric values.
-    if (leftNumericValue !== null && rightNumericValue !== null) {
-      comparison = leftNumericValue - rightNumericValue;
-      // If the numbers are equal, compare the full text values.
-      if (comparison === 0) {
-        comparison = left.localeCompare(right);
-      }
-    }
-    // Only one line starts with a number, so numeric values come first.
-    else if (hasNumericLeft) {
-      comparison = -1;
-    } else if (hasNumericRight) {
-      comparison = 1;
-    }
-    // Neither line starts with a number, so compare text values.
-    else {
-      comparison = left.localeCompare(right);
-    }
-
-    // We take into account the sorting direction
-    return order === 'asc' ? comparison : -comparison;
-  });
+  const sortedRows = sortTableRows(rows, orderBy, order);
 
   const paginatedRows = sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
