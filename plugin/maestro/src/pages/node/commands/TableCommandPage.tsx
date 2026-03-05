@@ -19,6 +19,7 @@ import { buildServerUrl } from '../../../config/server';
 import PageHeader from '../../shared/ui/PageHeader';
 import RefreshIntervalControl from '../../shared/ui/RefreshIntervalControl';
 import { alignRefreshInterval, getRefreshIntervalOptions, IntervalValue } from '../../shared/ui/refreshIntervals';
+import parseSizeToBytes from '../../shared/utils/parseSizeToBytes';
 type TableRowData = Record<string, string>;
 
 interface Column {
@@ -73,25 +74,6 @@ function createRows(dataRows: any[]): [Column[], TableRowData[]] {
   });
 
   return [columns, rows];
-}
-
-function toBytes(fullStr, numStr) {
-  const scaleStr = fullStr.substr(numStr.length).trim().toUpperCase()
-  const num = parseInt(numStr, 10);
-  if (scaleStr.length == 0)
-    return num;
-  switch (scaleStr) {
-    case 'KB': return num * 1000;
-      break;
-    case 'MB': return num * 1000000;
-      break;
-    case 'GB': return num * 1000000000;
-      break;
-    case 'TB': return num * 1000000000000;
-      break;
-    default:
-      return num;
-  }
 }
 
 const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }) => {
@@ -221,36 +203,31 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
   };
 
   const sortedRows = [...rows].sort((a, b) => {
-    let left = String(a[orderBy] ?? '');
-    let right = String(b[orderBy] ?? '');
+    const left = String(a[orderBy] ?? '');
+    const right = String(b[orderBy] ?? '');
+    const leftNumericValue = parseSizeToBytes(left);
+    const rightNumericValue = parseSizeToBytes(right);
 
-    // Extract the number from the beginning of the string, if there is one.
-    const numberRegex = /^(\d+\.?\d*|\.\d+)/;
-    const matchLeft = left.match(numberRegex);
-    const matchRight = right.match(numberRegex);
-
-    const hasNumLeft = matchLeft !== null;
-    const hasNumRight = matchRight !== null;
+    const hasNumericLeft = leftNumericValue !== null;
+    const hasNumericRight = rightNumericValue !== null;
 
     let comparison = 0;
 
-    // Both lines start with numbers - numeric comparison
-    if (hasNumLeft && hasNumRight) {
-      const numLeft = toBytes(left, matchLeft[1]);
-      const numRight = toBytes(right, matchRight[1]);
-      comparison = numLeft - numRight;
-      // If the numbers are equal, we compare the rest of the string
+    // Both lines start with numbers, so we compare as numeric values.
+    if (leftNumericValue !== null && rightNumericValue !== null) {
+      comparison = leftNumericValue - rightNumericValue;
+      // If the numbers are equal, compare the full text values.
       if (comparison === 0) {
         comparison = left.localeCompare(right);
       }
     }
-    // Only one line starts with a number - the number takes precedence
-    else if (hasNumLeft) {
+    // Only one line starts with a number, so numeric values come first.
+    else if (hasNumericLeft) {
       comparison = -1;
-    } else if (hasNumRight) {
+    } else if (hasNumericRight) {
       comparison = 1;
     }
-    //Both without numbers - text comparison
+    // Neither line starts with a number, so compare text values.
     else {
       comparison = left.localeCompare(right);
     }
