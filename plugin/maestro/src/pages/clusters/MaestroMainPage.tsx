@@ -793,8 +793,8 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
                 color="primary"
                 disabled={Boolean(nextClusterNameValidationError)}
                 onClick={() => handleSubmit(selectedNodeStages)}
-                size="large"
                 sx={{
+                  alignSelf: { md: 'stretch' },
                   ml: { md: 'auto' },
                   minWidth: { md: 220 },
                   px: 4,
