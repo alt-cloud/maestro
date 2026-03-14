@@ -9,6 +9,85 @@ headlamp-плугин maestro поддерживает UI-интерфейс к 
 - отображать данные узлов кластера (набор устройств, партиций, ...) см [Запрос ресурсов talosctl get](../../usefullSubcommands.md);
 - работать с etcd и другими сервисами кластера (см. [Полезные команды talosctl](../../usefullCommands.md)).
 
+## Запуск
+
+Плагин состоит из двух компонентов: **API-сервера** (Python) и **frontend-плагина** (Headlamp). Оба должны быть запущены одновременно.
+
+### Требования
+
+- Python 3.11+
+- Node.js / npm
+- `talosctl`, `nmap` (системные утилиты)
+- Запущенный [headlamp](https://github.com/kubernetes-sigs/headlamp)
+
+### 1. API-сервер
+
+Установка зависимостей:
+
+```bash
+cd api
+./scripts/install.sh
+```
+
+Или вручную:
+
+```bash
+cd api
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -r requirements.txt
+```
+
+Настройка (опционально): скопируйте `api/env.example` в `api/.env` и задайте нужные значения.
+
+Запуск:
+
+```bash
+cd api
+./scripts/start.sh
+```
+
+Или напрямую:
+
+```bash
+cd api
+python3 run.py
+```
+
+API по умолчанию доступен на `http://127.0.0.1:5000`.
+
+### 2. Frontend-плагин (режим разработки)
+
+Установка зависимостей:
+
+```bash
+cd plugin/maestro
+npm install
+```
+
+Запуск dev-сервера:
+
+```bash
+npm start
+```
+
+Headlamp подхватит плагин автоматически, если запущен в режиме разработки.
+
+### 3. Сборка и деплой плагина
+
+```bash
+cd plugin/maestro
+npm run build
+```
+
+Скопируйте папку `plugin/maestro/dist/` в директорию плагинов headlamp:
+
+```bash
+mkdir -p ~/.config/headlamp/plugins/maestro
+cp -r dist/* ~/.config/headlamp/plugins/maestro/
+```
+
 ## Схема работы headlamp-плугина maestro
 
 Так как headlamp-плугин maestro не может напрямую обращаться к talosctl для его функционирания создан [REST-интерфейс](../../api/run.py) для:
