@@ -41,9 +41,9 @@
       "ip": "IP",
       "manifests": "Манифесты",
       "member": "Участник",
-      "noConditions": "НетУсловий",
+      "noConditions": "Нет условий",
       "nodeReady": "Готов",
-      "nodeType": "ТипУзла",
+      "nodeType": "Тип узла",
       "stage": "Этап",
       "status": "Статус"
     },
