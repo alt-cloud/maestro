@@ -25,7 +25,7 @@ def _parse_json_stream(raw_output: str) -> list[dict[str, Any]]:
     return json.loads(normalized)
 
 
-def _build_command_env(cluster_dir: str) -> dict[str, str]:
+def build_command_env(cluster_dir: str) -> dict[str, str]:
     env = os.environ.copy()
     env["clusterDir"] = cluster_dir
     env["TALOSCONFIG"] = "talosconfig"
@@ -51,31 +51,16 @@ def run_command(
             stderr=subprocess.PIPE,
             cwd=cluster_dir,
             encoding="utf-8",
-            env=_build_command_env(cluster_dir),
+            env=build_command_env(cluster_dir),
             timeout=timeout_seconds,
         )
     except subprocess.TimeoutExpired as err:
-        effective_timeout = timeout_seconds if timeout_seconds is not None else float(err.timeout or 0.0)
-        raise CommandTimeoutError(args, effective_timeout) from err
-
-
-def start_background_command(args: list[str], cluster_dir: str, output_file: str) -> None:
-    if not args:
-        raise ValueError("Command arguments cannot be empty")
-
-    print(
-        "start_background_command "
-        f"cwd={cluster_dir} args={shlex.join(args)} output_file={output_file}"
-    )
-    with open(output_file, "ab") as file_pointer:
-        subprocess.Popen(
-            args,
-            cwd=cluster_dir,
-            env=_build_command_env(cluster_dir),
-            stdout=file_pointer,
-            stderr=subprocess.STDOUT,
-            start_new_session=True,
+        effective_timeout = (
+            timeout_seconds
+            if timeout_seconds is not None
+            else float(err.timeout or 0.0)
         )
+        raise CommandTimeoutError(args, effective_timeout) from err
 
 
 def table_to_json(text: str) -> str:
@@ -130,7 +115,9 @@ def table_to_json(text: str) -> str:
         for column_name, offsets in column_offsets.items():
             start = offsets["start"]
             end = offsets["end"]
-            values[column_name] = row[start:].strip() if end < 0 else row[start:end].strip()
+            values[column_name] = (
+                row[start:].strip() if end < 0 else row[start:end].strip()
+            )
         rows.append(values)
 
     return json.dumps(rows, indent=2)
@@ -153,17 +140,25 @@ def get_disk_name(ip: str, timeout_seconds: float | None = None) -> str:
     result = run_command(command, home_dir, timeout_seconds=timeout_seconds)
 
     if result.returncode != 0:
-        err = result.stderr.strip() or result.stdout.strip() or "talosctl discoveredvolume command failed"
+        err = (
+            result.stderr.strip()
+            or result.stdout.strip()
+            or "talosctl discoveredvolume command failed"
+        )
         raise RuntimeError(f"Failed to detect install disk for node {ip}: {err}")
 
     raw_output = (result.stdout or "").strip()
     if not raw_output:
-        raise RuntimeError(f"Failed to detect install disk for node {ip}: empty talosctl output")
+        raise RuntimeError(
+            f"Failed to detect install disk for node {ip}: empty talosctl output"
+        )
 
     try:
         volumes = _parse_json_stream(raw_output)
     except json.JSONDecodeError as err:
-        raise RuntimeError(f"Failed to parse discovered volumes for node {ip}: {err}") from err
+        raise RuntimeError(
+            f"Failed to parse discovered volumes for node {ip}: {err}"
+        ) from err
 
     for volume_info in volumes:
         metadata = volume_info.get("metadata", {})
@@ -175,7 +170,9 @@ def get_disk_name(ip: str, timeout_seconds: float | None = None) -> str:
         if disk:
             return disk
 
-    raise RuntimeError(f"Failed to detect install disk for node {ip}: no suitable disk found")
+    raise RuntimeError(
+        f"Failed to detect install disk for node {ip}: no suitable disk found"
+    )
 
 
 def nodes_list(nmap_output: str) -> dict[str, dict[str, str]]:
@@ -194,7 +191,7 @@ def nodes_list(nmap_output: str) -> dict[str, dict[str, str]]:
                 nodes[node_state["ip"]] = node_state
 
             node_state = {}
-            tail = line[len(prefix):].split()
+            tail = line[len(prefix) :].split()
             if len(tail) > 1:
                 node_state["dns"] = tail[0]
                 node_state["ip"] = tail[1][1:-1]
@@ -289,7 +286,11 @@ def talos_get_spec(
             try:
                 json_dict = json.loads(json_str)
             except json.JSONDecodeError as err:
-                return {}, result.returncode, f"{result.stderr.strip()} JSON parse error: {err}".strip()
+                return (
+                    {},
+                    result.returncode,
+                    f"{result.stderr.strip()} JSON parse error: {err}".strip(),
+                )
             spec = json_dict.get("spec")
             if isinstance(spec, dict):
                 result_spec = spec
@@ -362,7 +363,9 @@ def node_cluster_name(
             "-o",
             "json",
         ]
-        result = run_command(command, cluster_config_dir, timeout_seconds=timeout_seconds)
+        result = run_command(
+            command, cluster_config_dir, timeout_seconds=timeout_seconds
+        )
         if result.returncode == 0:
             return cluster_name
     if is_maintenance(node, timeout_seconds=timeout_seconds):
@@ -381,7 +384,9 @@ def refresh_talosconfigs(
     talos_config = load_talos_configs()
     cluster_names = list(talos_config["contexts"].keys())
     real_cluster_names = sorted(
-        cluster_name for cluster_name in cluster_names if cluster_name not in VIRTUAL_CLUSTERS
+        cluster_name
+        for cluster_name in cluster_names
+        if cluster_name not in VIRTUAL_CLUSTERS
     )
 
     previous_node_placement: dict[str, dict[str, str]] = {}
@@ -400,7 +405,9 @@ def refresh_talosconfigs(
                     "kube_node_type": "workers",
                 }
 
-    print(f"refresh_talosconfigs:: before talos_config={json.dumps(talos_config, indent=2)}")
+    print(
+        f"refresh_talosconfigs:: before talos_config={json.dumps(talos_config, indent=2)}"
+    )
     print(f"refresh_talosconfigs:: real_cluster_names={json.dumps(real_cluster_names)}")
 
     new_nodes: dict[str, dict[str, list[dict[str, Any]]]] = {
@@ -434,7 +441,9 @@ def refresh_talosconfigs(
             new_nodes[to_cluster_name].setdefault("controlplanes", [])
             new_nodes[to_cluster_name].setdefault("workers", [])
 
-            print(f"refresh_talosconfigs:: ip={ip} port 50000 open to_cluster_name={to_cluster_name}")
+            print(
+                f"refresh_talosconfigs:: ip={ip} port 50000 open to_cluster_name={to_cluster_name}"
+            )
             if is_port_open(ip, 6443, timeout=port_check_timeout_seconds):
                 kube_node_type = "controlplanes"
                 print(
@@ -455,7 +464,10 @@ def refresh_talosconfigs(
                 f"{from_cluster_name if from_cluster_name else '-'}"
             )
 
-        if from_cluster_name != to_cluster_name or from_kube_node_type != kube_node_type:
+        if (
+            from_cluster_name != to_cluster_name
+            or from_kube_node_type != kube_node_type
+        ):
             changed = True
 
         if to_cluster_name in VIRTUAL_CLUSTERS:
@@ -489,15 +501,21 @@ def refresh_talosconfigs(
                     ip,
                     timeout_seconds=command_timeout_seconds,
                 )
-                manifests_applied = manifest_spec.get("manifestsApplied", []) if manifest_spec else []
-                node_info["manifestsApplied"] = manifests_applied if isinstance(manifests_applied, list) else []
+                manifests_applied = (
+                    manifest_spec.get("manifestsApplied", []) if manifest_spec else []
+                )
+                node_info["manifestsApplied"] = (
+                    manifests_applied if isinstance(manifests_applied, list) else []
+                )
                 etcd_member_spec, _, _ = talos_get_spec(
                     to_cluster_name,
                     "etcdmember",
                     ip,
                     timeout_seconds=command_timeout_seconds,
                 )
-                node_info["memberID"] = etcd_member_spec.get("memberID", "-") if etcd_member_spec else "-"
+                node_info["memberID"] = (
+                    etcd_member_spec.get("memberID", "-") if etcd_member_spec else "-"
+                )
 
         new_nodes[to_cluster_name][kube_node_type].append(node_info)
 

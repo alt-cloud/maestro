@@ -11,4 +11,4 @@ python3 -m venv "$VENV_DIR"
 # shellcheck disable=SC1091
 . "$VENV_DIR/bin/activate"
 pip install -U pip
-pip install -r "$API_DIR/requirements.txt"
+pip install -e "$API_DIR"

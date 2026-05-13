@@ -1,12 +1,13 @@
 import json
 import os
+import subprocess
 from pathlib import Path
 from typing import Any
 
 from flask import Blueprint, current_app, jsonify, request
 
 from maestro_api import maestro
-from maestro_api.services.paths import get_cluster_config_dir, get_maestro_config_dir
+from maestro_api.services.paths import get_cluster_config_dir
 from maestro_api.services.validators import (
     validate_apply_actions,
     validate_cluster_name,
@@ -26,7 +27,6 @@ def apply():
     if not isinstance(payload, dict):
         return jsonify({"error": "JSON object payload is required"}), 400
 
-    maestro_config_dir = get_maestro_config_dir()
     talos_timeout_seconds = float(current_app.config["TALOS_COMMAND_TIMEOUT_SECONDS"])
 
     for cluster_name, actions in payload.items():
@@ -181,16 +181,43 @@ def apply():
 
                 if action == "controlplane":
                     bootstrap_file = os.path.join(talosconfig_dir, "bootstrap.log")
+
                     if not Path(bootstrap_file).exists():
-                        bootstrap_script = os.path.join(
-                            maestro_config_dir, "bootstrap.sh"
-                        )
                         try:
-                            maestro.start_background_command(
-                                [bootstrap_script, ip],
-                                talosconfig_dir,
-                                bootstrap_file,
+                            print(
+                                "start_background_command "
+                                f"cwd={talosconfig_dir} ip={ip} output_file={bootstrap_file}"
                             )
+
+                            bootstrap_command = f"""set -x
+
+sleep 5
+
+until nmap "{ip}/32" -p 50000 | grep open; do
+  sleep 5
+done
+
+until talosctl bootstrap -e "{ip}" -n "{ip}" 2>&1 | grep AlreadyExists; do
+  sleep 5
+done
+
+until talosctl health -e "{ip}" -n "{ip}"; do
+  sleep 5
+done
+
+talosctl -e "{ip}" -n "{ip}" kubeconfig -f
+"""
+
+                            with open(bootstrap_file, "ab") as file_pointer:
+                                subprocess.Popen(
+                                    ["/bin/sh", "-c", bootstrap_command],
+                                    cwd=talosconfig_dir,
+                                    env=maestro.build_command_env(talosconfig_dir),
+                                    stdout=file_pointer,
+                                    stderr=subprocess.STDOUT,
+                                    start_new_session=True,
+                                )
+
                         except OSError as err:
                             return jsonify(
                                 {"error": f"Failed to start bootstrap: {err}"}
