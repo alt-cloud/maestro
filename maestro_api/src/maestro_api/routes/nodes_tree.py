@@ -3,8 +3,8 @@ from pathlib import Path
 
 from flask import Blueprint, current_app, jsonify
 
-import maestro
-from app.services.paths import get_maestro_config_dir
+from maestro_api import maestro
+from maestro_api.services.paths import get_maestro_config_dir
 
 nodes_tree_bp = Blueprint("nodes_tree", __name__)
 

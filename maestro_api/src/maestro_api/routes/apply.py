@@ -5,9 +5,12 @@ from typing import Any
 
 from flask import Blueprint, current_app, jsonify, request
 
-import maestro
-from app.services.paths import get_cluster_config_dir, get_maestro_config_dir
-from app.services.validators import validate_apply_actions, validate_cluster_name
+from maestro_api import maestro
+from maestro_api.services.paths import get_cluster_config_dir, get_maestro_config_dir
+from maestro_api.services.validators import (
+    validate_apply_actions,
+    validate_cluster_name,
+)
 
 apply_bp = Blueprint("apply", __name__)
 
@@ -15,7 +18,9 @@ apply_bp = Blueprint("apply", __name__)
 @apply_bp.route("/apply", methods=["GET", "POST"])
 def apply():
     if request.method == "GET":
-        return jsonify({"status": "ok", "message": "Use POST /apply with JSON payload"}), 200
+        return jsonify(
+            {"status": "ok", "message": "Use POST /apply with JSON payload"}
+        ), 200
 
     payload = request.get_json(silent=True)
     if not isinstance(payload, dict):
@@ -35,11 +40,15 @@ def apply():
         controlplanes = normalized_actions.get("controlplane") or []
         workers = normalized_actions.get("worker") or []
         if not controlplanes and not workers:
-            return jsonify({"error": f"No nodes provided for cluster {cluster_name}"}), 400
+            return jsonify(
+                {"error": f"No nodes provided for cluster {cluster_name}"}
+            ), 400
 
         if not os.path.isdir(talosconfig_dir):
             if not controlplanes:
-                return jsonify({"error": f"Missing controlplane node for cluster {cluster_name}"}), 400
+                return jsonify(
+                    {"error": f"Missing controlplane node for cluster {cluster_name}"}
+                ), 400
 
             try:
                 install_disk = maestro.get_disk_name(
@@ -78,7 +87,12 @@ def apply():
             except maestro.CommandTimeoutError as err:
                 return jsonify({"error": str(err)}), 504
             if result.returncode != 0:
-                return jsonify({"error": result.stderr.strip() or "Failed to generate cluster talosconfig"}), 502
+                return jsonify(
+                    {
+                        "error": result.stderr.strip()
+                        or "Failed to generate cluster talosconfig"
+                    }
+                ), 502
 
         try:
             config_result = maestro.run_command(
@@ -89,7 +103,9 @@ def apply():
         except maestro.CommandTimeoutError as err:
             return jsonify({"error": str(err)}), 504
         if config_result.returncode != 0:
-            return jsonify({"error": config_result.stderr.strip() or "Failed to read talos config"}), 502
+            return jsonify(
+                {"error": config_result.stderr.strip() or "Failed to read talos config"}
+            ), 502
 
         try:
             config = json.loads(config_result.stdout)
@@ -103,7 +119,11 @@ def apply():
             }
             node_type = "endpoint" if action == "controlplane" else "node"
             field_name = f"{node_type}s"
-            points = config[field_name] if field_name in config and config[field_name] else []
+            points = (
+                config[field_name]
+                if field_name in config and config[field_name]
+                else []
+            )
             points = list(set(points + list(add_points[action])))
 
             command = ["talosctl", "config", node_type, *points]
@@ -116,7 +136,9 @@ def apply():
             except maestro.CommandTimeoutError as err:
                 return jsonify({"error": str(err)}), 504
             if result.returncode != 0:
-                return jsonify({"error": result.stderr.strip() or f"Failed to update {field_name}"}), 502
+                return jsonify(
+                    {"error": result.stderr.strip() or f"Failed to update {field_name}"}
+                ), 502
 
             for ip in ips:
                 try:
@@ -125,7 +147,9 @@ def apply():
                         timeout_seconds=talos_timeout_seconds,
                     )
                 except (RuntimeError, maestro.CommandTimeoutError) as err:
-                    status = 504 if isinstance(err, maestro.CommandTimeoutError) else 502
+                    status = (
+                        504 if isinstance(err, maestro.CommandTimeoutError) else 502
+                    )
                     return jsonify({"error": str(err)}), status
                 patch = f'{{"machine":{{"install":{{"disk":"{install_disk}"}}}}}}'
                 command = [
@@ -148,12 +172,19 @@ def apply():
                 except maestro.CommandTimeoutError as err:
                     return jsonify({"error": str(err)}), 504
                 if result.returncode != 0:
-                    return jsonify({"error": result.stderr.strip() or f"Failed to apply config on {ip}"}), 502
+                    return jsonify(
+                        {
+                            "error": result.stderr.strip()
+                            or f"Failed to apply config on {ip}"
+                        }
+                    ), 502
 
                 if action == "controlplane":
                     bootstrap_file = os.path.join(talosconfig_dir, "bootstrap.log")
                     if not Path(bootstrap_file).exists():
-                        bootstrap_script = os.path.join(maestro_config_dir, "bootstrap.sh")
+                        bootstrap_script = os.path.join(
+                            maestro_config_dir, "bootstrap.sh"
+                        )
                         try:
                             maestro.start_background_command(
                                 [bootstrap_script, ip],
@@ -161,6 +192,8 @@ def apply():
                                 bootstrap_file,
                             )
                         except OSError as err:
-                            return jsonify({"error": f"Failed to start bootstrap: {err}"}), 502
+                            return jsonify(
+                                {"error": f"Failed to start bootstrap: {err}"}
+                            ), 502
 
     return jsonify({})

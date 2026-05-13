@@ -1,6 +1,6 @@
 import os
 
-from app.services.validators import validate_cluster_name
+from maestro_api.services.validators import validate_cluster_name
 
 
 def get_home_dir() -> str:

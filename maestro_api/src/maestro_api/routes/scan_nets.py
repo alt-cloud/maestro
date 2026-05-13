@@ -3,9 +3,9 @@ import os
 
 from flask import Blueprint, current_app, jsonify, request
 
-import maestro
-from app.services.paths import get_home_dir, get_maestro_config_dir
-from app.services.validators import validate_scan_networks
+from maestro_api import maestro
+from maestro_api.services.paths import get_home_dir, get_maestro_config_dir
+from maestro_api.services.validators import validate_scan_networks
 
 scan_nets_bp = Blueprint("scan_nets", __name__)
 
@@ -52,9 +52,7 @@ def scan_nets():
         return jsonify({"error": result.stderr.strip() or "nmap failed"}), 502
 
     nodes = maestro.nodes_list(result.stdout.strip())
-    nodes = {
-        ip: info for ip, info in nodes.items() if info.get("apidState") == "open"
-    }
+    nodes = {ip: info for ip, info in nodes.items() if info.get("apidState") == "open"}
 
     nodes_file = os.path.join(maestro_config_dir, "nodes.json")
     with open(nodes_file, "w", encoding="utf-8") as file_pointer:

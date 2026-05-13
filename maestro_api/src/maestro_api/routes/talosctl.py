@@ -3,12 +3,19 @@ import os
 import shutil
 import tempfile
 
-from flask import Blueprint, after_this_request, current_app, jsonify, request, send_file
+from flask import (
+    Blueprint,
+    after_this_request,
+    current_app,
+    jsonify,
+    request,
+    send_file,
+)
 
-import maestro
-from app.services.parsers import parse_talos_json_stream
-from app.services.paths import get_cluster_config_dir
-from app.services.validators import (
+from maestro_api import maestro
+from maestro_api.services.parsers import parse_talos_json_stream
+from maestro_api.services.paths import get_cluster_config_dir
+from maestro_api.services.validators import (
     is_table_command,
     is_text_command,
     validate_cluster_name,
@@ -20,7 +27,9 @@ from app.services.validators import (
 talosctl_bp = Blueprint("talosctl", __name__)
 
 
-def _missing_query_params(params: dict[str, str], required: tuple[str, ...]) -> list[str]:
+def _missing_query_params(
+    params: dict[str, str], required: tuple[str, ...]
+) -> list[str]:
     return [name for name in required if not params.get(name)]
 
 
@@ -29,7 +38,9 @@ def talosctl():
     params = request.args.to_dict()
     missing = _missing_query_params(params, ("cluster", "n", "cmd"))
     if missing:
-        return jsonify({"error": f"Missing required query parameters: {', '.join(missing)}"}), 400
+        return jsonify(
+            {"error": f"Missing required query parameters: {', '.join(missing)}"}
+        ), 400
 
     cluster_name = params["cluster"]
     node = params["n"]
@@ -48,7 +59,9 @@ def talosctl():
     if cmd == "get":
         missing = _missing_query_params(params, ("subCommand",))
         if missing:
-            return jsonify({"error": f"Missing required query parameters: {', '.join(missing)}"}), 400
+            return jsonify(
+                {"error": f"Missing required query parameters: {', '.join(missing)}"}
+            ), 400
 
         sub_command = params["subCommand"]
         try:
@@ -78,13 +91,17 @@ def talosctl():
         except maestro.CommandTimeoutError as err:
             return jsonify({"error": str(err)}), 504
         if result.returncode != 0:
-            return jsonify({"error": result.stderr.strip() or "talosctl get command failed"}), 502
+            return jsonify(
+                {"error": result.stderr.strip() or "talosctl get command failed"}
+            ), 502
         if len(result.stdout.strip()) == 0:
-            result.stdout = '{}'
+            result.stdout = "{}"
         try:
             rows = parse_talos_json_stream(result.stdout)
         except json.JSONDecodeError as err:
-            return jsonify({"error": f"Failed to parse talosctl JSON stream: {err}"}), 502
+            return jsonify(
+                {"error": f"Failed to parse talosctl JSON stream: {err}"}
+            ), 502
 
         if rows and isinstance(rows[0].get("spec"), str):
             for row in rows:
@@ -106,8 +123,8 @@ def talosctl():
         except maestro.CommandTimeoutError as err:
             return jsonify({"error": str(err)}), 504
         table_json = maestro.table_to_json(result.stdout)
-        if result.returncode != 0 :
-            table_json = [ table_json, result.stderr ]
+        if result.returncode != 0:
+            table_json = [table_json, result.stderr]
         return table_json, 200, {"Content-Type": "application/json"}
 
     if cmd == "support":
@@ -126,7 +143,9 @@ def talosctl():
             return jsonify({"error": str(err)}), 504
         if result.returncode != 0 or not os.path.exists(support_path):
             shutil.rmtree(tmp_dir, ignore_errors=True)
-            return jsonify({"error": result.stderr.strip() or "Failed to generate support bundle"}), 502
+            return jsonify(
+                {"error": result.stderr.strip() or "Failed to generate support bundle"}
+            ), 502
 
         @after_this_request
         def cleanup_support_artifacts(response):
@@ -152,7 +171,9 @@ def talosctl():
         except maestro.CommandTimeoutError as err:
             return jsonify({"error": str(err)}), 504
         if result.returncode != 0:
-            return jsonify({"error": result.stderr.strip() or "talosctl text command failed"}), 502
+            return jsonify(
+                {"error": result.stderr.strip() or "talosctl text command failed"}
+            ), 502
         return jsonify({"content": result.stdout})
 
     return jsonify({"all_params": dict(request.args), "params_dict": params}), 400

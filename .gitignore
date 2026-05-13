@@ -38,21 +38,21 @@ plugin/maestro/dist/
 plugin/maestro/src/.kube/
 
 # API (Flask/Python)
-api/__pycache__/
-api/.venv/
-api/venv/
-api/.pytest_cache/
-api/.mypy_cache/
-api/.ruff_cache/
-api/.coverage
-api/.coverage.*
-api/htmlcov/
-api/instance/
-api/.flaskenv
-api/.env
-api/.env.*
-api/*.log
-api/**/*.log
+maestro_api/__pycache__/
+maestro_api/.venv/
+maestro_api/venv/
+maestro_api/.pytest_cache/
+maestro_api/.mypy_cache/
+maestro_api/.ruff_cache/
+maestro_api/.coverage
+maestro_api/.coverage.*
+maestro_api/htmlcov/
+maestro_api/instance/
+maestro_api/.flaskenv
+maestro_api/.env
+maestro_api/.env.*
+maestro_api/*.log
+maestro_api/**/*.log
 
 # OS noise
 .DS_Store

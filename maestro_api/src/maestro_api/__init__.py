@@ -1,8 +1,8 @@
 from flask import Flask
 
-from app.config import Config
-from app.extensions import init_extensions
-from app.routes import register_blueprints
+from maestro_api.config import Config
+from maestro_api.extensions import init_extensions
+from maestro_api.routes import register_blueprints
 
 
 def create_app() -> Flask:
