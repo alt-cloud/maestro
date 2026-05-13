@@ -20,23 +20,23 @@ headlamp-плугин maestro поддерживает UI-интерфейс к 
 - `talosctl`, `nmap` (системные утилиты)
 - Запущенный [headlamp](https://github.com/kubernetes-sigs/headlamp)
 
-### 1. API-сервер
+### 1. API-сервер (режим разработки)
 
-Установка зависимостей:
+Установка:
 
 ```bash
-cd api
+cd maestro_api
 ./scripts/install.sh
 ```
 
 Или вручную:
 
 ```bash
-cd api
+cd maestro_api
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -U pip
-pip install -r requirements.txt
+pip install -e .
 ```
 
 Настройка (опционально): скопируйте `api/env.example` в `api/.env` и задайте нужные значения.
@@ -44,15 +44,15 @@ pip install -r requirements.txt
 Запуск:
 
 ```bash
-cd api
+cd maestro_api
 ./scripts/start.sh
 ```
 
 Или напрямую:
 
 ```bash
-cd api
-python3 run.py
+cd maestro_api
+maestro-api
 ```
 
 API по умолчанию доступен на `http://127.0.0.1:5000`.

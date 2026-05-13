@@ -13,7 +13,7 @@ Backend API for the Maestro Headlamp plugin.
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -U pip
-pip install -r requirements.txt
+pip install -e .
 ```
 
 Alternative (system + venv bootstrap):
@@ -23,12 +23,6 @@ Alternative (system + venv bootstrap):
 ```
 
 ## Run
-
-```bash
-python3 run.py
-```
-
-or:
 
 ```bash
 maestro-api
