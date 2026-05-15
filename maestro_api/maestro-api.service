@@ -1,0 +1,11 @@
+[Unit]
+Description=Maestro API Server
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/maestro-api
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=default.target
