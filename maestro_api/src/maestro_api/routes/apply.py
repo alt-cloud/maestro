@@ -72,7 +72,7 @@ def apply():
                 cluster_name,
                 kube_endpoint,
                 "--install-image",
-                "altlinux.space/alt-orchestra/installer:v1.10.6",
+                "altlinux.space/alt-orchestra/installer:v11.0-alpha.0",
                 "--config-patch",
                 patch,
                 "--install-disk",
