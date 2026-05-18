@@ -29,7 +29,7 @@ function RefreshIntervalControl({
   };
 
   return (
-    <FormControl size="small" sx={{ minWidth: 180 }}>
+    <FormControl size="small" sx={{ minWidth: 180 }} variant="outlined">
       <InputLabel id="refresh-interval-label">{resolvedLabel}</InputLabel>
       <Select
         id="refresh-interval-select"

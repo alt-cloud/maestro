@@ -4,7 +4,6 @@ import {
   Alert,
   Box,
   Button,
-  Divider,
   FormControl,
   MenuItem,
   Paper,
@@ -118,15 +117,17 @@ function NodeStageSelect(props) {
   };
 
   return (
-    <FormControl sx={{ minWidth: 90 }}>
+    <FormControl size="small" sx={{ minWidth: 90 }}>
       <Select
         onChange={handleChange}
+        size="small"
         value={stage}
         label={t('clustersPage.columns.status')}
         sx={{
           '& .MuiSelect-select': {
-            display: 'flex',
             alignItems: 'center',
+            display: 'flex',
+            fontSize: '0.875rem',
             gap: 1,
           },
         }}
@@ -181,36 +182,71 @@ function getTranslatedStage(stage: string | undefined, t: (key: string) => strin
   return translated === key ? stage : translated;
 }
 
+const allStatusOptions = [...clusterStatusOptions, ...orphanStatusOptions];
+
+function StageIndicator({ stage, t }: { stage: string | undefined; t: (key: string) => string }) {
+  const option = allStatusOptions.find(o => o.value === stage);
+  return (
+    <Box alignItems="center" display="flex" gap={0.75}>
+      <Box
+        component="span"
+        sx={{
+          backgroundColor: option?.markerColor ?? 'grey.400',
+          borderRadius: '50%',
+          display: 'inline-block',
+          flexShrink: 0,
+          height: 8,
+          width: 8,
+        }}
+      />
+      <Typography variant="body2">{getTranslatedStage(stage, t)}</Typography>
+    </Box>
+  );
+}
+
+function ClusterSeparator() {
+  return (
+    <TableRow>
+      <TableCell
+        colSpan={9}
+        sx={{ backgroundColor: 'action.hover', border: 0, height: 6, p: 0 }}
+      />
+    </TableRow>
+  );
+}
+
 function NodeStage(props) {
   const stage = props.stage;
   const isClusterPage = props.isClusterPage;
   const t = props.t;
   if (stage === 'running' && isClusterPage) {
     return (
-    <TableCell>
-      <NodeStageSelect
-        onChangeStage={props.onChangeStage}
-        statusOptions={clusterStatusOptions}
-        stage={stage}
-        t={t}
+      <TableCell>
+        <NodeStageSelect
+          onChangeStage={props.onChangeStage}
+          statusOptions={clusterStatusOptions}
+          stage={stage}
+          t={t}
         />
-    </TableCell>
+      </TableCell>
     );
   }
   if (stage === 'maintenance') {
     return (
-    <TableCell>
-      <NodeStageSelect
-        onChangeStage={props.onChangeStage}
-        statusOptions={orphanStatusOptions}
-        stage={stage}
-        t={t}
+      <TableCell>
+        <NodeStageSelect
+          onChangeStage={props.onChangeStage}
+          statusOptions={orphanStatusOptions}
+          stage={stage}
+          t={t}
         />
-    </TableCell>
+      </TableCell>
     );
   }
   return (
-    <TableCell>{getTranslatedStage(stage, t)}</TableCell>
+    <TableCell>
+      <StageIndicator stage={stage} t={t} />
+    </TableCell>
   );
 }
 
@@ -276,17 +312,17 @@ function NodeColumns(props) {
   );
 }
 
-function ClusterDivider() {
-  return (
-    <TableRow>
-      <Divider
-        style={{
-          backgroundColor: 'green',
-          height: 5
-        }} />
-    </TableRow>
-  );
-}
+const nodeTypeCellSx = (color: string) => ({
+  borderLeft: '3px solid',
+  borderLeftColor: color,
+  color: 'text.secondary',
+  fontSize: '0.72rem',
+  fontWeight: 600,
+  letterSpacing: '0.06em',
+  textTransform: 'uppercase' as const,
+  verticalAlign: 'top',
+  whiteSpace: 'nowrap' as const,
+});
 
 function ClusterRows(props) {
   const clusterName = props.clusterName;
@@ -299,98 +335,101 @@ function ClusterRows(props) {
   const clusterLink = buildPathWithQuery('/maestro/cluster', { cluster: clusterName });
   const [firstControlPlaneRow, ...controlPlaneRows] = nodeTypes['controlplanes'] ?? [];
   const [firstWorkerRow, ...workerRows] = nodeTypes['workers'] ?? [];
+
   return (
     <>
-    <ClusterDivider />
-    <TableRow>
-      <TableCell rowSpan={clusterNameRowSpans[clusterName]['all']}>
-      {isClusterPage || clusterName[0] === '_' ?
-        <span>{clusterName}</span>
-        :
-        <Link to={clusterLink}>{clusterName}</Link>
-      }
-      </TableCell>
-      <TableCell
-        rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}>
-        {isOrphan ? <span>-</span> : <span>{t('common.controlplane')}</span>}
-      </TableCell>
-      <NodeColumns
-        clusterName={props.clusterName}
-        currentStage={clusterNodeStages[firstControlPlaneRow?.ip]}
-        nodeType='controlplane'
-        cols={firstControlPlaneRow}
-        isClusterPage={isClusterPage}
-        onChangeStage={(nextStage: string) => {
-          if (firstControlPlaneRow?.ip) {
-            props.onStageChange(clusterName, firstControlPlaneRow.ip, nextStage);
-          }
-        }}
-        t={t}
-        />
-    </TableRow>
-    {controlPlaneRows.map((value, index) => (
-      <TableRow key={`${clusterName}-controlplane-${value?.ip || index}`}>
+      <ClusterSeparator />
+      <TableRow>
+        <TableCell
+          rowSpan={clusterNameRowSpans[clusterName]['all']}
+          sx={{ fontWeight: 600, verticalAlign: 'top' }}
+        >
+          {isClusterPage || clusterName[0] === '_' ? (
+            <span>{clusterName}</span>
+          ) : (
+            <Link to={clusterLink}>{clusterName}</Link>
+          )}
+        </TableCell>
+        <TableCell
+          rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}
+          sx={nodeTypeCellSx('info.main')}
+        >
+          {isOrphan ? '-' : t('common.controlplane')}
+        </TableCell>
         <NodeColumns
           clusterName={props.clusterName}
-          currentStage={clusterNodeStages[value?.ip]}
-          nodeType='controlplane'
-          cols={value}
+          cols={firstControlPlaneRow}
+          currentStage={clusterNodeStages[firstControlPlaneRow?.ip]}
           isClusterPage={isClusterPage}
+          nodeType="controlplane"
           onChangeStage={(nextStage: string) => {
-            if (value?.ip) {
-              props.onStageChange(clusterName, value.ip, nextStage);
+            if (firstControlPlaneRow?.ip) {
+              props.onStageChange(clusterName, firstControlPlaneRow.ip, nextStage);
             }
           }}
           t={t}
-          />
-      </TableRow>
-    ))}
-    {isOrphan ?
-    <TableRow>
-      <Divider
-        style={{
-          backgroundColor: 'yellow',
-          height: 5
-        }} />
-    </TableRow>
-    :
-    <>
-    <TableRow>
-      <TableCell rowSpan={clusterNameRowSpans[clusterName]['workers']}>{t('common.worker')}</TableCell>
-      <NodeColumns
-        clusterName={props.clusterName}
-        currentStage={clusterNodeStages[firstWorkerRow?.ip]}
-        nodeType='worker'
-        cols={firstWorkerRow}
-        isClusterPage={isClusterPage}
-        onChangeStage={(nextStage: string) => {
-          if (firstWorkerRow?.ip) {
-            props.onStageChange(clusterName, firstWorkerRow.ip, nextStage);
-          }
-        }}
-        t={t}
         />
-    </TableRow>
-    {workerRows.map((value, index) => (
-      <TableRow key={`${clusterName}-worker-${value?.ip || index}`}>
-        <NodeColumns
-          clusterName={props.clusterName}
-          currentStage={clusterNodeStages[value?.ip]}
-          nodeType='worker'
-          cols={value}
-          isClusterPage={isClusterPage}
-          onChangeStage={(nextStage: string) => {
-            if (value?.ip) {
-              props.onStageChange(clusterName, value.ip, nextStage);
-            }
-          }}
-          t={t}
-          />
       </TableRow>
-    ))}
+      {controlPlaneRows.map((value, index) => (
+        <TableRow key={`${clusterName}-controlplane-${value?.ip || index}`}>
+          <NodeColumns
+            clusterName={props.clusterName}
+            cols={value}
+            currentStage={clusterNodeStages[value?.ip]}
+            isClusterPage={isClusterPage}
+            nodeType="controlplane"
+            onChangeStage={(nextStage: string) => {
+              if (value?.ip) {
+                props.onStageChange(clusterName, value.ip, nextStage);
+              }
+            }}
+            t={t}
+          />
+        </TableRow>
+      ))}
+      {!isOrphan && (
+        <>
+          <TableRow>
+            <TableCell
+              rowSpan={clusterNameRowSpans[clusterName]['workers']}
+              sx={nodeTypeCellSx('success.main')}
+            >
+              {t('common.worker')}
+            </TableCell>
+            <NodeColumns
+              clusterName={props.clusterName}
+              cols={firstWorkerRow}
+              currentStage={clusterNodeStages[firstWorkerRow?.ip]}
+              isClusterPage={isClusterPage}
+              nodeType="worker"
+              onChangeStage={(nextStage: string) => {
+                if (firstWorkerRow?.ip) {
+                  props.onStageChange(clusterName, firstWorkerRow.ip, nextStage);
+                }
+              }}
+              t={t}
+            />
+          </TableRow>
+          {workerRows.map((value, index) => (
+            <TableRow key={`${clusterName}-worker-${value?.ip || index}`}>
+              <NodeColumns
+                clusterName={props.clusterName}
+                cols={value}
+                currentStage={clusterNodeStages[value?.ip]}
+                isClusterPage={isClusterPage}
+                nodeType="worker"
+                onChangeStage={(nextStage: string) => {
+                  if (value?.ip) {
+                    props.onStageChange(clusterName, value.ip, nextStage);
+                  }
+                }}
+                t={t}
+              />
+            </TableRow>
+          ))}
+        </>
+      )}
     </>
-    }
-  </>
   );
 }
 
@@ -759,16 +798,27 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
         subtitle={t('clustersPage.subtitle')}
         title={t('clustersPage.title')}
       />
-      <Paper sx={{ p: 2 }} variant="outlined">
-        <Stack direction={{ sm: 'row', xs: 'column' }} justifyContent="space-between" spacing={1.5} sx={{ mb: 2 }}>
-          <Stack spacing={0.5}>
+      <Paper sx={{ p: 2.5, borderRadius: 2 }} variant="outlined">
+        <Stack
+          alignItems={{ sm: 'center' }}
+          direction={{ sm: 'row', xs: 'column' }}
+          justifyContent="space-between"
+          spacing={1.5}
+          sx={{ mb: 2.5 }}
+        >
+          <Box>
             <RefreshIntervalControl onChange={setTimeout} options={intervalOptions} value={timeout} />
-            <Typography color="text.secondary" variant="caption">
-              {t('clustersPage.lastUpdated')}: {lastUpdatedAt ? lastUpdatedAt.toLocaleTimeString() : t('common.unknown')}
+            <Typography color="text.secondary" display="block" sx={{ mt: 0.25 }} variant="caption">
+              {t('clustersPage.lastUpdated')}:{' '}
+              {lastUpdatedAt ? lastUpdatedAt.toLocaleTimeString() : t('common.unknown')}
             </Typography>
-          </Stack>
-          <Stack direction={{ sm: 'row', xs: 'column' }} spacing={1}>
-            <Button onClick={() => setRefreshTick(current => current + 1)} size="small" variant="outlined">
+          </Box>
+          <Stack direction="row" spacing={1}>
+            <Button
+              onClick={() => setRefreshTick(current => current + 1)}
+              size="small"
+              variant="outlined"
+            >
               {t('clustersPage.refreshNow')}
             </Button>
             <Button component={Link} size="small" to="/maestro/cluster/scanNets" variant="contained">
@@ -777,39 +827,40 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
           </Stack>
         </Stack>
         <form>
-          <FormControl fullWidth margin="normal" required>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    {clusterColumns.map(column => (
-                      <TableCell key={column.id}>{column.label}</TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {Object.entries(filteredRows).map(([clusterName, nodeTypes]) => (
-                    <ClusterRows
-                      clusterName={clusterName}
-                      clusterNameRowSpans={clusterNameRowSpans}
-                      isClusterPage={isClusterPage}
-                      key={clusterName}
-                      nodeTypes={nodeTypes}
-                      onStageChange={handleNodeStageChange}
-                      selectedNodeStages={selectedNodeStages}
-                      t={t}
-                    />
+          <TableContainer
+            component={Paper}
+            sx={{ borderRadius: 2 }}
+            variant="outlined"
+          >
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ backgroundColor: 'action.hover' }}>
+                  {clusterColumns.map(column => (
+                    <TableCell
+                      key={column.id}
+                      sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}
+                    >
+                      {column.label}
+                    </TableCell>
                   ))}
-                  <Divider
-                    style={{
-                      backgroundColor: 'green',
-                      height: 5,
-                    }}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Object.entries(filteredRows).map(([clusterName, nodeTypes]) => (
+                  <ClusterRows
+                    clusterName={clusterName}
+                    clusterNameRowSpans={clusterNameRowSpans}
+                    isClusterPage={isClusterPage}
+                    key={clusterName}
+                    nodeTypes={nodeTypes}
+                    onStageChange={handleNodeStageChange}
+                    selectedNodeStages={selectedNodeStages}
+                    t={t}
                   />
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </FormControl>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
           {hasOrphans && (
             <Stack
