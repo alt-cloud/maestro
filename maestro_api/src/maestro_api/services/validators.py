@@ -1,3 +1,4 @@
+import base64
 import ipaddress
 import re
 from typing import Any
@@ -99,6 +100,107 @@ def validate_scan_networks(scan_networks: Any) -> list[str]:
         validated_networks.append(normalized)
 
     return list(dict.fromkeys(validated_networks))
+
+
+VALID_ARCHES = {"amd64", "arm64"}
+VALID_CNI_NAMES = {"flannel", "custom", "none"}
+
+
+def validate_image_config(image_config: Any) -> dict:
+    if not isinstance(image_config, dict):
+        raise ValueError("imageConfig must be an object")
+
+    installer_url = image_config.get("installerImageUrl")
+    if installer_url is not None:
+        if not isinstance(installer_url, str) or not installer_url.strip():
+            raise ValueError("imageConfig.installerImageUrl must be a non-empty string")
+        return {"installerImageUrl": installer_url.strip()}
+
+    version = image_config.get("version")
+    if not isinstance(version, str) or not version.strip():
+        raise ValueError("imageConfig.version must be a non-empty string")
+
+    arch = image_config.get("arch", "amd64")
+    if arch not in VALID_ARCHES:
+        raise ValueError(f"imageConfig.arch must be one of: {', '.join(sorted(VALID_ARCHES))}")
+
+    secure_boot = image_config.get("secureBoot", False)
+    if not isinstance(secure_boot, bool):
+        raise ValueError("imageConfig.secureBoot must be a boolean")
+
+    extensions = image_config.get("extensions", [])
+    if not isinstance(extensions, list):
+        raise ValueError("imageConfig.extensions must be a list")
+    for ext in extensions:
+        if not isinstance(ext, str) or not ext.strip():
+            raise ValueError("imageConfig.extensions items must be non-empty strings")
+
+    kernel_args = image_config.get("kernelArgs", [])
+    if not isinstance(kernel_args, list):
+        raise ValueError("imageConfig.kernelArgs must be a list")
+    for arg in kernel_args:
+        if not isinstance(arg, str) or not arg.strip():
+            raise ValueError("imageConfig.kernelArgs items must be non-empty strings")
+
+    cni = image_config.get("cni", "")
+    if not isinstance(cni, str):
+        raise ValueError("imageConfig.cni must be a string")
+
+    return {
+        "version": version.strip(),
+        "arch": arch,
+        "secureBoot": secure_boot,
+        "extensions": [e.strip() for e in extensions],
+        "kernelArgs": [a.strip() for a in kernel_args],
+        "cni": cni.strip(),
+    }
+
+
+def _validate_patch_file(patch: Any, field_name: str) -> dict:
+    if not isinstance(patch, dict):
+        raise ValueError(f"'{field_name}' item must be an object")
+
+    name = patch.get("name")
+    if not isinstance(name, str) or not name.strip():
+        raise ValueError(f"'{field_name}' item 'name' must be a non-empty string")
+
+    content = patch.get("content")
+    if not isinstance(content, str) or not content.strip():
+        raise ValueError(f"'{field_name}' item 'content' must be a non-empty string")
+
+    try:
+        base64.b64decode(content, validate=True)
+    except Exception as err:
+        raise ValueError(f"'{field_name}' item '{name}' content must be valid base64") from err
+
+    return {"name": name.strip(), "content": content}
+
+
+def _validate_patch_list(patches: Any, field_name: str) -> list[dict]:
+    if not isinstance(patches, list):
+        raise ValueError(f"'{field_name}' must be a list")
+    return [_validate_patch_file(p, field_name) for p in patches]
+
+
+def validate_patches(patches: Any) -> dict:
+    if not isinstance(patches, dict):
+        raise ValueError("patches must be an object")
+
+    result: dict = {
+        "common": _validate_patch_list(patches.get("common", []), "patches.common"),
+        "controlplane": _validate_patch_list(patches.get("controlplane", []), "patches.controlplane"),
+        "worker": _validate_patch_list(patches.get("worker", []), "patches.worker"),
+        "nodes": {},
+    }
+
+    nodes = patches.get("nodes", {})
+    if not isinstance(nodes, dict):
+        raise ValueError("patches.nodes must be an object")
+    for ip, node_patches in nodes.items():
+        validate_ip_address(ip, "patches.nodes key")
+        result["nodes"][ip] = _validate_patch_list(node_patches, f"patches.nodes.{ip}")
+
+    return result
 
 
 def validate_apply_actions(actions: Any) -> dict[str, list[str]]:

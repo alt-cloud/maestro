@@ -17,7 +17,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -26,6 +25,10 @@ import { buildServerUrl } from '../../config/server';
 import PageHeader from '../shared/ui/PageHeader';
 import RefreshIntervalControl from '../shared/ui/RefreshIntervalControl';
 import { alignRefreshInterval, getRefreshIntervalOptions, IntervalValue } from '../shared/ui/refreshIntervals';
+import ClusterConfigDialog, {
+  ClusterPatches,
+  ImageConfig,
+} from './ClusterConfigDialog';
 
 const clusterStatusOptions: StatusOption[] = [
   {
@@ -90,23 +93,6 @@ interface StatusOption {
 
 interface PageProps {
   delay?: string | number | null;
-}
-
-function validateClusterName(
-  value: string,
-  existingNames: Set<string>,
-  t: (key: string) => string
-): string | null {
-  const normalizedValue = value.trim();
-  if (normalizedValue.length === 0) {
-    return t('clustersPage.alertNameRequired');
-  }
-
-  if (existingNames.has(normalizedValue.toLowerCase())) {
-    return t('clustersPage.alertNameDuplicate');
-  }
-
-  return null;
 }
 
 function buildPathWithQuery(pathname: string, params: Record<string, string | undefined>) {
@@ -429,9 +415,9 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
   const [timeout, setTimeout] = useState<IntervalValue>(alignRefreshInterval(delay));
   const [refreshTick, setRefreshTick] = useState(0);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null);
-  const [newClusterName, setNewClusterName] = useState('');
-  const [clusterNameError, setClusterNameError] = useState<string | null>(null);
   const [selectedNodeStages, setSelectedNodeStages] = useState<SelectedNodeStages>({});
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [pendingSubmitStages, setPendingSubmitStages] = useState<SelectedNodeStages | null>(null);
 
   const [rows, setRows] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -530,9 +516,6 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
   );
 
   const shouldProvideNewClusterName = !isClusterPage && hasOrphans;
-  const nextClusterNameValidationError = shouldProvideNewClusterName
-    ? validateClusterName(newClusterName, existingClusterNames, t)
-    : null;
 
   const handleNodeStageChange = (clusterName: string, nodeIp: string, nextStage: string) => {
     setSelectedNodeStages(previousSelections => ({
@@ -622,32 +605,11 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
     );
   }
 
-  const handleSubmit = async nextSelectedNodeStages => {
-    let targetClusterName: string | undefined;
-    if (shouldProvideNewClusterName) {
-      const validationError = validateClusterName(newClusterName, existingClusterNames, t);
-      if (validationError) {
-        setClusterNameError(validationError);
-        return;
-      }
-      targetClusterName = newClusterName.trim();
-    } else {
-      for (const clusterName in nextSelectedNodeStages) {
-        if (clusterName[0] !== '_') {
-          targetClusterName = clusterName;
-          break;
-        }
-      }
-    }
-
-    if (!targetClusterName) {
-      alert(t('clustersPage.alertTargetClusterMissing'));
-      return;
-    }
-
-    const actions = {};
+  const buildActions = (nextSelectedNodeStages: SelectedNodeStages, targetClusterName: string) => {
+    const actions: Record<string, Record<string, string[]>> = {};
     let orphanControlPlaneCount = 0;
     let orphanWorkerCount = 0;
+
     for (const clusterName in nextSelectedNodeStages) {
       const isOrphan = clusterName === orphansClusterName;
       for (const ip in nextSelectedNodeStages[clusterName]) {
@@ -660,15 +622,36 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
             actions[targetClusterName][state] = [];
           }
           actions[targetClusterName][state].push(ip);
-          if (state === 'controlplane') {
-            orphanControlPlaneCount += 1;
-          }
-          if (state === 'worker') {
-            orphanWorkerCount += 1;
-          }
+          if (state === 'controlplane') orphanControlPlaneCount += 1;
+          if (state === 'worker') orphanWorkerCount += 1;
         }
       }
     }
+
+    return { actions, orphanControlPlaneCount, orphanWorkerCount };
+  };
+
+  const handleSubmit = (nextSelectedNodeStages: SelectedNodeStages) => {
+    let targetClusterName: string | undefined;
+    if (!shouldProvideNewClusterName) {
+      for (const clusterName in nextSelectedNodeStages) {
+        if (clusterName[0] !== '_') {
+          targetClusterName = clusterName;
+          break;
+        }
+      }
+      if (!targetClusterName) {
+        alert(t('clustersPage.alertTargetClusterMissing'));
+        return;
+      }
+    } else {
+      targetClusterName = '__new__';
+    }
+
+    const { actions, orphanControlPlaneCount, orphanWorkerCount } = buildActions(
+      nextSelectedNodeStages,
+      targetClusterName
+    );
 
     if (Object.keys(actions).length === 0) {
       alert(t('clustersPage.alertNoChanges'));
@@ -680,14 +663,68 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       return;
     }
 
+    setPendingSubmitStages(nextSelectedNodeStages);
+    setDialogOpen(true);
+  };
+
+  const getSelectedIps = (
+    nextSelectedNodeStages: SelectedNodeStages,
+    nodeType: 'controlplane' | 'worker'
+  ): string[] => {
+    const ips: string[] = [];
+    for (const clusterName in nextSelectedNodeStages) {
+      for (const ip in nextSelectedNodeStages[clusterName]) {
+        if (nextSelectedNodeStages[clusterName][ip] === nodeType) {
+          ips.push(ip);
+        }
+      }
+    }
+    return ips;
+  };
+
+  const handleDialogSubmit = async (
+    imageConfig: ImageConfig | null,
+    patches: ClusterPatches,
+    clusterName?: string
+  ) => {
+    if (!pendingSubmitStages) return;
+
+    let targetClusterName = clusterName ?? '';
+    if (!shouldProvideNewClusterName) {
+      for (const cn in pendingSubmitStages) {
+        if (cn[0] !== '_') {
+          targetClusterName = cn;
+          break;
+        }
+      }
+    }
+
+    const { actions } = buildActions(pendingSubmitStages, targetClusterName);
+
+    const patchesPayload = {
+      common: [],
+      controlplane: patches.controlplane.general,
+      worker: patches.worker.general,
+      nodes: {
+        ...patches.controlplane.nodes,
+        ...patches.worker.nodes,
+      },
+    };
+
+    const body: Record<string, unknown> = { actions };
+    if (imageConfig) body.imageConfig = imageConfig;
+    body.patches = patchesPayload;
+
     try {
       const response = await fetch(buildServerUrl('/apply'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(actions),
+        body: JSON.stringify(body),
       });
 
       if (response.ok) {
+        setDialogOpen(false);
+        setPendingSubmitStages(null);
         setRefreshTick(current => current + 1);
       } else {
         console.error(t('clustersPage.sendError'));
@@ -696,6 +733,21 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       console.error(t('clustersPage.netError'), err);
     }
   };
+
+  const dialogControlplaneIps = pendingSubmitStages
+    ? getSelectedIps(pendingSubmitStages, 'controlplane')
+    : [];
+  const dialogWorkerIps = pendingSubmitStages
+    ? getSelectedIps(pendingSubmitStages, 'worker')
+    : [];
+  const dialogClusterName = shouldProvideNewClusterName
+    ? ''
+    : (() => {
+        for (const clusterName in selectedNodeStages) {
+          if (clusterName[0] !== '_') return clusterName;
+        }
+        return '';
+      })();
 
   return (
     <SectionBox title="" textAlign="left" paddingTop={2}>
@@ -767,31 +819,9 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
               spacing={2}
               sx={{ mt: 2.5 }}
             >
-              {shouldProvideNewClusterName && (
-                <TextField
-                  error={Boolean(clusterNameError)}
-                  helperText={clusterNameError || t('clustersPage.clusterNameHelper')}
-                  label={t('clustersPage.clusterNameLabel')}
-                  onBlur={() => {
-                    setClusterNameError(validateClusterName(newClusterName, existingClusterNames, t));
-                  }}
-                  onChange={event => {
-                    const value = event.target.value;
-                    setNewClusterName(value);
-                    if (clusterNameError) {
-                      setClusterNameError(validateClusterName(value, existingClusterNames, t));
-                    }
-                  }}
-                  sx={{ maxWidth: 420, width: { md: 360, xs: '100%' } }}
-                  value={newClusterName}
-                  variant="outlined"
-                />
-              )}
-
               <Button
                 aria-label={t('clustersPage.createClusterAria')}
                 color="primary"
-                disabled={Boolean(nextClusterNameValidationError)}
                 onClick={() => handleSubmit(selectedNodeStages)}
                 sx={{
                   alignSelf: { md: 'stretch' },
@@ -806,6 +836,20 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
               </Button>
             </Stack>
           )}
+
+          <ClusterConfigDialog
+            clusterName={dialogClusterName}
+            controlplaneIps={dialogControlplaneIps}
+            existingClusterNames={existingClusterNames}
+            onClose={() => {
+              setDialogOpen(false);
+              setPendingSubmitStages(null);
+            }}
+            onSubmit={handleDialogSubmit}
+            open={dialogOpen}
+            showClusterNameInput={shouldProvideNewClusterName}
+            workerIps={dialogWorkerIps}
+          />
         </form>
       </Paper>
     </SectionBox>

@@ -11,6 +11,10 @@ def get_maestro_config_dir() -> str:
     return os.path.join(get_home_dir(), ".maestro")
 
 
+def get_configs_dir() -> str:
+    return os.path.join(get_maestro_config_dir(), "configs")
+
+
 def get_cluster_config_dir(cluster_name: str) -> str:
     validate_cluster_name(cluster_name)
     base_dir = os.path.abspath(get_maestro_config_dir())

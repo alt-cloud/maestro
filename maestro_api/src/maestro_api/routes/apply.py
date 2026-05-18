@@ -1,9 +1,11 @@
+import base64
 import json
 import os
 import subprocess
 from pathlib import Path
 from typing import Any
 
+import requests
 from flask import Blueprint, current_app, jsonify, request
 
 from maestro_api import maestro
@@ -11,9 +13,60 @@ from maestro_api.services.paths import get_cluster_config_dir
 from maestro_api.services.validators import (
     validate_apply_actions,
     validate_cluster_name,
+    validate_image_config,
+    validate_patches,
 )
 
 apply_bp = Blueprint("apply", __name__)
+
+FACTORY_BASE_URL = "https://factory.altlinux.space"
+FACTORY_TIMEOUT = 30
+DEFAULT_INSTALL_IMAGE = "altlinux.space/alt-orchestra/installer:v11.0-alpha.0"
+BASE_CONFIG_PATCH = (
+    '{"machine":{"kernel":{"modules":[{"name":"bridge"}]},'
+    '"registries":{"config":{"registry.altlinux.org":{"tls":{"insecureSkipVerify":true}}}}}}'
+)
+
+
+def _create_schematic(image_config: dict) -> str:
+    customization: dict = {}
+
+    if image_config.get("extensions"):
+        customization["systemExtensions"] = {"officialExtensions": image_config["extensions"]}
+    if image_config.get("kernelArgs"):
+        customization["extraKernelArgs"] = image_config["kernelArgs"]
+    if image_config.get("secureBoot"):
+        customization["secureboot"] = {"includeWellKnownCertificates": True}
+
+    payload = {"customization": customization} if customization else {}
+    resp = requests.post(
+        f"{FACTORY_BASE_URL}/schematics",
+        json=payload,
+        timeout=FACTORY_TIMEOUT,
+    )
+    resp.raise_for_status()
+    return resp.json()["id"]
+
+
+def _build_install_image(image_config: dict) -> str:
+    schematic_id = _create_schematic(image_config)
+    version = image_config["version"]
+    installer_type = (
+        "alt-orchestra-metal-installer-secureboot"
+        if image_config.get("secureBoot")
+        else "alt-orchestra-metal-installer"
+    )
+    return f"factory.altlinux.space/{installer_type}/{schematic_id}:{version}"
+
+
+def _get_install_image(image_config: dict) -> str:
+    if image_config.get("installerImageUrl"):
+        return image_config["installerImageUrl"]
+    return _build_install_image(image_config)
+
+
+def _decode_patches(patch_list: list[dict]) -> list[str]:
+    return [base64.b64decode(p["content"]).decode("utf-8") for p in patch_list]
 
 
 @apply_bp.route("/apply", methods=["GET", "POST"])
@@ -27,9 +80,44 @@ def apply():
     if not isinstance(payload, dict):
         return jsonify({"error": "JSON object payload is required"}), 400
 
+    # New format: {"actions": {clusterName: {controlplane, worker}}, "imageConfig": {...}, "patches": {...}}
+    # Old format (backward compat): {clusterName: {controlplane, worker}}
+    if "actions" in payload:
+        actions_map = payload.get("actions", {})
+        raw_image_config = payload.get("imageConfig")
+        raw_patches = payload.get("patches")
+    else:
+        actions_map = payload
+        raw_image_config = None
+        raw_patches = None
+
+    if not isinstance(actions_map, dict) or not actions_map:
+        return jsonify({"error": "actions must be a non-empty object"}), 400
+
     talos_timeout_seconds = float(current_app.config["TALOS_COMMAND_TIMEOUT_SECONDS"])
 
-    for cluster_name, actions in payload.items():
+    image_config = None
+    if raw_image_config is not None:
+        try:
+            image_config = validate_image_config(raw_image_config)
+        except ValueError as err:
+            return jsonify({"error": str(err)}), 400
+
+    patches = None
+    if raw_patches is not None:
+        try:
+            patches = validate_patches(raw_patches)
+        except ValueError as err:
+            return jsonify({"error": str(err)}), 400
+
+    install_image = DEFAULT_INSTALL_IMAGE
+    if image_config:
+        try:
+            install_image = _get_install_image(image_config)
+        except requests.RequestException as err:
+            return jsonify({"error": f"Failed to create image schematic: {err}"}), 502
+
+    for cluster_name, actions in actions_map.items():
         try:
             validate_cluster_name(cluster_name)
             normalized_actions = validate_apply_actions(actions)
@@ -61,10 +149,6 @@ def apply():
             os.makedirs(talosconfig_dir, exist_ok=True)
 
             kube_endpoint = f"https://{controlplanes[0]}:6443"
-            patch = (
-                '{"machine":{"kernel":{"modules":[{"name":"bridge"}]},'
-                '"registries":{"config":{"registry.altlinux.org":{"tls":{"insecureSkipVerify":true}}}}}}'
-            )
             command = [
                 "talosctl",
                 "gen",
@@ -72,12 +156,28 @@ def apply():
                 cluster_name,
                 kube_endpoint,
                 "--install-image",
-                "altlinux.space/alt-orchestra/installer:v11.0-alpha.0",
+                install_image,
                 "--config-patch",
-                patch,
+                BASE_CONFIG_PATCH,
                 "--install-disk",
                 install_disk,
             ]
+
+            cni_name = (image_config or {}).get("cni") if not (image_config or {}).get("installerImageUrl") else None
+            if cni_name in ("flannel", "none"):
+                command.extend([
+                    "--config-patch",
+                    f'{{"cluster":{{"network":{{"cni":{{"name":"{cni_name}"}}}}}}}}',
+                ])
+
+            if patches:
+                for content in _decode_patches(patches.get("common", [])):
+                    command.extend(["--config-patch", content])
+                for content in _decode_patches(patches.get("controlplane", [])):
+                    command.extend(["--config-patch-control-plane", content])
+                for content in _decode_patches(patches.get("worker", [])):
+                    command.extend(["--config-patch-worker", content])
+
             try:
                 result = maestro.run_command(
                     command,
@@ -151,21 +251,27 @@ def apply():
                         504 if isinstance(err, maestro.CommandTimeoutError) else 502
                     )
                     return jsonify({"error": str(err)}), status
-                patch = f'{{"machine":{{"install":{{"disk":"{install_disk}"}}}}}}'
-                command = [
+
+                ip_patch = f'{{"machine":{{"install":{{"disk":"{install_disk}"}}}}}}'
+                apply_command = [
                     "talosctl",
                     "apply-config",
                     "--config-patch",
-                    patch,
+                    ip_patch,
                     "--insecure",
                     "-n",
                     ip,
                     "--file",
                     f"{action}.yaml",
                 ]
+
+                if patches and patches.get("nodes", {}).get(ip):
+                    for content in _decode_patches(patches["nodes"][ip]):
+                        apply_command.extend(["--config-patch", content])
+
                 try:
                     result = maestro.run_command(
-                        command,
+                        apply_command,
                         talosconfig_dir,
                         timeout_seconds=talos_timeout_seconds,
                     )
