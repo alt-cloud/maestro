@@ -217,9 +217,11 @@ function ClusterSeparator() {
 
 function NodeStage(props) {
   const stage = props.stage;
+  const originalStage = props.originalStage;
+  const isOrphan = props.isOrphan;
   const isClusterPage = props.isClusterPage;
   const t = props.t;
-  if (stage === 'running' && isClusterPage) {
+  if (originalStage === 'running' && isClusterPage) {
     return (
       <TableCell>
         <NodeStageSelect
@@ -231,7 +233,7 @@ function NodeStage(props) {
       </TableCell>
     );
   }
-  if (stage === 'maintenance') {
+  if (isOrphan) {
     return (
       <TableCell>
         <NodeStageSelect
@@ -299,7 +301,9 @@ function NodeColumns(props) {
     </TableCell>
     <NodeStage
       isClusterPage={props.isClusterPage}
+      isOrphan={props.isOrphan}
       onChangeStage={props.onChangeStage}
+      originalStage={cols['stage']}
       stage={stage}
       t={t}
       />
@@ -361,6 +365,7 @@ function ClusterRows(props) {
           cols={firstControlPlaneRow}
           currentStage={clusterNodeStages[firstControlPlaneRow?.ip]}
           isClusterPage={isClusterPage}
+          isOrphan={isOrphan}
           nodeType="controlplane"
           onChangeStage={(nextStage: string) => {
             if (firstControlPlaneRow?.ip) {
@@ -377,6 +382,7 @@ function ClusterRows(props) {
             cols={value}
             currentStage={clusterNodeStages[value?.ip]}
             isClusterPage={isClusterPage}
+            isOrphan={isOrphan}
             nodeType="controlplane"
             onChangeStage={(nextStage: string) => {
               if (value?.ip) {
@@ -401,6 +407,7 @@ function ClusterRows(props) {
               cols={firstWorkerRow}
               currentStage={clusterNodeStages[firstWorkerRow?.ip]}
               isClusterPage={isClusterPage}
+              isOrphan={false}
               nodeType="worker"
               onChangeStage={(nextStage: string) => {
                 if (firstWorkerRow?.ip) {
@@ -417,6 +424,7 @@ function ClusterRows(props) {
                 cols={value}
                 currentStage={clusterNodeStages[value?.ip]}
                 isClusterPage={isClusterPage}
+                isOrphan={false}
                 nodeType="worker"
                 onChangeStage={(nextStage: string) => {
                   if (value?.ip) {
