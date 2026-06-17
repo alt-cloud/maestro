@@ -19,6 +19,8 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { buildServerUrl } from '../../config/server';
 import PageHeader from '../shared/ui/PageHeader';
+import { apiClient, MaestroApiError } from '../../shared/utils/apiClient';
+import { useApiErrorHandler } from '../../shared/auth/useApiErrorHandler';
 
 function isValidIpWithCidr(value: string) {
   if (!value.includes('/')) return false;
@@ -43,6 +45,7 @@ interface SnackbarState {
 }
 
 const ScanNetworksPage: React.FC<{}> = () => {
+  const safeApiCall = useApiErrorHandler();
   const { t } = useTranslation();
   const failedToLoadDataText = t('common.failedToLoadData');
   const [inputValue, setInputValue] = useState('');
@@ -61,35 +64,57 @@ const ScanNetworksPage: React.FC<{}> = () => {
   useEffect(() => {
     const controller = new AbortController();
 
+//     const fetchData = async () => {
+//       try {
+//         const talosUrl = buildServerUrl('/scanNets');
+//         const response = await fetch(talosUrl, {
+//           method: 'GET',
+//           headers: {
+//             Accept: 'application/json',
+//           },
+//           signal: controller.signal,
+//         });
+//
+//         if (!response.ok) {
+//           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+//         }
+//
+//         const payload: any = await response.json();
+//         setScanNetworks(payload.scanNets ?? []);
+//       } catch (err: any) {
+//         if (err.name === 'AbortError') {
+//           return;
+//         }
+//         setFetchError(err.message || t(failedToLoadDataText));
+//       } finally {
+//         if (!controller.signal.aborted) {
+//           setLoading(false);
+//         }
+//       }
+//     };
     const fetchData = async () => {
       try {
-        const talosUrl = buildServerUrl('/scanNets');
-        const response = await fetch(talosUrl, {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-          },
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const payload: any = await response.json();
+        const payload = await safeApiCall(() =>
+          apiClient.get<{ scanNets?: string[] }>('/scanNets', {
+            signal: controller.signal,
+          })
+        );
         setScanNetworks(payload.scanNets ?? []);
       } catch (err: any) {
         if (err.name === 'AbortError') {
           return;
         }
-        setFetchError(err.message || t(failedToLoadDataText));
+        if (err instanceof MaestroApiError) {
+          setFetchError(err.toUserMessage());
+        } else {
+          setFetchError(err.message || failedToLoadDataText);
+        }
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
         }
       }
     };
-
     fetchData();
 
     return () => {
@@ -123,6 +148,32 @@ const ScanNetworksPage: React.FC<{}> = () => {
     setScanNetworks(prev => prev.filter(network => network !== networkToRemove));
   };
 
+//   const handleSubmit = async () => {
+//     if (scanNetworks.length === 0) {
+//       setSnackbar({ open: true, message: t('scanNetworks.addAtLeastOne'), severity: 'warning' });
+//       return;
+//     }
+//
+//     try {
+//       const response = await fetch(buildServerUrl('/scanNets'), {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ scanNets: scanNetworks }),
+//       });
+//
+//       if (response.ok) {
+//         history.push('/maestro');
+//       } else {
+//         throw new Error(t('scanNetworks.serverError'));
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       setSnackbar({ open: true, message: t('scanNetworks.requestFailed'), severity: 'error' });
+//     }
+//   };
+
   const handleSubmit = async () => {
     if (scanNetworks.length === 0) {
       setSnackbar({ open: true, message: t('scanNetworks.addAtLeastOne'), severity: 'warning' });
@@ -130,19 +181,8 @@ const ScanNetworksPage: React.FC<{}> = () => {
     }
 
     try {
-      const response = await fetch(buildServerUrl('/scanNets'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ scanNets: scanNetworks }),
-      });
-
-      if (response.ok) {
-        history.push('/maestro');
-      } else {
-        throw new Error(t('scanNetworks.serverError'));
-      }
+      await apiClient.postNoContent('/scanNets', { scanNets: scanNetworks });
+      history.push('/maestro');
     } catch (err) {
       console.error(err);
       setSnackbar({ open: true, message: t('scanNetworks.requestFailed'), severity: 'error' });

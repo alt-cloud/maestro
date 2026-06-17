@@ -20,6 +20,8 @@ import PageHeader from '../../shared/ui/PageHeader';
 import RefreshIntervalControl from '../../shared/ui/RefreshIntervalControl';
 import { alignRefreshInterval, getRefreshIntervalOptions, IntervalValue } from '../../shared/ui/refreshIntervals';
 import { Column, sortTableRows, TableRowData } from '../../shared/utils/tableUtils';
+import { apiClient, MaestroApiError } from '../../../shared/utils/apiClient';
+import { useApiErrorHandler } from '../../../shared/auth/useApiErrorHandler';
 
 interface ColumnGroups {
   meta: string[];
@@ -92,6 +94,7 @@ function createRows(columnGroups: ColumnGroups, dataRows: any[]): TableRowData[]
 
 const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }) => {
   const { t } = useTranslation();
+  const safeApiCall = useApiErrorHandler();
   const failedToLoadDataText = t('common.failedToLoadData');
   const intervalOptions = useMemo(() => getRefreshIntervalOptions(t), [t]);
   const [timeout, setTimeout] = useState<IntervalValue>(alignRefreshInterval(delay));
@@ -132,31 +135,45 @@ const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }
       }
       isFetching = true;
       try {
-        const requestParams = new URLSearchParams();
-        if (cluster) {
-          requestParams.set('cluster', cluster);
-        }
-        if (node) {
-          requestParams.set('n', node);
-        }
-        requestParams.set('cmd', 'get');
-        requestParams.set('commandSet', commandSet);
-        requestParams.set('subCommand', command);
+//         const requestParams = new URLSearchParams();
+//         if (cluster) {
+//           requestParams.set('cluster', cluster);
+//         }
+//         if (node) {
+//           requestParams.set('n', node);
+//         }
+//         requestParams.set('cmd', 'get');
+//         requestParams.set('commandSet', commandSet);
+//         requestParams.set('subCommand', command);
+//
+//         const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
+//         const response = await fetch(talosUrl, {
+//           method: 'GET',
+//           headers: {
+//             Accept: 'application/json',
+//           },
+//           signal: controller.signal,
+//         });
+//
+//         if (!response.ok) {
+//           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+//         }
+//         const responseRows = await response.json();
+        const queryParams: Record<string, string> = {
+          cmd: 'get',
+          commandSet,
+          subCommand: command,
+        };
+        if (cluster) queryParams.cluster = cluster;
+        if (node) queryParams.n = node;
 
-        const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
-        const response = await fetch(talosUrl, {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-          },
-          signal: controller.signal,
-        });
+        const responseRows = await safeApiCall(() =>
+          apiClient.get<any[]>('/talosctl', {
+            queryParams,
+            signal: controller.signal,
+          })
+        );
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const responseRows = await response.json();
         const nextColumnGroups = createColumnGroups(responseRows);
         const nextColumns = createColumns(nextColumnGroups);
         const nextRows = createRows(nextColumnGroups, responseRows);

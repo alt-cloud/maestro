@@ -20,20 +20,27 @@ const SupportDownloadButton = ({ cluster, node }: SupportDownloadButtonProps) =>
 
     setIsDownloading(true);
     try {
-      const requestParams = new URLSearchParams();
-      requestParams.set('cluster', cluster);
-      requestParams.set('n', node);
-      requestParams.set('cmd', 'support');
-      const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
-      const response = await fetch(talosUrl, {
-        method: 'GET',
+//       const requestParams = new URLSearchParams();
+//       requestParams.set('cluster', cluster);
+//       requestParams.set('n', node);
+//       requestParams.set('cmd', 'support');
+//       const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
+//       const response = await fetch(talosUrl, {
+//         method: 'GET',
+//       });
+//
+//       if (!response.ok) {
+//         throw new Error(`Error: ${response.status} ${response.statusText}`);
+//       }
+//
+//       const blob = await response.blob();
+      const blob = await apiClient.getBlob('/talosctl', {
+        queryParams: {
+          cluster,
+          n: node,
+          cmd: 'support',
+        },
       });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-
-      const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
 
       const anchor = document.createElement('a');

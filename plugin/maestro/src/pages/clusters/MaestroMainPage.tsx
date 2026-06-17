@@ -2,6 +2,7 @@ import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import {
   Alert,
+  AlertColor,
   Box,
   Button,
   FormControl,
@@ -9,6 +10,7 @@ import {
   Paper,
   Select,
   SelectChangeEvent,
+  Snackbar,
   Stack,
   Table,
   TableBody,
@@ -21,7 +23,8 @@ import {
 } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { buildServerUrl } from '../../config/server';
+import { useApiErrorHandler } from '../../shared/auth/useApiErrorHandler';
+import { apiClient, MaestroApiError } from '../../shared/utils/apiClient';
 import PageHeader from '../shared/ui/PageHeader';
 import RefreshIntervalControl from '../shared/ui/RefreshIntervalControl';
 import { alignRefreshInterval, getRefreshIntervalOptions, IntervalValue } from '../shared/ui/refreshIntervals';
@@ -459,8 +462,15 @@ function ClusterRows(props) {
   );
 }
 
+interface SnackbarState {
+  open: boolean;
+  message: string;
+  severity: AlertColor;
+}
+
 const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
   const { t } = useTranslation();
+  const safeApiCall = useApiErrorHandler();
   const failedToLoadDataText = t('common.failedToLoadData');
   const intervalOptions = useMemo(() => getRefreshIntervalOptions(t), [t]);
   const clusterColumns: Column[] = useMemo(
@@ -489,6 +499,11 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
   const [rows, setRows] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [snackbar, setSnackbar] = useState<SnackbarState>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
   const location = useLocation();
   const queryParams = useMemo(() => {
@@ -604,19 +619,11 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       }
       isFetching = true;
       try {
-        const response = await fetch(buildServerUrl('/nodesTree'), {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-          },
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const responseRows = await response.json();
+        const responseRows = await safeApiCall(() =>
+          apiClient.get<Record<string, any>>('/nodesTree', {
+            signal: controller.signal,
+          })
+        );
         setRows(responseRows);
         setError(null);
         setLastUpdatedAt(new Date());
@@ -624,7 +631,11 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
         if (err.name === 'AbortError') {
           return;
         }
-        setError(err.message || failedToLoadDataText);
+        if (err instanceof MaestroApiError) {
+          setError(err.toUserMessage());
+        } else {
+          setError(err.message || failedToLoadDataText);
+        }
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -784,24 +795,22 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
     body.patches = patchesPayload;
 
     try {
-      const response = await fetch(buildServerUrl('/apply'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
-      if (response.ok) {
-        setDialogOpen(false);
-        setPendingSubmitStages(null);
-        setRefreshTick(current => current + 1);
-      } else {
-        console.error(t('clustersPage.sendError'));
-      }
+      await apiClient.postNoContent('/apply', actions);
+      setRefreshTick(current => current + 1);
     } catch (err) {
-      console.error(t('clustersPage.netError'), err);
+      if (err instanceof MaestroApiError) {
+        console.error(t('clustersPage.sendError'), err.toUserMessage());
+        setSnackbar({ open: true, message: t('scanNetworks.sendError') + `: ${err.toUserMessage()}`, severity: 'error' });
+      } else {
+        console.error(t('clustersPage.netError'), err);
+        setSnackbar({ open: true, message: t('scanNetworks.netError') + `: ${err}`, severity: 'error' });
+      }
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
   const dialogControlplaneIps = pendingSubmitStages
     ? getSelectedIps(pendingSubmitStages, 'controlplane')
     : [];
@@ -955,6 +964,11 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
           />
         </form>
       </Paper>
+      <Snackbar autoHideDuration={3000} onClose={handleCloseSnackbar} open={snackbar.open}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </SectionBox>
   );
 };

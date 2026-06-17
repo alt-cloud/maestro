@@ -7,9 +7,12 @@ import { buildServerUrl } from '../../../config/server';
 import PageHeader from '../../shared/ui/PageHeader';
 import RefreshIntervalControl from '../../shared/ui/RefreshIntervalControl';
 import { alignRefreshInterval, getRefreshIntervalOptions, IntervalValue } from '../../shared/ui/refreshIntervals';
+import { apiClient, MaestroApiError } from '../../../shared/utils/apiClient';
+import { useApiErrorHandler } from '../../../shared/auth/useApiErrorHandler';
 
 const TextCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }) => {
   const { t } = useTranslation();
+  const safeApiCall = useApiErrorHandler();
   const failedToLoadDataText = t('common.failedToLoadData');
   const intervalOptions = useMemo(() => getRefreshIntervalOptions(t), [t]);
   const [timeout, setTimeout] = useState<IntervalValue>(alignRefreshInterval(delay));
@@ -46,36 +49,60 @@ const TextCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }
       }
       isFetching = true;
       try {
-        const requestParams = new URLSearchParams();
-        if (cluster) {
-          requestParams.set('cluster', cluster);
-        }
-        if (node) {
-          requestParams.set('n', node);
-        }
-        requestParams.set('cmd', commandPath);
+//         const requestParams = new URLSearchParams();
+//         if (cluster) {
+//           requestParams.set('cluster', cluster);
+//         }
+//         if (node) {
+//           requestParams.set('n', node);
+//         }
+//         requestParams.set('cmd', commandPath);
+//
+//         const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
+//         const response = await fetch(talosUrl, {
+//           method: 'GET',
+//           headers: {
+//             Accept: 'application/json',
+//           },
+//           signal: controller.signal,
+//         });
+//
+//         if (!response.ok) {
+//           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+//         }
+//
+//         const responsePayload = await response.json();
+//         setContent(String(responsePayload?.content || ''));
+//         setError(null);
+//       } catch (err: any) {
+//         if (err.name === 'AbortError') {
+//           return;
+//         }
+//         setError(err.message || failedToLoadDataText);
+        const queryParams: Record<string, string> = {
+          cmd: commandPath,
+        };
+        if (cluster) queryParams.cluster = cluster;
+        if (node) queryParams.n = node;
 
-        const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
-        const response = await fetch(talosUrl, {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-          },
-          signal: controller.signal,
-        });
+        const responsePayload = await safeApiCall(() =>
+          apiClient.get<{ content?: string }>('/talosctl', {
+            queryParams,
+            signal: controller.signal,
+          })
+        );
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const responsePayload = await response.json();
         setContent(String(responsePayload?.content || ''));
         setError(null);
       } catch (err: any) {
         if (err.name === 'AbortError') {
           return;
         }
-        setError(err.message || failedToLoadDataText);
+        if (err instanceof MaestroApiError) {
+          setError(err.toUserMessage());
+        } else {
+          setError(err.message || failedToLoadDataText);
+        }
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);

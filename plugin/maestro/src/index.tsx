@@ -16,6 +16,8 @@
 
 import { registerRoute, registerSidebarEntry } from '@kinvolk/headlamp-plugin/lib';
 import React from 'react';
+import { ApiKeyModal } from './shared/auth/ApiKeyModal';
+import { ApiKeyProvider } from './shared/auth/ApiKeyContext';
 import MaestroMainPage from './pages/clusters/MaestroMainPage';
 import ScanNetworksPage from './pages/clusters/ScanNetworksPage';
 import ServiceCommandPage from './pages/node/commands/ServiceCommandPage';
@@ -33,7 +35,7 @@ interface SidebarConfig {
 interface MaestroPageRegistrationConfig {
   path: string;
   name: string;
-  component: React.ComponentType<any>;
+  component: React.ComponentType;
   exact?: boolean;
   sidebar: SidebarConfig;
 }
@@ -42,10 +44,10 @@ interface MaestroResourceRegistrationConfig {
   name: string;
   listPath: string;
   listRouteName: string;
-  listComponent: React.ComponentType<any>;
+  listComponent: React.ComponentType;
   detailPath?: string;
   detailRouteName?: string;
-  detailComponent?: React.ComponentType<any>;
+  detailComponent?: React.ComponentType;
   listExact?: boolean;
   detailExact?: boolean;
   sidebar: SidebarConfig;
@@ -56,6 +58,18 @@ const clustersSidebar: SidebarConfig = { item: 'Clusters', sidebar: 'HOME' };
 const scanNetworksSidebar: SidebarConfig = { item: 'ScanNetworks', sidebar: 'HOME' };
 const nodeSidebar: SidebarConfig = { item: 'maestroplugin', sidebar: 'HOME' };
 
+/**
+ * Wrapper component that provides API key context to all Maestro pages.
+ * This ensures that every page has access to the API key state and can
+ * trigger the authentication modal when needed.
+ */
+const MaestroPageWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <ApiKeyProvider>
+    {children}
+    <ApiKeyModal />
+  </ApiKeyProvider>
+);
+
 function registerMaestroPage(config: MaestroPageRegistrationConfig) {
   const { path, name, component: PageComponent, exact = true, sidebar } = config;
   registerRoute({
@@ -65,7 +79,11 @@ function registerMaestroPage(config: MaestroPageRegistrationConfig) {
     sidebar,
     useClusterURL: false,
     noAuthRequired: true,
-    component: () => <PageComponent />,
+    component: () => (
+      <MaestroPageWrapper>
+        <PageComponent />
+      </MaestroPageWrapper>
+    ),
   });
 }
 
@@ -115,6 +133,8 @@ function registerMaestroResource(config: MaestroResourceRegistrationConfig) {
   }
 }
 
+// === SIDEBAR ENTRIES ===
+
 registerSidebarEntry({
   name: 'maestroplugin',
   label: 'Maestro',
@@ -122,6 +142,8 @@ registerSidebarEntry({
   icon: 'mdi:music-note-outline',
   sidebar: 'HOME',
 });
+
+// === CLUSTER PAGES ===
 
 registerMaestroResource({
   name: 'Clusters',
@@ -153,6 +175,8 @@ registerMaestroPage({
   sidebar: scanNetworksSidebar,
 });
 
+// === NODE PAGES ===
+
 registerMaestroPage({
   path: '/maestro/node',
   name: 'maestro_node',
@@ -181,6 +205,8 @@ registerMaestroPage({
   sidebar: nodeSidebar,
 });
 
+// === TEXT COMMAND ROUTES ===
+
 const textCommandRoutes = [
   { path: '/maestro/node/dmesg', name: 'maestro_node_dmesg', exact: true },
   { path: '/maestro/node/version', name: 'maestro_node_version', exact: true },
@@ -201,6 +227,8 @@ textCommandRoutes.forEach(route => {
     sidebar: nodeSidebar,
   });
 });
+
+// === TABLE COMMAND ROUTES ===
 
 const tableCommandPaths = [
   'containers',

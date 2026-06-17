@@ -20,6 +20,8 @@ import PageHeader from '../../shared/ui/PageHeader';
 import RefreshIntervalControl from '../../shared/ui/RefreshIntervalControl';
 import { alignRefreshInterval, getRefreshIntervalOptions, IntervalValue } from '../../shared/ui/refreshIntervals';
 import { Column, createFlatRows, sortTableRows, TableRowData } from '../../shared/utils/tableUtils';
+import { apiClient, MaestroApiError } from '../../../shared/utils/apiClient';
+import { useApiErrorHandler } from '../../../shared/auth/useApiErrorHandler';
 
 function normalizeErrorMessage(value: unknown): string {
   const text = String(value ?? '');
@@ -32,6 +34,7 @@ function normalizeErrorMessage(value: unknown): string {
 
 const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }) => {
   const { t } = useTranslation();
+  const safeApiCall = useApiErrorHandler();
   const failedToLoadDataText = t('common.failedToLoadData');
   const intervalOptions = useMemo(() => getRefreshIntervalOptions(t), [t]);
   const [timeout, setTimeout] = useState<IntervalValue>(alignRefreshInterval(delay));
@@ -74,35 +77,68 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
       }
       isFetching = true;
       try {
-        const requestParams = new URLSearchParams();
-        if (cluster) {
-          requestParams.set('cluster', cluster);
-        }
-        if (node) {
-          requestParams.set('n', node);
-        }
-        requestParams.set('cmd', commandPath);
+//         const requestParams = new URLSearchParams();
+//         if (cluster) {
+//           requestParams.set('cluster', cluster);
+//         }
+//         if (node) {
+//           requestParams.set('n', node);
+//         }
+//         requestParams.set('cmd', commandPath);
+//
+//         const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
+//         const response = await fetch(talosUrl, {
+//           method: 'GET',
+//           headers: {
+//             Accept: 'application/json',
+//           },
+//           signal: controller.signal,
+//         });
+//
+//         if (!response.ok) {
+//           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+//         }
+//
+//         let responseRows = await response.json();
+//         if (responseRows.length === 2 && responseRows[0].length > 0 && responseRows[0][0] === '[') {
+//           setError(normalizeErrorMessage(responseRows[1]));
+//           responseRows = JSON.parse(responseRows[0]);
+//         } else {
+//           setError(null);
+//         }
+//         const [nextColumns, nextRows] = createFlatRows(responseRows);
+//
+//         setRows(nextRows);
+//         setColumns(nextColumns);
+//
+//         if (nextColumns.length > 0 && !orderBy) {
+//           setOrderBy(nextColumns[0].id);
+//         }
+//       } catch (err: any) {
+//         if (err.name === 'AbortError') {
+//           return;
+//         }
+//         setError(normalizeErrorMessage(err.message || failedToLoadDataText));
+       const queryParams: Record<string, string> = {
+          cmd: commandPath,
+        };
+        if (cluster) queryParams.cluster = cluster;
+        if (node) queryParams.n = node;
 
-        const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
-        const response = await fetch(talosUrl, {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-          },
-          signal: controller.signal,
-        });
+        let responseRows = await safeApiCall(() =>
+          apiClient.get<any[]>('/talosctl', {
+            queryParams,
+            signal: controller.signal,
+          })
+        );
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        let responseRows = await response.json();
         if (responseRows.length === 2 && responseRows[0].length > 0 && responseRows[0][0] === '[') {
           setError(normalizeErrorMessage(responseRows[1]));
           responseRows = JSON.parse(responseRows[0]);
         } else {
           setError(null);
         }
+
         const [nextColumns, nextRows] = createFlatRows(responseRows);
 
         setRows(nextRows);
@@ -115,7 +151,11 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
         if (err.name === 'AbortError') {
           return;
         }
-        setError(normalizeErrorMessage(err.message || failedToLoadDataText));
+        if (err instanceof MaestroApiError) {
+          setError(normalizeErrorMessage(err.toUserMessage()));
+        } else {
+          setError(normalizeErrorMessage(err.message || failedToLoadDataText));
+        }
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
