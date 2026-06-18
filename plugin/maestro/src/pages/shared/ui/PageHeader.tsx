@@ -1,7 +1,14 @@
 import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
-import { Breadcrumbs, Link as MuiLink, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Breadcrumbs,
+  Link as MuiLink,
+  Stack,
+  Typography,
+} from '@mui/material';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { ApiKeySettingsButton } from '../../../shared/auth/ApiKeySettingsButton';
 
 export interface PageBreadcrumb {
   label: string;
@@ -12,31 +19,57 @@ interface PageHeaderProps {
   title: string;
   subtitle?: string;
   breadcrumbs?: PageBreadcrumb[];
+  /**
+   * Whether to show the API key settings button on the right side.
+   * Defaults to true. Set to false to hide the button (e.g., on login pages).
+   */
+  showApiKeySettings?: boolean;
 }
 
-function PageHeader({ title, subtitle, breadcrumbs = [] }: PageHeaderProps) {
+function PageHeader({
+  title,
+  subtitle,
+  breadcrumbs = [],
+  showApiKeySettings = true,
+}: PageHeaderProps) {
   const { t } = useTranslation();
 
   return (
-    <Stack spacing={0.75} sx={{ mb: 2 }}>
-      <Typography variant="h5">{title}</Typography>
+    <Stack spacing={1}>
+      {/* Top row: Title on the left, API key settings button on the right */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 1,
+        }}
+      >
+        <Typography variant="h4" component="h1">
+          {title}
+        </Typography>
+        {showApiKeySettings && <ApiKeySettingsButton />}
+      </Box>
+
+      {/* Breadcrumbs row */}
       {breadcrumbs.length > 0 && (
-        <Breadcrumbs aria-label={t('common.breadcrumb')} sx={{ '& .MuiBreadcrumbs-ol': { flexWrap: 'wrap' } }}>
+        <Breadcrumbs>
           {breadcrumbs.map(item =>
             item.to ? (
-              <MuiLink key={`${item.to}-${item.label}`} component={RouterLink} color="inherit" to={item.to} underline="hover">
+              <MuiLink component={RouterLink} to={item.to} key={item.label}>
                 {item.label}
               </MuiLink>
             ) : (
-              <Typography key={item.label} color="text.primary">
-                {item.label}
-              </Typography>
+              <Typography key={item.label}>{item.label}</Typography>
             )
           )}
         </Breadcrumbs>
       )}
+
+      {/* Subtitle row */}
       {subtitle && (
-        <Typography color="text.secondary" variant="body2">
+        <Typography variant="body2" color="text.secondary">
           {subtitle}
         </Typography>
       )}

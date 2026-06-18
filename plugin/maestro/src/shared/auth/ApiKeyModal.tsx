@@ -42,6 +42,7 @@ export const ApiKeyModal: React.FC = () => {
   const [isTesting, setIsTesting] = useState(false);
   const [testError, setTestError] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Reset form when modal opens
   useEffect(() => {
@@ -51,6 +52,7 @@ export const ApiKeyModal: React.FC = () => {
       setShowKey(false);
       setTestError(null);
       setValidationError(null);
+      setSuccessMessage(null);
     }
   }, [isModalOpen, storedKey]);
 
@@ -77,13 +79,18 @@ export const ApiKeyModal: React.FC = () => {
 
     setIsTesting(true);
     setTestError(null);
+    setSuccessMessage(null);
 
     try {
-      // Test by calling a lightweight endpoint with the new key
-      // We pass the key explicitly via a temporary override
       await testConnectionWithKey(keyInput);
-      // Success — save and close
       setApiKey(keyInput.trim(), labelInput.trim() || undefined);
+      setSuccessMessage(
+        t('apiKey.modal.success', 'API key saved successfully!')
+      );
+      // Close modal after a short delay to show success message
+      setTimeout(() => {
+        closeModal();
+      }, 1000);
     } catch (error) {
       if (error instanceof MaestroApiError) {
         if (error.isAuthError()) {
@@ -96,10 +103,7 @@ export const ApiKeyModal: React.FC = () => {
           );
         } else {
           setTestError(
-            t(
-              'apiKey.errors.connection',
-              `Connection failed: ${error.toUserMessage()}`
-            )
+            t('apiKey.errors.connection', `Connection failed: ${error.toUserMessage()}`)
           );
         }
       } else {
@@ -129,9 +133,11 @@ export const ApiKeyModal: React.FC = () => {
     closeModal();
   };
 
+  // Allow closing only if a key already exists (otherwise plugin won't work)
+  const canClose = Boolean(storedKey);
+
   const handleClose = () => {
-    // Only allow closing if a key is already set (otherwise plugin won't work)
-    if (storedKey) {
+    if (canClose) {
       closeModal();
     }
   };
@@ -142,11 +148,13 @@ export const ApiKeyModal: React.FC = () => {
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
-      disableEscapeKeyDown={!storedKey}
+      disableEscapeKeyDown={!canClose}
       aria-labelledby="api-key-modal-title"
     >
       <DialogTitle id="api-key-modal-title">
-        {t('apiKey.modal.title', 'Maestro API Key')}
+        {storedKey
+          ? t('apiKey.modal.titleManage', 'Manage Maestro API Key')
+          : t('apiKey.modal.title', 'Maestro API Key')}
       </DialogTitle>
 
       <DialogContent dividers>
@@ -156,22 +164,31 @@ export const ApiKeyModal: React.FC = () => {
           </Alert>
         )}
 
+        {successMessage && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {successMessage}
+          </Alert>
+        )}
+
         <Typography variant="body2" color="text.secondary" paragraph>
           {t(
             'apiKey.modal.description',
-            'Enter your Maestro API key to authenticate requests. The key is stored locally in your browser and sent only to the Maestro backend.'
+            'Enter your Maestro API key to authenticate requests. The key is stored locally in your browser and sent only to the Maestro backend via the X-API-Key header.'
           )}
         </Typography>
 
         {storedKey && (
           <Alert severity="info" sx={{ mb: 2 }}>
-            {t('apiKey.modal.currentKey', 'Current key')}: <code>{maskApiKey(storedKey.key)}</code>
-            {storedKey.label && (
-              <>
-                {' '}
-                ({storedKey.label})
-              </>
-            )}
+            <Typography variant="body2">
+              {t('apiKey.modal.currentKey', 'Current key')}:{' '}
+              <code>{maskApiKey(storedKey.key)}</code>
+              {storedKey.label && (
+                <Typography component="span" color="text.secondary">
+                  {' '}
+                  ({storedKey.label})
+                </Typography>
+              )}
+            </Typography>
           </Alert>
         )}
 
@@ -185,6 +202,7 @@ export const ApiKeyModal: React.FC = () => {
               setKeyInput(e.target.value);
               setValidationError(null);
               setTestError(null);
+              setSuccessMessage(null);
             }}
             placeholder="Enter your API key"
             autoComplete="off"
@@ -192,7 +210,13 @@ export const ApiKeyModal: React.FC = () => {
             fullWidth
             required
             error={Boolean(validationError)}
-            helperText={validationError}
+            helperText={
+              validationError ||
+              t(
+                'apiKey.modal.keyHelper',
+                'Leave empty to keep the current key'
+              )
+            }
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -243,6 +267,7 @@ export const ApiKeyModal: React.FC = () => {
               color="error"
               variant="outlined"
               size="small"
+              startIcon={<span>🗑️</span>}
             >
               {t('apiKey.modal.clear', 'Clear Key')}
             </Button>
@@ -250,7 +275,7 @@ export const ApiKeyModal: React.FC = () => {
         </div>
 
         <div>
-          {!storedKey && (
+          {canClose && (
             <Button onClick={handleClose} sx={{ mr: 1 }}>
               {t('common.cancel', 'Cancel')}
             </Button>
