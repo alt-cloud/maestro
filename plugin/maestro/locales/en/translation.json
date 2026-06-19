@@ -16,7 +16,8 @@
     "remove": "Remove",
     "unknown": "Unknown",
     "yes": "Yes",
-    "worker": "worker"
+    "worker": "worker",
+    "cancel": "Cancel"
   },
   "refresh": {
     "fiveSeconds": "5 seconds",
@@ -154,6 +155,41 @@
     "downloadFailed": "Failed to download support bundle",
     "downloading": "Downloading..."
   },
+  "apiKey": {
+    "errors": {
+      "connection": "Connection failed: {{message}}",
+      "invalid": "Invalid API key. Please check and try again.",
+      "network": "Unable to reach Maestro API. Check that the server is running.",
+      "rateLimited": "Too many attempts. Please wait a moment.",
+      "required": "API key is required",
+      "tooShort": "API key must be at least {{min}} characters",
+      "whitespace": "API key must not contain spaces"
+      }
+    },
+    "modal": {
+      "clear": "Clear Key",
+      "currentKey": "Current key",
+      "description": "Enter your Maestro API key to authenticate requests. The key is stored locally in your browser and sent only to the Maestro backend via the X-API-Key header.",
+      "hint": "The key is stored only in your browser's local storage and is never included in the JavaScript bundle or URL.",
+      "keyHelper": "Leave empty to keep the current key",
+      "keyLabel": "API Key",
+      "labelLabel": "Label (optional)",
+      "save": "Save",
+      "success": "API key saved successfully!",
+      "testAndSave": "Test & Save",
+      "testing": "Testing...",
+      "title": "Maestro API Key",
+      "titleManage": "Manage Maestro API Key",
+      "enterKey": "Enter your API key"
+    },
+    "settings": {
+      "ariaLabel": "API key settings",
+      "clickToConfigure": "Click to configure",
+      "clickToManage": "Click to manage",
+      "keyConfigured": "API key configured",
+      "noKey": "No API key configured",
+      "noKeyWarning": "API key is not configured"
+    },
   "clusterConfigDialog": {
     "title": "Edit: Cluster configuration",
     "configurationSuffix": "Configuration",
