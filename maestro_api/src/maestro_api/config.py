@@ -7,9 +7,9 @@ from typing import Union
 LOCALHOST_ORIGINS = [
     "http://localhost",
     "http://127.0.0.1",
-    "http://localhost:3000",  # Common React/Vue dev server port
+    "http://localhost:4466",  # Common React/Vue dev server port
     "http://localhost:5173",  # Vite default port
-    "http://127.0.0.1:3000",
+    "http://127.0.0.1:4466",
     "http://127.0.0.1:5173",
 ]
 
