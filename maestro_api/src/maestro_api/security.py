@@ -50,6 +50,62 @@ def register_security_headers(app):
 
         return response
 
+def register_strict_origin_check(app):
+    """
+    Строгая проверка Origin на уровне сервера.
+
+    Если запрос содержит заголовок Origin и он не в списке разрешённых,
+    запрос блокируется с кодом 403.
+
+    Это дополнение к браузерной защите CORS — защищает от:
+    - curl/Postman запросов с поддельным Origin
+    - Server-to-server атак
+    - Прямых HTTP-запросов в обход браузера
+    """
+
+    @app.before_request
+    def check_origin_strict():
+        # Пропускаем OPTIONS (preflight) — они обрабатываются Flask-CORS
+        if request.method == "OPTIONS":
+            return None
+
+        # Получаем Origin из запроса
+        origin = request.headers.get('Origin')
+
+        # Если Origin отсутствует — разрешаем (это normal для curl без Origin, server-to-server)
+        if not origin:
+            return None
+
+        # Получаем список разрешённых origins
+        allowed_origins = current_app.config.get('CORS_ORIGINS', [])
+
+        # Если разрешены все origins — пропускаем
+        if allowed_origins == '*':
+            return None
+
+        # Если это список — проверяем
+        if isinstance(allowed_origins, list):
+            if origin in allowed_origins:
+                return None
+
+            # Origin не в списке — блокируем
+            current_app.logger.warning(
+                f"Blocked request from untrusted origin: {origin} "
+                f"(path: {request.path}, method: {request.method})"
+            )
+            return jsonify({
+                "error": "Origin not allowed",
+                "details": f"Origin '{origin}' is not in the list of trusted origins"
+            }), 403
+
+        # Неизвестный формат конфигурации — блокируем для безопасности
+        current_app.logger.error(
+            f"Invalid CORS_ORIGINS configuration: {allowed_origins}"
+        )
+        return jsonify({
+            "error": "Server misconfiguration",
+            "details": "CORS configuration is invalid"
+        }), 500
 
 def register_csrf_protection(app):
     """
@@ -72,6 +128,6 @@ def register_csrf_protection(app):
         # ============================================================
         if request.method == "OPTIONS":
             return None
-        # No additional CSRF checks needed — X-API-Key header provides
+        # No additional CSRF checks needed — X-API-Key header and register_strict_origin_check provides
         # implicit CSRF protection via CORS preflight.
         return None
