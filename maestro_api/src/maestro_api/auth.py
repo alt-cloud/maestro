@@ -67,7 +67,7 @@ def register_api_key_auth(app: Flask) -> None:
             return None
         provided_key = _extract_api_key()
         if not provided_key:
-            return j(
+            return (
                 jsonify({
                     "error": "API key is required. "
                     "Provide it via X-API-Key or Authorization: Bearer header."
