@@ -131,3 +131,61 @@ def register_csrf_protection(app):
         # No additional CSRF checks needed — X-API-Key header and register_strict_origin_check provides
         # implicit CSRF protection via CORS preflight.
         return None
+
+def register_ip_whitelist_check(app):
+    """
+    Проверка IP-адреса клиента.
+
+    Если входящий IP не входит в список хостов, извлечённых из CORS_ORIGINS,
+    запрос блокируется с кодом 403.
+
+    ProxyFix (применённый в create_app) обеспечивает корректное определение
+    реального IP клиента через заголовки X-Forwarded-For.
+    """
+
+    @app.before_request
+    def check_ip_whitelist():
+        # Пропускаем OPTIONS (preflight) — они обрабатываются Flask-CORS
+        if request.method == "OPTIONS":
+            return None
+
+        # Получаем список разрешённых origins
+        allowed_origins = current_app.config.get('CORS_ORIGINS', [])
+
+        if request.method == "OPTIONS":
+            return None
+        # Если разрешены все origins — пропускаем проверку IP
+        if allowed_origins == '*':
+            return None
+
+        # Извлекаем хосты/IP-адреса из CORS_ORIGINS
+        allowed_hosts = set()
+        if isinstance(allowed_origins, list):
+            for origin in allowed_origins:
+                parsed = urlparse(origin)
+                host = parsed.hostname if parsed.hostname else parsed.path
+                # host = parsed.hostname
+                if host:
+                    allowed_hosts.add(host)
+                    # Нормализуем localhost в IP-адреса
+                    if host == "localhost":
+                        allowed_hosts.add("127.0.0.1")
+                        allowed_hosts.add("::1")
+
+        # Получаем IP клиента
+        # ProxyFix гарантирует, что request.remote_addr содержит реальный IP
+        # (из заголовка X-Forwarded-For), а не адрес прокси
+        client_ip = request.remote_addr
+
+        # Проверяем, входит ли IP в список разрешённых
+        if client_ip not in allowed_hosts:
+            current_app.logger.warning(
+                f"Blocked request from untrusted IP: {client_ip} "
+                f"(path: {request.path}, method: {request.method})"
+            )
+            return jsonify({
+                "error": "IP not allowed",
+                "details": f"IP '{client_ip}' is not in the list of trusted origins"
+            }), 403
+
+        return None

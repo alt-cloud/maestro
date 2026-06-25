@@ -252,10 +252,9 @@ export const ApiKeyModal: React.FC = () => {
         <Typography variant="caption" color="text.secondary">
           {t(
             'apiKey.modal.hint',
-            '💡 The key is stored only in your browser\'s local storage and is never ' +
-            'included in the JavaScript bundle or URL. Generate a key on the backend with '
+            'The key is stored only in your browser\'s local storage and is never ' +
+            'included in the JavaScript bundle or URL.'
           )}
-          <code>openssl rand -hex 32</code>
         </Typography>
       </DialogContent>
 

@@ -7,7 +7,6 @@ cors = CORS()
 def init_extensions(app: Flask) -> None:
     cors.init_app(app, origins=app.config["CORS_ORIGINS"])
     cors_origins = app.config.get("CORS_ORIGINS", "localhost")
-    print('init_extensions:: cors_origins', cors_origins)
     if cors_origins == "*":
         CORS(
             app,
