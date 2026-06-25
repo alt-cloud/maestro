@@ -7,7 +7,6 @@ from maestro_api.routes import register_blueprints
 from maestro_api.security import (
     register_csrf_protection,
     register_security_headers,
-    register_strict_origin_check,
     register_ip_whitelist_check,
 )
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -28,7 +27,6 @@ def create_app() -> Flask:
 
     # Register security layers
     register_security_headers(app)
-    register_strict_origin_check(app)
     register_ip_whitelist_check(app)
     register_csrf_protection(app)
 
