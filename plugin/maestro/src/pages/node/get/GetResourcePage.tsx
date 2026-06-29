@@ -135,30 +135,6 @@ const GetResourcePage: React.FC<{ delay?: string | number | null }> = ({ delay }
       }
       isFetching = true;
       try {
-//         const requestParams = new URLSearchParams();
-//         if (cluster) {
-//           requestParams.set('cluster', cluster);
-//         }
-//         if (node) {
-//           requestParams.set('n', node);
-//         }
-//         requestParams.set('cmd', 'get');
-//         requestParams.set('commandSet', commandSet);
-//         requestParams.set('subCommand', command);
-//
-//         const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
-//         const response = await fetch(talosUrl, {
-//           method: 'GET',
-//           headers: {
-//             Accept: 'application/json',
-//           },
-//           signal: controller.signal,
-//         });
-//
-//         if (!response.ok) {
-//           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-//         }
-//         const responseRows = await response.json();
         const queryParams: Record<string, string> = {
           cmd: 'get',
           commandSet,

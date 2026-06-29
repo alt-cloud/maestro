@@ -35,7 +35,7 @@ interface SidebarConfig {
 interface MaestroPageRegistrationConfig {
   path: string;
   name: string;
-  component: React.ComponentType;
+  component: React.ComponentType<any>;
   exact?: boolean;
   sidebar: SidebarConfig;
 }
@@ -44,10 +44,10 @@ interface MaestroResourceRegistrationConfig {
   name: string;
   listPath: string;
   listRouteName: string;
-  listComponent: React.ComponentType;
+  listComponent: React.ComponentType<any>;
   detailPath?: string;
   detailRouteName?: string;
-  detailComponent?: React.ComponentType;
+  detailComponent?: React.ComponentType<any>;
   listExact?: boolean;
   detailExact?: boolean;
   sidebar: SidebarConfig;

@@ -77,48 +77,6 @@ const TableCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay 
       }
       isFetching = true;
       try {
-//         const requestParams = new URLSearchParams();
-//         if (cluster) {
-//           requestParams.set('cluster', cluster);
-//         }
-//         if (node) {
-//           requestParams.set('n', node);
-//         }
-//         requestParams.set('cmd', commandPath);
-//
-//         const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
-//         const response = await fetch(talosUrl, {
-//           method: 'GET',
-//           headers: {
-//             Accept: 'application/json',
-//           },
-//           signal: controller.signal,
-//         });
-//
-//         if (!response.ok) {
-//           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-//         }
-//
-//         let responseRows = await response.json();
-//         if (responseRows.length === 2 && responseRows[0].length > 0 && responseRows[0][0] === '[') {
-//           setError(normalizeErrorMessage(responseRows[1]));
-//           responseRows = JSON.parse(responseRows[0]);
-//         } else {
-//           setError(null);
-//         }
-//         const [nextColumns, nextRows] = createFlatRows(responseRows);
-//
-//         setRows(nextRows);
-//         setColumns(nextColumns);
-//
-//         if (nextColumns.length > 0 && !orderBy) {
-//           setOrderBy(nextColumns[0].id);
-//         }
-//       } catch (err: any) {
-//         if (err.name === 'AbortError') {
-//           return;
-//         }
-//         setError(normalizeErrorMessage(err.message || failedToLoadDataText));
        const queryParams: Record<string, string> = {
           cmd: commandPath,
         };

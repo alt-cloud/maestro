@@ -49,36 +49,6 @@ const TextCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }
       }
       isFetching = true;
       try {
-//         const requestParams = new URLSearchParams();
-//         if (cluster) {
-//           requestParams.set('cluster', cluster);
-//         }
-//         if (node) {
-//           requestParams.set('n', node);
-//         }
-//         requestParams.set('cmd', commandPath);
-//
-//         const talosUrl = `${buildServerUrl('/talosctl')}?${requestParams.toString()}`;
-//         const response = await fetch(talosUrl, {
-//           method: 'GET',
-//           headers: {
-//             Accept: 'application/json',
-//           },
-//           signal: controller.signal,
-//         });
-//
-//         if (!response.ok) {
-//           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-//         }
-//
-//         const responsePayload = await response.json();
-//         setContent(String(responsePayload?.content || ''));
-//         setError(null);
-//       } catch (err: any) {
-//         if (err.name === 'AbortError') {
-//           return;
-//         }
-//         setError(err.message || failedToLoadDataText);
         const queryParams: Record<string, string> = {
           cmd: commandPath,
         };
