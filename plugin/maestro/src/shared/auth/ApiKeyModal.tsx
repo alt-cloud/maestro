@@ -204,7 +204,7 @@ export const ApiKeyModal: React.FC = () => {
               setTestError(null);
               setSuccessMessage(null);
             }}
-            placeholder="Enter your API key"
+            placeholder={t('apiKey.modal.enterKey', 'Enter your API key')}
             autoComplete="off"
             spellCheck={false}
             fullWidth
