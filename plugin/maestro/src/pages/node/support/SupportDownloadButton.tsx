@@ -1,7 +1,7 @@
 import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import { Button } from '@mui/material';
 import React, { useState } from 'react';
-import { buildServerUrl } from '../../../config/server';
+import { apiClient } from '../../../shared/utils/apiClient';
 
 interface SupportDownloadButtonProps {
   cluster?: string;

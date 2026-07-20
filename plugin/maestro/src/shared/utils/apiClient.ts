@@ -1,4 +1,4 @@
-import { buildServerUrl, getApiKey } from '../../config/server';
+import { buildServerUrl } from '../../config/server';
 import { getApiKeyFromStorage } from '../auth/ApiKeyAccessor';
 
 /**

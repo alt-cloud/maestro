@@ -16,13 +16,12 @@ import {
 } from '@mui/material';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { buildServerUrl } from '../../../config/server';
+import { useApiErrorHandler } from '../../../shared/auth/useApiErrorHandler';
+import { apiClient, MaestroApiError } from '../../../shared/utils/apiClient';
 import PageHeader from '../../shared/ui/PageHeader';
 import RefreshIntervalControl from '../../shared/ui/RefreshIntervalControl';
 import { alignRefreshInterval, getRefreshIntervalOptions, IntervalValue } from '../../shared/ui/refreshIntervals';
 import { Column, createFlatRows, sortTableRows, TableRowData } from '../../shared/utils/tableUtils';
-import { apiClient, MaestroApiError } from '../../../shared/utils/apiClient';
-import { useApiErrorHandler } from '../../../shared/auth/useApiErrorHandler';
 
 interface ServiceCellProps {
   cluster?: string;

@@ -1,4 +1,3 @@
-import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import {
   Box,
   Breadcrumbs,
@@ -32,7 +31,6 @@ function PageHeader({
   breadcrumbs = [],
   showApiKeySettings = true,
 }: PageHeaderProps) {
-  const { t } = useTranslation();
 
   return (
     <Stack spacing={1}>

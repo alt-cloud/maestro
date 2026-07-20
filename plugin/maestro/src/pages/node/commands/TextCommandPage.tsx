@@ -3,12 +3,11 @@ import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import { Alert, Box, Paper, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { buildServerUrl } from '../../../config/server';
+import { useApiErrorHandler } from '../../../shared/auth/useApiErrorHandler';
+import { apiClient, MaestroApiError } from '../../../shared/utils/apiClient';
 import PageHeader from '../../shared/ui/PageHeader';
 import RefreshIntervalControl from '../../shared/ui/RefreshIntervalControl';
 import { alignRefreshInterval, getRefreshIntervalOptions, IntervalValue } from '../../shared/ui/refreshIntervals';
-import { apiClient, MaestroApiError } from '../../../shared/utils/apiClient';
-import { useApiErrorHandler } from '../../../shared/auth/useApiErrorHandler';
 
 const TextCommandPage: React.FC<{ delay?: string | number | null }> = ({ delay }) => {
   const { t } = useTranslation();

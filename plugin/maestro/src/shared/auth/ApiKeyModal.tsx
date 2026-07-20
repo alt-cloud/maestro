@@ -7,17 +7,16 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
-  FormHelperText,
   IconButton,
   InputAdornment,
-  Link,
   TextField,
   Typography,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { apiClient, MaestroApiError } from '../utils/apiClient';
-import { maskApiKey } from './ApiKeyStorage';
+import { buildServerUrl } from '../../config/server';
+import { MaestroApiError } from '../utils/apiClient';
 import { useApiKey } from './ApiKeyContext';
+import { maskApiKey } from './ApiKeyStorage';
 
 const MIN_KEY_LENGTH = 16;
 
@@ -194,7 +193,6 @@ export const ApiKeyModal: React.FC = () => {
 
         <FormControl fullWidth error={Boolean(validationError)} sx={{ mb: 2 }}>
           <TextField
-            autoFocus
             label={t('apiKey.modal.keyLabel', 'API Key')}
             type={showKey ? 'text' : 'password'}
             value={keyInput}
@@ -307,7 +305,6 @@ export const ApiKeyModal: React.FC = () => {
  */
 async function testConnectionWithKey(key: string): Promise<void> {
   // Use a lightweight endpoint. '/nodesTree' is typically fast.
-  const { buildServerUrl } = await import('../../config/server');
   const url = buildServerUrl('/nodesTree');
 
   const response = await fetch(url, {

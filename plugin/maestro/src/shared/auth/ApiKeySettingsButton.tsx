@@ -1,14 +1,14 @@
 import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import {
   Badge,
+  Box,
   IconButton,
   Tooltip,
   Typography,
-  Box,
 } from '@mui/material';
 import React from 'react';
-import { maskApiKey } from './ApiKeyStorage';
 import { useApiKey } from './ApiKeyContext';
+import { maskApiKey } from './ApiKeyStorage';
 
 /**
  * Settings button for managing the Maestro API key.
