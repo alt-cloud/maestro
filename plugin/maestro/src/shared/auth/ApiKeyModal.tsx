@@ -13,7 +13,6 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { buildServerUrl } from '../../config/server';
 import { MaestroApiError } from '../utils/apiClient';
 import { useApiKey } from './ApiKeyContext';
 import { maskApiKey } from './ApiKeyStorage';

@@ -16,6 +16,7 @@
 
 import { registerRoute, registerSidebarEntry } from '@kinvolk/headlamp-plugin/lib';
 import React from 'react';
+import { maestroConfig } from './maestroConfig';
 import MaestroMainPage from './pages/clusters/MaestroMainPage';
 import ScanNetworksPage from './pages/clusters/ScanNetworksPage';
 import ServiceCommandPage from './pages/node/commands/ServiceCommandPage';
@@ -26,6 +27,8 @@ import GetTreePage from './pages/node/get/GetTreePage';
 import NodePage from './pages/node/NodePage';
 import { ApiKeyProvider } from './shared/auth/ApiKeyContext';
 import { ApiKeyModal } from './shared/auth/ApiKeyModal';
+
+maestroConfig.init();
 
 interface SidebarConfig {
   item: string;

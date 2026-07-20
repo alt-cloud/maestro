@@ -1,4 +1,4 @@
-import { buildServerUrl } from '../../config/server';
+import { maestroConfig } from '../../maestroConfig';
 import { getApiKeyFromStorage } from '../auth/ApiKeyAccessor';
 
 /**
@@ -130,8 +130,14 @@ async function request<T>(
     throw error;
   }
 
-  const url = buildFullUrl(path, options.queryParams);
+  // const url = buildFullUrl(path, options.queryParams);
+  const baseUrl = maestroConfig.getBaseUrl();
 
+  if (!baseUrl) {
+    throw new Error('Конфигурация Maestro ещё не загружена.');
+  }
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const url = `${baseUrl}${normalizedPath}`;
   const init: RequestInit = {
     method,
     headers,
