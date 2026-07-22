@@ -75,85 +75,59 @@ def register_csrf_protection(app):
         # implicit CSRF protection via CORS preflight.
         return None
 
+import ipaddress
+from flask import request, jsonify, current_app
+
+
 def register_ip_whitelist_check(app):
     """
-    Проверка IP-адреса клиента.
-
-    Если входящий IP не входит в список хостов, извлечённых из CORS_ORIGINS,
-    запрос блокируется с кодом 403.
-
-    ProxyFix (применённый в create_app) обеспечивает корректное определение
-    реального IP клиента через заголовки X-Forwarded-For.
+    Регистрирует хук before_request, который проверяет IP/Host клиента
+    против заранее распарсенного whitelist из app.config["API_WHITELIST"].
     """
 
     @app.before_request
-    def check_ip_whitelist():
-        # Пропускаем OPTIONS (preflight) — они обрабатываются Flask-CORS
+    def check_api_whitelist():
+        # Пропускаем preflight-запросы — ими управляет Flask-CORS
         if request.method == "OPTIONS":
             return None
 
-        # Получаем список разрешённых origins
-        allowed_origins = current_app.config.get('CORS_ORIGINS', [])
+        # Получаем уже распарсенный whitelist из конфига (объект WhitelistConfig)
+        whitelist = current_app.config.get("API_WHITELIST")
 
-        if request.method == "OPTIONS":
+        # Если whitelist пуст (переменная окружения не задана) — фильтрация не применяется.
+        # Это стандартная политика: если админ не настроил whitelist, значит, он не нужен.
+        if whitelist is None or (not whitelist.ip_networks):
             return None
-        # Если разрешены все origins — пропускаем проверку IP
-        if allowed_origins == '*':
-            return None
 
-        # Извлекаем хосты/IP-адреса из CORS_ORIGINS
-        allowed_hosts = set()
-        if isinstance(allowed_origins, list):
-            for origin in allowed_origins:
-                parsed = urlparse(origin)
-                host = parsed.hostname if parsed.hostname else parsed.path
-                # host = parsed.hostname
-                if host:
-                    allowed_hosts.add(host)
-                    # Нормализуем localhost в IP-адреса
-                    if host == "localhost":
-                        allowed_hosts.add("127.0.0.1")
-                        allowed_hosts.add("::1")
+        # Извлекаем данные клиента
+        # ProxyFix (применённый в create_app) обеспечивает корректное определение
+        # реального IP клиента через заголовки X-Forwarded-For.
+        client_ip_str = request.remote_addr
+        host_header = request.host.split(':')[0].lower()  # Убираем порт
 
-        # Получаем IP клиента
-        # ProxyFix гарантирует, что request.remote_addr содержит реальный IP
-        # (из заголовка X-Forwarded-For), а не адрес прокси
-        client_ip = request.remote_addr
-
-        # Проверяем, входит ли IP в список разрешённых
-        if client_ip not in allowed_hosts:
+        # Валидация IP клиента
+        try:
+            client_ip = ipaddress.ip_address(client_ip_str)
+        except ValueError:
             current_app.logger.warning(
-                f"Blocked request from untrusted IP: {client_ip} "
-                f"(path: {request.path}, method: {request.method})"
+                f"Невозможно определить корректный IP клиента: {client_ip_str}"
+            )
+            return jsonify({"error": "Invalid client IP format"}), 400
+
+        # 1. Проверка вхождения IP клиента в разрешённые сети (с учётом маски)
+        ip_allowed = any(client_ip in network for network in whitelist.ip_networks)
+
+        # 2. Итоговое решение: достаточно попадания ХОТЯ БЫ ПО ОДНОМУ критерию
+        if not (ip_allowed):
+            current_app.logger.warning(
+                f"Доступ заблокирован: IP '{client_ip_str}' "
+                f"не найдены в whitelist."
             )
             return jsonify({
-                "error": "IP not allowed",
-                "details": f"IP '{client_ip}' is not in the list of trusted origins"
+                "error": "Access denied",
+                "details": "Your IP or Host is not in the API whitelist."
             }), 403
 
         return None
 
-    @app.after_request
-    def add_cors_headers(response):
-        """Добавляет CORS-заголовки, если Origin разрешён."""
-        origin = request.headers.get('Origin')
-
-        # Если Origin отсутствует, не добавляем CORS-заголовки
-        if not origin:
-            print('The request is missing an Origin header.')
-            return response
-
-        allowed_origins = current_app.config.get('CORS_ORIGINS', [])
-
-        # Если разрешены все origins
-        if isinstance(allowed_origins, list) and origin in allowed_origins:
-            # Origin в списке разрешённых — добавляем заголовки
-            response.headers['Access-Control-Allow-Origin'] = origin
-            response.headers['Access-Control-Allow-Credentials'] = 'true'
-            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
-            response.headers['Access-Control-Allow-Headers'] = 'X-API-Key, Authorization, Content-Type'
-            response.headers['Access-Control-Max-Age'] = '3600'
-        else
-            print('Origin: %s absent in CORS_ORIGINS %s' % (origin, json.dumps(allowed_hosts)))
-        return response
 

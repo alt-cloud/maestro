@@ -2,15 +2,15 @@ import os
 import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Union
+import ipaddress
+import re
+from typing import List, Set, Union
 
 LOCALHOST_ORIGINS = [
     "http://localhost",
     "http://127.0.0.1",
-    "http://localhost:4466",  # Common React/Vue dev server port
-    "http://localhost:5173",  # Vite default port
+    "http://localhost:4466",
     "http://127.0.0.1:4466",
-    "http://127.0.0.1:5173",
 ]
 
 @dataclass
@@ -29,22 +29,24 @@ class APIKeyConfig:
         # 'admin' implicitly grants all permissions
         return "admin" in self.scopes or required_scope in self.scopes
 
-def parse_cors_origins(raw_value: str) -> Union[str, list[str]]:
-    """Parse CORS origins from environment variable.
-
-    Special values:
-      - "*" or empty string: allow all origins (insecure, for development only)
-      - "localhost": use predefined LOCALHOST_ORIGINS list
-      - comma-separated list: custom origins
+def parse_cors_origins(raw_value: str) -> List[str]:
+    """
+    Парсит разрешённые CORS-источники из строки окружения.
+    Использование '*' запрещено из соображений безопасности.
     """
     stripped = raw_value.strip()
 
-    if stripped == "*" or stripped == "":
-        return "*"
+    if stripped == "*":
+        raise RuntimeError(
+            "Using MAESTRO_CORS_ORIGINS='*' is prohibited for security reasons. "
+            "Please provide a specific list of IP addresses or domains separated by commas. "
+            "(for example, 'http://localhost:4466,https://mydomain.com')."
+        )
 
-    if stripped.lower() == "localhost" or stripped == "127.0.0.1":
+    if not stripped or stripped.lower() in ("localhost", "127.0.0.1"):
         return LOCALHOST_ORIGINS.copy()
 
+    # Преобразуем строку с разделителями-запятыми в список
     return [origin.strip() for origin in stripped.split(",") if origin.strip()]
 
 def parse_positive_float(env_name: str, default_value: float) -> float:
@@ -113,12 +115,54 @@ def parse_api_keys_config(raw_value: str) -> list[APIKeyConfig]:
 
     return configs
 
+@dataclass
+class WhitelistConfig:
+    """Конфигурация белого списка, содержащая разобранные IP-сети."""
+    ip_networks: List[Union[ipaddress.IPv4Network, ipaddress.IPv6Network]]
+
+def parse_api_whitelist(raw_value: str) -> WhitelistConfig:
+    """
+    Парсит строку MAESTRO_API_WHITELIST, содержащую IP-адреса, IP-сети (с маской) и домены,
+    разделенные запятыми.
+
+    :param raw_value: Строка из переменной окружения
+                      (например, "192.168.1.0/24, 10.0.0.5)
+    :return: Объект WhitelistConfig со списками валидных IP-сетей.
+    :raises ValueError: Если хотя бы один элемент строки не является валидным IP/сетью,
+    """
+    if not raw_value or not raw_value.strip():
+        return WhitelistConfig(ip_networks=[], domains=set())
+
+    ip_networks: List[Union[ipaddress.IPv4Network, ipaddress.IPv6Network]] = []
+
+    # Разделяем по запятой и убираем лишние пробелы
+    items = [item.strip() for item in raw_value.split(',') if item.strip()]
+
+    for item in items:
+        try:
+            # Пытаемся интерпретировать как IP-сеть или одиночный IP-адрес.
+            # strict=False позволяет администратору написать 192.168.1.5/24,
+            # и система автоматически исправит это на корректную сеть 192.168.1.0/24.
+            # Одиночный IP (например, "10.0.0.1") будет преобразован в /32 (или /128 для IPv6).
+            network = ipaddress.ip_network(item, strict=False)
+            ip_networks.append(network)
+        except ValueError:
+            # Явно отвергаем мусорные данные (например, URL с http://, некорректные строки и т.д.)
+            raise ValueError(
+                f"Invalid variable format MAESTRO_API_WHITELIST: '{item}'. "
+               f"Expecting IP address, IP network (e.g. 192.168.1.0/24)."
+            )
+
+    return WhitelistConfig(ip_networks=ip_networks)
+
 class Config:
     API_HOST = os.getenv("MAESTRO_API_HOST", "127.0.0.1")
     API_PORT = int(os.getenv("MAESTRO_API_PORT", "5000"))
     API_DEBUG = os.getenv("MAESTRO_API_DEBUG", "false").lower() == "true"
 
-    CORS_ORIGINS = parse_cors_origins(os.getenv("MAESTRO_CORS_ORIGINS", "127.0.0.1"))
+    CORS_ORIGINS = parse_cors_origins(os.getenv("MAESTRO_CORS_ORIGINS", "http://127.0.0.1:4466"))
+
+    API_WHITELIST = parse_api_whitelist(os.getenv("MAESTRO_API_WHITELIST", "127.0.0.1"))
 
     API_KEYS_CONFIG = parse_api_keys_config(os.getenv("MAESTRO_API_KEYS", ""))
 
