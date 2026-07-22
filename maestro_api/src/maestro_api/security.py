@@ -140,21 +140,20 @@ def register_ip_whitelist_check(app):
 
         # Если Origin отсутствует, не добавляем CORS-заголовки
         if not origin:
+            print('The request is missing an Origin header.')
             return response
 
         allowed_origins = current_app.config.get('CORS_ORIGINS', [])
 
         # Если разрешены все origins
-        if allowed_origins == '*':
-            response.headers['Access-Control-Allow-Origin'] = '*'
-            response.headers['Access-Control-Allow-Credentials'] = 'true'
-        elif isinstance(allowed_origins, list) and origin in allowed_origins:
+        if isinstance(allowed_origins, list) and origin in allowed_origins:
             # Origin в списке разрешённых — добавляем заголовки
             response.headers['Access-Control-Allow-Origin'] = origin
             response.headers['Access-Control-Allow-Credentials'] = 'true'
             response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
             response.headers['Access-Control-Allow-Headers'] = 'X-API-Key, Authorization, Content-Type'
             response.headers['Access-Control-Max-Age'] = '3600'
-
+        else
+            print('Origin: %s absent in CORS_ORIGINS %s' % (origin, json.dumps(allowed_hosts)))
         return response
 
