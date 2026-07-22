@@ -10,13 +10,27 @@ from maestro_api.security import (
     register_ip_whitelist_check,
 )
 from werkzeug.middleware.proxy_fix import ProxyFix
-
+import sys
+import logging
 
 def create_app() -> Flask:
    # Fail-fast: refuse to start with insecure configuration
     Config.validate()
     app = Flask(__name__)
     app.config.from_object(Config)
+
+    # === ЯВНАЯ НАСТРОЙКА ЛОГИРОВАНИЯ ===
+    app.logger.handlers.clear()
+    log_stream = sys.stderr
+    handler = logging.StreamHandler(log_stream)
+    handler.setLevel(logging.WARNING)  # Минимальный уровень для этого хендлера
+    formatter = logging.Formatter(
+        '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    handler.setFormatter(formatter)
+    app.logger.addHandler(handler)
+    app.logger.setLevel(logging.WARNING)
 
     # ProxyFix для корректного определения реального IP клиента за reverse proxy
     # (читает заголовки X-Forwarded-For, X-Forwarded-Proto и т.д.)
