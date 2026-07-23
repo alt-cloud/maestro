@@ -223,7 +223,7 @@ def is_maintenance(ip: str, timeout_seconds: float | None = None) -> bool:
     command = [
         "talosctl",
         "get",
-        "discoveredvolume",
+        "machinestatus",
         "-o",
         "json",
         "-n",
@@ -242,14 +242,11 @@ def is_maintenance(ip: str, timeout_seconds: float | None = None) -> bool:
         return False
 
     try:
-        volumes = _parse_json_stream(raw_output)
+        data = json.loads(raw_output)
     except json.JSONDecodeError:
         return False
 
-    for volume_info in volumes:
-        if "partition_label" in volume_info.get("spec", {}):
-            return False
-    return True
+    return data.get("spec", {}).get("stage") == "maintenance"
 
 
 def talos_get_spec(
