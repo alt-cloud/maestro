@@ -18,7 +18,7 @@ def init_extensions(app: Flask) -> None:
     CORS(
         app,
         origins=cors_origins,
-        supports_credentials=True,
+        supports_credentials=False,
         allow_headers=["X-API-Key", "Authorization", "Content-Type"],
         methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         max_age=3600,  # Кэшируем preflight на 1 час
