@@ -11,5 +11,6 @@ if [ -f "$ENV_FILE" ]; then
   . "$ENV_FILE"
   set +a
 fi
+DEBUG=1
 
 exec maestro-api

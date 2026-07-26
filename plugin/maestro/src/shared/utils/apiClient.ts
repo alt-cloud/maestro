@@ -84,7 +84,13 @@ function buildHeaders(extraHeaders?: Record<string, string>): Record<string, str
 }
 
 function buildFullUrl(path: string, queryParams?: Record<string, string>): string {
-  let fullUrl = buildServerUrl(path);
+  const baseUrl = maestroConfig.getBaseUrl();
+
+  if (!baseUrl) {
+    throw new Error('Конфигурация Maestro ещё не загружена.');
+  }
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  let fullUrl = `${baseUrl}${normalizedPath}`;
 
   if (queryParams && Object.keys(queryParams).length > 0) {
     const params = new URLSearchParams();
@@ -130,14 +136,8 @@ async function request<T>(
     throw error;
   }
 
-  // const url = buildFullUrl(path, options.queryParams);
-  const baseUrl = maestroConfig.getBaseUrl();
+  const url = buildFullUrl(path, options.queryParams);
 
-  if (!baseUrl) {
-    throw new Error('Конфигурация Maestro ещё не загружена.');
-  }
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  const url = `${baseUrl}${normalizedPath}`;
   const init: RequestInit = {
     method,
     headers,
