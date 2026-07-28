@@ -16,6 +16,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -92,6 +93,23 @@ interface StatusOption {
 
 interface PageProps {
   delay?: string | number | null;
+}
+
+function validateClusterName(
+  value: string,
+  existingNames: Set<string>,
+  t: (key: string) => string
+): string | null {
+  const normalizedValue = value.trim();
+  if (normalizedValue.length === 0) {
+    return t('clustersPage.alertNameRequired');
+  }
+
+  if (existingNames.has(normalizedValue.toLowerCase())) {
+    return t('clustersPage.alertNameDuplicate');
+  }
+
+  return null;
 }
 
 function buildPathWithQuery(pathname: string, params: Record<string, string | undefined>) {
@@ -465,6 +483,8 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
   const [selectedNodeStages, setSelectedNodeStages] = useState<SelectedNodeStages>({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [pendingSubmitStages, setPendingSubmitStages] = useState<SelectedNodeStages | null>(null);
+  const [newClusterName, setNewClusterName] = useState('');
+  const [clusterNameError, setClusterNameError] = useState<string | null>(null);
 
   const [rows, setRows] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -731,13 +751,14 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
 
   const handleDialogSubmit = async (
     imageConfig: ImageConfig | null,
-    patches: ClusterPatches,
-    clusterName?: string
+    patches: ClusterPatches
   ) => {
     if (!pendingSubmitStages) return;
 
-    let targetClusterName = clusterName ?? '';
-    if (!shouldProvideNewClusterName) {
+    let targetClusterName = '';
+    if (shouldProvideNewClusterName) {
+      targetClusterName = newClusterName.trim();
+    } else {
       for (const cn in pendingSubmitStages) {
         if (cn[0] !== '_') {
           targetClusterName = cn;
@@ -749,7 +770,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
     const { actions } = buildActions(pendingSubmitStages, targetClusterName);
 
     const patchesPayload = {
-      common: [],
+      common: patches.common,
       controlplane: patches.controlplane.general,
       worker: patches.worker.general,
       nodes: {
@@ -788,7 +809,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
     ? getSelectedIps(pendingSubmitStages, 'worker')
     : [];
   const dialogClusterName = shouldProvideNewClusterName
-    ? ''
+    ? newClusterName.trim()
     : (() => {
         for (const clusterName in selectedNodeStages) {
           if (clusterName[0] !== '_') return clusterName;
@@ -878,9 +899,34 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
               spacing={2}
               sx={{ mt: 2.5 }}
             >
+              {shouldProvideNewClusterName && (
+                <TextField
+                  error={Boolean(clusterNameError)}
+                  helperText={clusterNameError || t('clustersPage.clusterNameHelper')}
+                  label={t('clustersPage.clusterNameLabel')}
+                  onBlur={() => {
+                    setClusterNameError(validateClusterName(newClusterName, existingClusterNames, t));
+                  }}
+                  onChange={event => {
+                    const value = event.target.value;
+                    setNewClusterName(value);
+                    if (clusterNameError) {
+                      setClusterNameError(validateClusterName(value, existingClusterNames, t));
+                    }
+                  }}
+                  sx={{ maxWidth: 420, width: { md: 360, xs: '100%' } }}
+                  value={newClusterName}
+                  variant="outlined"
+                />
+              )}
+
               <Button
                 aria-label={t('clustersPage.createClusterAria')}
                 color="primary"
+                disabled={
+                  shouldProvideNewClusterName &&
+                  Boolean(validateClusterName(newClusterName, existingClusterNames, t))
+                }
                 onClick={() => handleSubmit(selectedNodeStages)}
                 sx={{
                   alignSelf: { md: 'stretch' },
@@ -899,14 +945,12 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
           <ClusterConfigDialog
             clusterName={dialogClusterName}
             controlplaneIps={dialogControlplaneIps}
-            existingClusterNames={existingClusterNames}
             onClose={() => {
               setDialogOpen(false);
               setPendingSubmitStages(null);
             }}
             onSubmit={handleDialogSubmit}
             open={dialogOpen}
-            showClusterNameInput={shouldProvideNewClusterName}
             workerIps={dialogWorkerIps}
           />
         </form>

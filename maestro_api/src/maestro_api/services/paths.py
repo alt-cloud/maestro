@@ -12,7 +12,7 @@ def get_maestro_config_dir() -> str:
 
 
 def get_configs_dir() -> str:
-    return os.path.join(get_maestro_config_dir(), "configs")
+    return os.path.join(get_maestro_config_dir(), ".configs")
 
 
 def get_cluster_config_dir(cluster_name: str) -> str:

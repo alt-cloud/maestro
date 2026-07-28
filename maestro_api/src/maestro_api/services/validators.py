@@ -114,7 +114,14 @@ def validate_image_config(image_config: Any) -> dict:
     if installer_url is not None:
         if not isinstance(installer_url, str) or not installer_url.strip():
             raise ValueError("imageConfig.installerImageUrl must be a non-empty string")
-        return {"installerImageUrl": installer_url.strip()}
+        result: dict = {"installerImageUrl": installer_url.strip()}
+        # CNI is applied via talosctl gen config regardless of the image source.
+        cni = image_config.get("cni", "")
+        if not isinstance(cni, str):
+            raise ValueError("imageConfig.cni must be a string")
+        if cni.strip():
+            result["cni"] = cni.strip()
+        return result
 
     version = image_config.get("version")
     if not isinstance(version, str) or not version.strip():

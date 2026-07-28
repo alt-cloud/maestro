@@ -163,7 +163,7 @@ def apply():
                 install_disk,
             ]
 
-            cni_name = (image_config or {}).get("cni") if not (image_config or {}).get("installerImageUrl") else None
+            cni_name = (image_config or {}).get("cni")
             if cni_name in ("flannel", "none"):
                 command.extend([
                     "--config-patch",
