@@ -303,8 +303,7 @@ export const ApiKeyModal: React.FC = () => {
  * This bypasses the normal apiClient to avoid triggering the 401 handler.
  */
 async function testConnectionWithKey(key: string): Promise<void> {
-  // Use a lightweight endpoint. '/nodesTree' is typically fast.
-  const url = buildServerUrl('/nodesTree');
+  const url = buildServerUrl('/test');
 
   const response = await fetch(url, {
     method: 'GET',
