@@ -1,7 +1,4 @@
-from urllib.parse import urlparse
-
 from flask import current_app, jsonify, request
-
 
 def register_security_headers(app):
     """Добавляет защитные HTTP-заголовки ко всем ответам."""
@@ -43,41 +40,10 @@ def register_security_headers(app):
         # Принудительное использование HTTPS (отключаем в debug-режиме для локальной разработки)
         if not current_app.config.get('API_DEBUG', False):
             response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
-
-        # Явное указание типа контента для предотвращения XSS через MIME-конфузию
-        if response.mimetype == 'application/json':
-            response.headers['X-Content-Type-Options'] = 'nosniff'
-
         return response
-
-def register_csrf_protection(app):
-    """
-    Дополнительная защита от CSRF.
-
-    Примечание: Запросы с заголовками `X-API-Key` или `Authorization: Bearer`
-    НЕ подвержены CSRF, так как браузеры не могут подделать кастомные заголовки
-    в межсайтовых запросах без прохождения CORS preflight.
-
-    ОДНАКО: Передача ключа через query-параметр `?api_key=...` УЯЗВИМА к CSRF,
-    так как браузер автоматически добавит его при переходе по ссылке.
-    Этот middleware блокирует state-changing запросы с ключом в URL, если Origin не доверенный.
-    """
-
-    @app.before_request
-    def check_origin_for_state_changing_requests():
-        # ============================================================
-        # CRITICAL: Skip CSRF check for OPTIONS (preflight) requests.
-        # Preflight is handled by Flask-CORS and should not be blocked.
-        # ============================================================
-        if request.method == "OPTIONS":
-            return None
-        # No additional CSRF checks needed — X-API-Key header and register_strict_origin_check provides
-        # implicit CSRF protection via CORS preflight.
-        return None
 
 import ipaddress
 from flask import request, jsonify, current_app
-
 
 def register_ip_whitelist_check(app):
     """
@@ -103,7 +69,6 @@ def register_ip_whitelist_check(app):
         # ProxyFix (применённый в create_app) обеспечивает корректное определение
         # реального IP клиента через заголовки X-Forwarded-For.
         client_ip_str = request.remote_addr
-        host_header = request.host.split(':')[0].lower()  # Убираем порт
 
         # Валидация IP клиента
         try:
@@ -129,5 +94,3 @@ def register_ip_whitelist_check(app):
             }), 403
 
         return None
-
-

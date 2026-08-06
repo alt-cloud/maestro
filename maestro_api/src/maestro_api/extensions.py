@@ -8,12 +8,6 @@ def init_extensions(app: Flask) -> None:
     """
     cors_origins = app.config.get("CORS_ORIGINS", [])
 
-    # Дополнительная защита на уровне типа: если вдруг в конфиге оказался "*", блокируем
-    if cors_origins == "*" or (isinstance(cors_origins, list) and "*" in cors_origins):
-        raise ValueError(
-            "Инициализация CORS с '*' запрещена. Проверьте конфигурацию CORS_ORIGINS."
-        )
-
     # Единая и корректная инициализация без дублирования
     CORS(
         app,

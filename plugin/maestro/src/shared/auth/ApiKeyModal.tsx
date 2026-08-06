@@ -324,7 +324,7 @@ async function testConnectionWithKey(key: string): Promise<void> {
       `Test connection failed: ${response.statusText}`,
       response.status,
       response.statusText,
-      '/nodesTree',
+      '/test',
       details
     );
   }

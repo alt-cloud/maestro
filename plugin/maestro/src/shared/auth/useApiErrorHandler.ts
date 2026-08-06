@@ -8,12 +8,6 @@ import { useApiKey } from './ApiKeyContext';
  * Usage:
  *   const safeApiCall = useApiErrorHandler();
  *
- *   try {
- *     const data = await safeApiCall(() => apiClient.get('/nodesTree'));
- *   } catch (error) {
- *     // Error is already handled (modal shown if needed)
- *     // Only non-auth errors reach here
- *   }
  */
 export function useApiErrorHandler() {
   const { requestKey, hasKey } = useApiKey();

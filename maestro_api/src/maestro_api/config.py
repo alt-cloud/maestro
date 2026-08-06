@@ -3,7 +3,6 @@ import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 import ipaddress
-import re
 from typing import List, Set, Union
 
 LOCALHOST_ORIGINS = [
@@ -39,8 +38,8 @@ def parse_cors_origins(raw_value: str) -> List[str]:
     if stripped == "*":
         raise RuntimeError(
             "Using MAESTRO_CORS_ORIGINS='*' is prohibited for security reasons. "
-            "Please provide a specific list of IP addresses or domains separated by commas. "
-            "(for example, 'http://localhost:4466,https://mydomain.com')."
+            "Please provide a specific list of IP addresses separated by commas. "
+            "(for example, 'http://127.0.0.1:4466')."
         )
 
     if not stripped or stripped.lower() in ("localhost", "127.0.0.1"):
@@ -64,7 +63,6 @@ def parse_api_keys_config(raw_value: str) -> list[APIKeyConfig]:
     """Parse JSON array of API key configurations."""
     if not raw_value or raw_value.strip() == "":
         return []
-
     try:
         data = json.loads(raw_value)
     except json.JSONDecodeError as err:
@@ -131,7 +129,7 @@ def parse_api_whitelist(raw_value: str) -> WhitelistConfig:
     :raises ValueError: Если хотя бы один элемент строки не является валидным IP/сетью,
     """
     if not raw_value or not raw_value.strip():
-        return WhitelistConfig(ip_networks=[], domains=set())
+        return WhitelistConfig(ip_networks=[])
 
     ip_networks: List[Union[ipaddress.IPv4Network, ipaddress.IPv6Network]] = []
 
