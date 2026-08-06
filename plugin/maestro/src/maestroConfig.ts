@@ -12,16 +12,16 @@ class MaestroConfigManager {
       this.initPromise = fetch('/plugins/maestro/config.json')
         .then(async (res) => {
           if (!res.ok) {
-            throw new Error(`Не удалось загрузить конфиг: HTTP ${res.status}`);
+            throw new Error(`Failed to load config: HTTP ${res.status}`);
             }
           return res.json();
         })
         .then((data: MaestroConfig) => {
           this.config = data;
-          console.log('✅ Конфигурация Maestro успешно загружена:', this.config);
+          console.log('Maestro configuration loaded successfully:', this.config);
         })
         .catch((err) => {
-          console.error('❌ Ошибка загрузки config.json, используются значения по умолчанию:', err);
+          console.error('Error loading config.json, using default value MAESTRO_API_URL=http://127.0.0.1:5000:', err);
           // Fallback (значения по умолчанию на случай ошибки)
           this.config = {
             MAESTRO_API_URL: 'http://127.0.0.1:5000'
