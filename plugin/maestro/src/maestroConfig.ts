@@ -20,7 +20,7 @@ class MaestroConfigManager {
           this.config = data;
           console.log('Maestro configuration loaded successfully:', this.config);
         })
-        .catch((err) => {
+        .catch(() => {
           console.warn("The maestro plugin's config.json file is missing. Using default value MAESTRO_API_URL=http://127.0.0.1:5000:");
           // Fallback (значения по умолчанию на случай ошибки)
           this.config = {

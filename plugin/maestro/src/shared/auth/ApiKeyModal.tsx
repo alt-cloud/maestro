@@ -1,4 +1,5 @@
 import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
+import { maestroConfig } from '../../maestroConfig';
 import {
   Alert,
   Button,
@@ -303,9 +304,13 @@ export const ApiKeyModal: React.FC = () => {
  * This bypasses the normal apiClient to avoid triggering the 401 handler.
  */
 async function testConnectionWithKey(key: string): Promise<void> {
-  const url = buildServerUrl('/test');
+  const baseUrl = maestroConfig.getBaseUrl();
+  if (!baseUrl) {
+    throw new Error('Конфигурация Maestro ещё не загружена.');
+  }
+  const fullUrl = `${baseUrl}/test`;
 
-  const response = await fetch(url, {
+  const response = await fetch(fullUrl, {
     method: 'GET',
     headers: {
       'X-API-Key': key,
