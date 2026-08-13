@@ -190,6 +190,7 @@
     "extensionVersion": "Version",
     "noExtensionsFound": "No extensions found",
     "cni": "CNI",
+    "kubernetesVersion": "Kubernetes version",
     "cniCustomHelper": "Attach a patch with manifest URLs to install your CNI of choice.",
     "kernelArgs": "Additional Kernel arguments",
     "kernelArgsHelper": "This step allows you to customize the default kernel command line arguments.",

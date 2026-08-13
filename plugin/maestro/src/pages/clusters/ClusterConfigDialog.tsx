@@ -65,6 +65,7 @@ export interface ImageConfig {
   extensions?: string[];
   kernelArgs?: string[];
   cni?: string;
+  kubernetesVersion?: string;
 }
 
 export interface ClusterConfigDialogProps {
@@ -506,6 +507,14 @@ export default function ClusterConfigDialog({
   // CNI (shared between both setup types)
   const [cniName, setCniName] = useState('flannel');
 
+  // Kubernetes version (shared between both setup types)
+  const [kubernetesVersion, setKubernetesVersion] = useState('');
+  const [kubeVersions, setKubeVersions] = useState<string[]>([]);
+  // Server-recommended version (newest compatible with the running Talos).
+  const [recommendedKubeVersion, setRecommendedKubeVersion] = useState('');
+  const [kubeVersionsLoading, setKubeVersionsLoading] = useState(false);
+  const [kubeVersionsError, setKubeVersionsError] = useState<string | null>(null);
+
   const emptyNodeTypePatches = useCallback(
     (): NodeTypePatches => ({ general: [], nodes: {} }),
     []
@@ -559,6 +568,30 @@ export default function ClusterConfigDialog({
       .finally(() => setExtensionsLoading(false));
   }, [open, setupType, version]);
 
+  // Load Kubernetes versions (shared between both setup types)
+  useEffect(() => {
+    if (!open) return;
+    setKubeVersionsLoading(true);
+    setKubeVersionsError(null);
+    fetch(buildServerUrl('/kubernetes/versions'))
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((data: { versions: string[]; recommended: string | null }) => {
+        const sorted = [...(data.versions ?? [])].sort(compareVersionsDesc);
+        setKubeVersions(sorted);
+        // Prefer the server recommendation (compatible with the running Talos),
+        // fall back to the newest available version.
+        const preferred =
+          data.recommended && sorted.includes(data.recommended) ? data.recommended : sorted[0];
+        setRecommendedKubeVersion(preferred ?? '');
+        if (preferred && !kubernetesVersion) setKubernetesVersion(preferred);
+      })
+      .catch(err => setKubeVersionsError(err.message))
+      .finally(() => setKubeVersionsLoading(false));
+  }, [open]);
+
   // Load saved config names
   useEffect(() => {
     if (!open) return;
@@ -568,30 +601,56 @@ export default function ClusterConfigDialog({
       .catch(() => setSavedConfigs([]));
   }, [open]);
 
+  // Reset every config field to its default value (used when selecting a config
+  // that is not saved yet, e.g. `default`).
+  const resetConfigFields = () => {
+    setVersion(versions[0] ?? '');
+    setArch('amd64');
+    setSecureBoot(false);
+    setSelectedExtensions([]);
+    setKernelArgsText('');
+    setCniName('flannel');
+    setKubernetesVersion(recommendedKubeVersion || kubeVersions[0] || '');
+    setCommonPatches([]);
+    setCpPatches({ general: [], nodes: {} });
+    setWorkerPatches({ general: [], nodes: {} });
+  };
+
   const handleLoadConfig = (name: string) => {
     if (!name) return;
+    setConfigName(name);
+    setActiveConfigName(name);
     fetch(buildServerUrl(`/configs/${encodeURIComponent(name)}`))
-      .then(r => r.json())
+      .then(r => (r.ok ? r.json() : null))
       .then(data => {
-        setConfigName(name);
-        setActiveConfigName(name);
-        if (data.version) setVersion(data.version);
-        if (data.arch) setArch(data.arch);
-        if (typeof data.secureBoot === 'boolean') setSecureBoot(data.secureBoot);
-        if (Array.isArray(data.extensions)) setSelectedExtensions(data.extensions);
-        if (Array.isArray(data.kernelArgs)) setKernelArgsText(data.kernelArgs.join('\n'));
-        if (data.cni) setCniName(data.cni);
+        // Missing config (e.g. `default` before it is saved) — reset to defaults
+        // rather than keeping the previously loaded config's values.
+        if (!data || typeof data !== 'object') {
+          resetConfigFields();
+          return;
+        }
+        // Start from defaults, then overlay whatever the saved config provides,
+        // so fields absent in the config don't leak from the previous one.
+        setVersion(data.version || versions[0] || '');
+        setArch(data.arch || 'amd64');
+        setSecureBoot(typeof data.secureBoot === 'boolean' ? data.secureBoot : false);
+        setSelectedExtensions(Array.isArray(data.extensions) ? data.extensions : []);
+        setKernelArgsText(Array.isArray(data.kernelArgs) ? data.kernelArgs.join('\n') : '');
+        setCniName(data.cni || 'flannel');
+        setKubernetesVersion(data.kubernetesVersion || recommendedKubeVersion || kubeVersions[0] || '');
         // Only group-level patches are stored in a config (per-IP patches are
         // tied to specific addresses and intentionally not persisted).
-        if (Array.isArray(data.patches?.common)) setCommonPatches(data.patches.common);
-        if (Array.isArray(data.patches?.controlplane)) {
-          setCpPatches({ general: data.patches.controlplane, nodes: {} });
-        }
-        if (Array.isArray(data.patches?.worker)) {
-          setWorkerPatches({ general: data.patches.worker, nodes: {} });
-        }
+        setCommonPatches(Array.isArray(data.patches?.common) ? data.patches.common : []);
+        setCpPatches({
+          general: Array.isArray(data.patches?.controlplane) ? data.patches.controlplane : [],
+          nodes: {},
+        });
+        setWorkerPatches({
+          general: Array.isArray(data.patches?.worker) ? data.patches.worker : [],
+          nodes: {},
+        });
       })
-      .catch(() => {});
+      .catch(() => resetConfigFields());
   };
 
   const handleDeleteConfig = async () => {
@@ -629,6 +688,7 @@ export default function ClusterConfigDialog({
       extensions: selectedExtensions,
       kernelArgs,
       cni: cniName,
+      kubernetesVersion,
       patches: {
         common: commonPatches,
         controlplane: cpPatches.general,
@@ -667,7 +727,7 @@ export default function ClusterConfigDialog({
 
     if (setupType === 'installer') {
       imageConfig = installerImageUrl.trim()
-        ? { installerImageUrl: installerImageUrl.trim(), cni: cniName }
+        ? { installerImageUrl: installerImageUrl.trim(), cni: cniName, kubernetesVersion }
         : null;
     } else {
       const kernelArgs = kernelArgsText
@@ -681,6 +741,7 @@ export default function ClusterConfigDialog({
         extensions: selectedExtensions,
         kernelArgs,
         cni: cniName,
+        kubernetesVersion,
       };
     }
 
@@ -928,23 +989,55 @@ export default function ClusterConfigDialog({
             </>
           )}
 
-          {/* CNI — shared between both setup types */}
+          {/* Kubernetes version + CNI — shared between both setup types */}
           <Box>
-            <FormControl fullWidth size="small" variant="outlined">
-              <InputLabel id="cni-name-label">{t('clusterConfigDialog.cni')}</InputLabel>
-              <Select
-                label={t('clusterConfigDialog.cni')}
-                labelId="cni-name-label"
-                onChange={(e: SelectChangeEvent) => setCniName(e.target.value)}
-                value={cniName}
-              >
-                {CNI_OPTIONS.map(c => (
-                  <MenuItem key={c} value={c}>
-                    {c}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Stack direction={{ sm: 'row', xs: 'column' }} spacing={2}>
+              <FormControl fullWidth size="small" variant="outlined">
+                <InputLabel id="kube-version-label">
+                  {t('clusterConfigDialog.kubernetesVersion')}
+                </InputLabel>
+                <Select
+                  disabled={kubeVersionsLoading}
+                  label={t('clusterConfigDialog.kubernetesVersion')}
+                  labelId="kube-version-label"
+                  onChange={(e: SelectChangeEvent) => setKubernetesVersion(e.target.value)}
+                  value={kubernetesVersion}
+                >
+                  {kubeVersionsLoading && (
+                    <MenuItem disabled value="">
+                      <CircularProgress size={16} sx={{ mr: 1 }} />
+                      {t('clusterConfigDialog.loadingVersions')}
+                    </MenuItem>
+                  )}
+                  {kubeVersions.map(v => (
+                    <MenuItem key={v} value={v}>
+                      {v}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl fullWidth size="small" variant="outlined">
+                <InputLabel id="cni-name-label">{t('clusterConfigDialog.cni')}</InputLabel>
+                <Select
+                  label={t('clusterConfigDialog.cni')}
+                  labelId="cni-name-label"
+                  onChange={(e: SelectChangeEvent) => setCniName(e.target.value)}
+                  value={cniName}
+                >
+                  {CNI_OPTIONS.map(c => (
+                    <MenuItem key={c} value={c}>
+                      {c}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
+            {kubeVersionsError && (
+              <Alert severity="error" sx={{ mt: 1 }}>
+                {kubeVersionsError}
+              </Alert>
+            )}
             {cniName === 'custom' && (
               <Typography color="text.secondary" sx={{ mt: 1 }} variant="caption">
                 {t('clusterConfigDialog.cniCustomHelper')}

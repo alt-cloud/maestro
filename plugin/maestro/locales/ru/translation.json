@@ -190,6 +190,7 @@
     "extensionVersion": "Версия",
     "noExtensionsFound": "Расширения не найдены",
     "cni": "CNI",
+    "kubernetesVersion": "Версия Kubernetes",
     "cniCustomHelper": "Прикрепите патч со ссылками на манифесты для установки нужного CNI.",
     "kernelArgs": "Дополнительные аргументы ядра",
     "kernelArgsHelper": "Этот шаг позволяет настроить аргументы командной строки ядра по умолчанию.",

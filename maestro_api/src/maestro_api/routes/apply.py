@@ -170,6 +170,10 @@ def apply():
                     f'{{"cluster":{{"network":{{"cni":{{"name":"{cni_name}"}}}}}}}}',
                 ])
 
+            kube_version = (image_config or {}).get("kubernetesVersion")
+            if kube_version:
+                command.extend(["--kubernetes-version", kube_version])
+
             if patches:
                 for content in _decode_patches(patches.get("common", [])):
                     command.extend(["--config-patch", content])

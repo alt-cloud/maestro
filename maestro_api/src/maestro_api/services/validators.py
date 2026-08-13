@@ -106,6 +106,15 @@ VALID_ARCHES = {"amd64", "arm64"}
 VALID_CNI_NAMES = {"flannel", "custom", "none"}
 
 
+def _normalize_kube_version(image_config: dict) -> str:
+    # Applied via `talosctl gen config --kubernetes-version`, which expects the
+    # version without a leading "v" (e.g. "1.35.5", not "v1.35.5").
+    kube_version = image_config.get("kubernetesVersion", "")
+    if not isinstance(kube_version, str):
+        raise ValueError("imageConfig.kubernetesVersion must be a string")
+    return re.sub(r"^v", "", kube_version.strip())
+
+
 def validate_image_config(image_config: Any) -> dict:
     if not isinstance(image_config, dict):
         raise ValueError("imageConfig must be an object")
@@ -115,12 +124,16 @@ def validate_image_config(image_config: Any) -> dict:
         if not isinstance(installer_url, str) or not installer_url.strip():
             raise ValueError("imageConfig.installerImageUrl must be a non-empty string")
         result: dict = {"installerImageUrl": installer_url.strip()}
-        # CNI is applied via talosctl gen config regardless of the image source.
+        # CNI and Kubernetes version are applied via talosctl gen config
+        # regardless of the image source.
         cni = image_config.get("cni", "")
         if not isinstance(cni, str):
             raise ValueError("imageConfig.cni must be a string")
         if cni.strip():
             result["cni"] = cni.strip()
+        kube_version = _normalize_kube_version(image_config)
+        if kube_version:
+            result["kubernetesVersion"] = kube_version
         return result
 
     version = image_config.get("version")
@@ -160,6 +173,7 @@ def validate_image_config(image_config: Any) -> dict:
         "extensions": [e.strip() for e in extensions],
         "kernelArgs": [a.strip() for a in kernel_args],
         "cni": cni.strip(),
+        "kubernetesVersion": _normalize_kube_version(image_config),
     }
 
 
