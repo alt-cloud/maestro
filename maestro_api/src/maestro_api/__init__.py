@@ -18,11 +18,11 @@ def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # === ЯВНАЯ НАСТРОЙКА ЛОГИРОВАНИЯ ===
+    # === Explicit logging configuration ===
     app.logger.handlers.clear()
     log_stream = sys.stderr
     handler = logging.StreamHandler(log_stream)
-    handler.setLevel(logging.WARNING)  # Минимальный уровень для этого хендлера
+    handler.setLevel(logging.WARNING)  # Minimum level for this handler
     formatter = logging.Formatter(
         '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
@@ -31,8 +31,8 @@ def create_app() -> Flask:
     app.logger.addHandler(handler)
     app.logger.setLevel(logging.WARNING)
 
-    # ProxyFix для корректного определения реального IP клиента за reverse proxy
-    # (читает заголовки X-Forwarded-For, X-Forwarded-Proto и т.д.)
+    # ProxyFix so the real client IP is detected behind a reverse proxy
+    # (reads the X-Forwarded-For, X-Forwarded-Proto, etc. headers).
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
     init_extensions(app)

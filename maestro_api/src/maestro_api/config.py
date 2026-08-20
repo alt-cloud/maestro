@@ -30,8 +30,8 @@ class APIKeyConfig:
 
 def parse_cors_origins(raw_value: str) -> List[str]:
     """
-    Парсит разрешённые CORS-источники из строки окружения.
-    Использование '*' запрещено из соображений безопасности.
+    Parse the allowed CORS origins from the environment string.
+    Using '*' is prohibited for security reasons.
     """
     stripped = raw_value.strip()
 
@@ -45,7 +45,7 @@ def parse_cors_origins(raw_value: str) -> List[str]:
     if not stripped or stripped.lower() in ("localhost", "127.0.0.1"):
         return LOCALHOST_ORIGINS.copy()
 
-    # Преобразуем строку с разделителями-запятыми в список
+    # Turn the comma-separated string into a list
     return [origin.strip() for origin in stripped.split(",") if origin.strip()]
 
 def parse_positive_float(env_name: str, default_value: float) -> float:
@@ -115,37 +115,37 @@ def parse_api_keys_config(raw_value: str) -> list[APIKeyConfig]:
 
 @dataclass
 class WhitelistConfig:
-    """Конфигурация белого списка, содержащая разобранные IP-сети."""
+    """Whitelist configuration holding the parsed IP networks."""
     ip_networks: List[Union[ipaddress.IPv4Network, ipaddress.IPv6Network]]
 
 def parse_api_whitelist(raw_value: str) -> WhitelistConfig:
     """
-    Парсит строку MAESTRO_API_WHITELIST, содержащую IP-адреса, IP-сети (с маской) и домены,
-    разделенные запятыми.
+    Parse the MAESTRO_API_WHITELIST string of comma-separated IP addresses and
+    IP networks (with a mask).
 
-    :param raw_value: Строка из переменной окружения
-                      (например, "192.168.1.0/24, 10.0.0.5)
-    :return: Объект WhitelistConfig со списками валидных IP-сетей.
-    :raises ValueError: Если хотя бы один элемент строки не является валидным IP/сетью,
+    :param raw_value: value of the environment variable
+                      (e.g. "192.168.1.0/24, 10.0.0.5")
+    :return: a WhitelistConfig with the list of valid IP networks.
+    :raises ValueError: if any item is not a valid IP/network.
     """
     if not raw_value or not raw_value.strip():
         return WhitelistConfig(ip_networks=[])
 
     ip_networks: List[Union[ipaddress.IPv4Network, ipaddress.IPv6Network]] = []
 
-    # Разделяем по запятой и убираем лишние пробелы
+    # Split on commas and trim surrounding whitespace
     items = [item.strip() for item in raw_value.split(',') if item.strip()]
 
     for item in items:
         try:
-            # Пытаемся интерпретировать как IP-сеть или одиночный IP-адрес.
-            # strict=False позволяет администратору написать 192.168.1.5/24,
-            # и система автоматически исправит это на корректную сеть 192.168.1.0/24.
-            # Одиночный IP (например, "10.0.0.1") будет преобразован в /32 (или /128 для IPv6).
+            # Interpret the item as an IP network or a single IP address.
+            # strict=False lets an admin write 192.168.1.5/24 and the system
+            # normalizes it to the correct 192.168.1.0/24 network. A single IP
+            # (e.g. "10.0.0.1") becomes /32 (or /128 for IPv6).
             network = ipaddress.ip_network(item, strict=False)
             ip_networks.append(network)
         except ValueError:
-            # Явно отвергаем мусорные данные (например, URL с http://, некорректные строки и т.д.)
+            # Reject garbage explicitly (e.g. an http:// URL, malformed strings).
             raise ValueError(
                 f"Invalid variable format MAESTRO_API_WHITELIST: '{item}'. "
                f"Expecting IP address, IP network (e.g. 192.168.1.0/24)."
@@ -178,10 +178,10 @@ class Config:
     )
 
     # === SECURITY: Cookie Defaults ===
-    # Даже если мы используем API-ключи, эти настройки защитят любые служебные куки Flask
-    SESSION_COOKIE_HTTPONLY = True       # Защита от XSS (запрет чтения JS)
-    SESSION_COOKIE_SECURE = not API_DEBUG # Защита от перехвата (требует HTTPS)
-    SESSION_COOKIE_SAMESITE = 'Strict'   # Защита от CSRF (куки не отправляются в cross-origin запросах)
+    # Even though we use API keys, these settings protect any Flask service cookies.
+    SESSION_COOKIE_HTTPONLY = True       # Anti-XSS (not readable from JS)
+    SESSION_COOKIE_SECURE = not API_DEBUG # Anti-interception (requires HTTPS)
+    SESSION_COOKIE_SAMESITE = 'Strict'   # Anti-CSRF (cookies not sent on cross-origin requests)
 
     @classmethod
     def validate(cls) -> None:

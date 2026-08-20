@@ -2,7 +2,13 @@
  * Persistent storage for the Maestro API key.
  *
  * SECURITY NOTES:
- * - localStorage is same-origin isolated (protected by our CSP policy on backend).
+ * - localStorage is readable by any JavaScript running on this page. An XSS in
+ *   the plugin (or in the hosting Headlamp page) can therefore read the key.
+ *   This is an accepted trade-off: for a browser client there is no storage that
+ *   is both persistent and immune to XSS. The backend's CSP does NOT protect
+ *   this value — it applies to the API's own (JSON) responses, not to the
+ *   Headlamp document. Prefer short-lived, narrowly-scoped keys to limit blast
+ *   radius.
  * - Key is NEVER logged.
  * - Key is NEVER included in URLs.
  * - Cleared automatically on 401 response to prevent retry loops with invalid key.

@@ -1,5 +1,4 @@
 import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
-import { maestroConfig } from '../../maestroConfig';
 import {
   Alert,
   Button,
@@ -14,6 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { maestroConfig } from '../../maestroConfig';
 import { MaestroApiError } from '../utils/apiClient';
 import { useApiKey } from './ApiKeyContext';
 import { maskApiKey } from './ApiKeyStorage';

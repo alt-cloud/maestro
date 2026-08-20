@@ -10,7 +10,14 @@ from maestro_api.config import APIKeyConfig
 
 
 class InMemoryRateLimiter:
-    """Thread-safe in-memory rate limiter for API keys."""
+    """Thread-safe in-memory rate limiter for API keys.
+
+    Limitation: the counters live in the process memory, so the limit is
+    enforced per worker process, not globally. Under several workers
+    (e.g. ``gunicorn -w N``) the effective limit is multiplied by N, and all
+    counters are reset when the API server restarts. It is a best-effort
+    throttle, not a hard global guarantee.
+    """
     def __init__(self):
         self.requests: dict[str, list[float]] = defaultdict(list)
         self.lock = threading.Lock()

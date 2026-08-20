@@ -1,92 +1,90 @@
+import ipaddress
+
 from flask import current_app, jsonify, request
 
+
 def register_security_headers(app):
-    """Добавляет защитные HTTP-заголовки ко всем ответам."""
+    """Add protective HTTP headers to every response."""
 
     @app.after_request
     def apply_security_headers(response):
-        # 1. XSS & Clickjacking: Content Security Policy
-        # Для pure JSON API safest policy — запретить всё.
-        # Если API когда-либо будет отдавать HTML, расширьте эту политику.
+        # 1. XSS & Clickjacking: Content Security Policy.
+        # For a pure JSON API the safest policy is to forbid everything.
+        # If the API ever serves HTML, widen this policy.
         csp_directives = [
-            "default-src 'none'",          # Запретить загрузку любых ресурсов по умолчанию
-            "frame-ancestors 'none'",      # Защита от Clickjacking (запрет встраивания в iframe)
-            "form-action 'none'",          # Запрет отправки форм
-            "base-uri 'none'",             # Запрет изменения базового URI документа
-            "object-src 'none'",           # Запрет плагинов (Flash, PDF и т.д.)
+            "default-src 'none'",          # Forbid loading any resource by default
+            "frame-ancestors 'none'",      # Anti-clickjacking (no embedding in an iframe)
+            "form-action 'none'",          # Forbid form submissions
+            "base-uri 'none'",             # Forbid changing the document base URI
+            "object-src 'none'",           # Forbid plugins (Flash, PDF, etc.)
         ]
         response.headers['Content-Security-Policy'] = "; ".join(csp_directives)
 
-        # 2. Clickjacking (Legacy защита для старых браузеров)
+        # 2. Clickjacking (legacy protection for old browsers).
         response.headers['X-Frame-Options'] = 'DENY'
 
-        # 3. XSS: Запрет MIME-sniffing (браузер не должен угадывать тип контента)
-        # Особенно важно для JSON, чтобы его не интерпретировали как HTML/JS
+        # 3. XSS: forbid MIME sniffing (the browser must not guess the content type).
+        # Matters for JSON so it is not interpreted as HTML/JS.
         response.headers['X-Content-Type-Options'] = 'nosniff'
 
-        # 4. XS-Leaks: Изоляция контекста
-        # COOP: Гарантирует, что окно не будет иметь доступа к другим окнам того же origin,
-        # если они не имеют того же COOP.
+        # 4. XS-Leaks: browsing-context isolation.
+        # COOP: ensures the window cannot access other windows of the same origin
+        # unless they share the same COOP.
         response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
 
-        # COEP: Требует, чтобы все загружаемые ресурсы имели явные заголовки CORP/CORS.
-        # ВНИМАНИЕ: Это строгая политика. Убедитесь, что ваш фронтенд делает запросы с правильными CORS-заголовками.
+        # COEP: requires every loaded resource to carry explicit CORP/CORS headers.
+        # NOTE: strict policy — make sure the frontend sends proper CORS headers.
         response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
 
-        # CORP: Дополнительно защищает ресурсы от чтения другими origin без явного разрешения.
+        # CORP: additionally protects resources from being read by other origins
+        # without explicit permission.
         response.headers['Cross-Origin-Resource-Policy'] = 'same-origin'
 
-        # 5. XSS: HTTP Strict Transport Security (HSTS)
-        # Принудительное использование HTTPS (отключаем в debug-режиме для локальной разработки)
+        # 5. HTTP Strict Transport Security (HSTS): force HTTPS.
+        # Disabled in debug mode for local development.
         if not current_app.config.get('API_DEBUG', False):
             response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
         return response
 
-import ipaddress
-from flask import request, jsonify, current_app
 
 def register_ip_whitelist_check(app):
-    """
-    Регистрирует хук before_request, который проверяет IP/Host клиента
-    против заранее распарсенного whitelist из app.config["API_WHITELIST"].
+    """Register a before_request hook that checks the client IP against the
+    pre-parsed whitelist in app.config["API_WHITELIST"].
     """
 
     @app.before_request
     def check_api_whitelist():
-        # Пропускаем preflight-запросы — ими управляет Flask-CORS
+        # Skip preflight requests — handled by Flask-CORS.
         if request.method == "OPTIONS":
             return None
 
-        # Получаем уже распарсенный whitelist из конфига (объект WhitelistConfig)
+        # Already-parsed whitelist from the config (a WhitelistConfig object).
         whitelist = current_app.config.get("API_WHITELIST")
 
-        # Если whitelist пуст (переменная окружения не задана) — фильтрация не применяется.
-        # Это стандартная политика: если админ не настроил whitelist, значит, он не нужен.
+        # If the whitelist is empty (env var not set) no filtering is applied:
+        # if the admin did not configure a whitelist, it is not needed.
         if whitelist is None or (not whitelist.ip_networks):
             return None
 
-        # Извлекаем данные клиента
-        # ProxyFix (применённый в create_app) обеспечивает корректное определение
-        # реального IP клиента через заголовки X-Forwarded-For.
+        # Client IP. ProxyFix (applied in create_app) makes request.remote_addr
+        # hold the real client IP taken from the X-Forwarded-For header.
         client_ip_str = request.remote_addr
 
-        # Валидация IP клиента
         try:
             client_ip = ipaddress.ip_address(client_ip_str)
         except ValueError:
             current_app.logger.warning(
-                f"Невозможно определить корректный IP клиента: {client_ip_str}"
+                f"Cannot determine a valid client IP: {client_ip_str}"
             )
             return jsonify({"error": "Invalid client IP format"}), 400
 
-        # 1. Проверка вхождения IP клиента в разрешённые сети (с учётом маски)
+        # Deny unless the client IP falls into one of the whitelisted networks
+        # (mask-aware).
         ip_allowed = any(client_ip in network for network in whitelist.ip_networks)
 
-        # 2. Итоговое решение: достаточно попадания ХОТЯ БЫ ПО ОДНОМУ критерию
-        if not (ip_allowed):
+        if not ip_allowed:
             current_app.logger.warning(
-                f"Доступ заблокирован: IP '{client_ip_str}' "
-                f"не найдены в whitelist."
+                f"Access blocked: IP '{client_ip_str}' is not in the whitelist."
             )
             return jsonify({
                 "error": "Access denied",
