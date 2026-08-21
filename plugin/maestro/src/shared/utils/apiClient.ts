@@ -224,4 +224,17 @@ export const apiClient = {
       },
     });
   },
+
+  /**
+   * Perform a DELETE request.
+   * Returns parsed JSON if the server responds with data, or void for 204 No Content.
+   */
+  async delete<T = void>(path: string, options?: ApiRequestOptions): Promise<T> {
+    const response = await request<Response>('DELETE', path, null, options);
+    if (response.status === 204) {
+      return undefined as unknown as T;
+    }
+    return response.json() as Promise<T>;
+  },
 };
+
