@@ -793,9 +793,8 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
     const body: Record<string, unknown> = { actions };
     if (imageConfig) body.imageConfig = imageConfig;
     body.patches = patchesPayload;
-
     try {
-      await apiClient.postNoContent('/apply', actions);
+      await apiClient.post('/apply', body);
       setRefreshTick(current => current + 1);
     } catch (err) {
       if (err instanceof MaestroApiError) {
@@ -930,7 +929,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
               )}
 
               <Button
-                aria-label={t('clustersPage.createClusterAria')}
+                aria-label={isClusterPage ? t('clustersPage.addNodesToClusterAria') : t('clustersPage.createClusterAria')}
                 color="primary"
                 disabled={
                   shouldProvideNewClusterName &&
@@ -946,7 +945,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
                 }}
                 variant="contained"
               >
-                {t('clustersPage.applyChanges')}
+                {isClusterPage ? t('clustersPage.addNodesToCluster') : t('clustersPage.createCluster')}
               </Button>
             </Stack>
           )}

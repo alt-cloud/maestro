@@ -48,7 +48,10 @@
       "stage": "Этап",
       "status": "Статус"
     },
+    "createCluster": "Создать кластер",
+    "addNodesToCluster": "Добавить узлы в кластер",
     "createClusterAria": "Создать кластер",
+    "addNodesToClusterAria": "Добавить узлы в кластер",
     "loadingClusterList": "Загрузка списка кластеров...",
     "refreshNow": "Обновить сейчас",
     "netError": "Ошибка сети",

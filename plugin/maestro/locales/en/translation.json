@@ -48,7 +48,10 @@
       "stage": "Stage",
       "status": "Status"
     },
+    "createCluster": "Create cluster",
+    "addNodesToCluster": "Add nodes to cluster",
     "createClusterAria": "Create cluster",
+    "addNodesToClusterAria": "Add nodes to cluster",
     "loadingClusterList": "Loading cluster list...",
     "refreshNow": "Refresh now",
     "netError": "Network error",
