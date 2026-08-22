@@ -43,7 +43,7 @@ def run_command(
         raise ValueError("timeout_seconds must be greater than zero")
 
     timeout_info = f" timeout={timeout_seconds}s" if timeout_seconds is not None else ""
-    print(f"run_command cwd={cluster_dir} args={shlex.join(args)}{timeout_info}")
+    print(f"run_command cwd={cluster_dir} args={shlex.join(args)}{timeout_info}", flush=True)
     try:
         return subprocess.run(
             args,
@@ -186,7 +186,7 @@ def nodes_list(nmap_output: str) -> dict[str, dict[str, str]]:
 
     for line in lines:
         if line.startswith(prefix):
-            print(line)
+            print(line, flush=True)
             if node_state:
                 nodes[node_state["ip"]] = node_state
 
@@ -205,7 +205,7 @@ def nodes_list(nmap_output: str) -> dict[str, dict[str, str]]:
 
     if node_state and node_state.get("apidState") == "open":
         nodes[node_state["ip"]] = node_state
-        print(f"nodes_list:: node_state={node_state}")
+        print(f"nodes_list:: node_state={node_state}", flush=True)
 
     return nodes
 
@@ -233,7 +233,7 @@ def is_maintenance(ip: str, timeout_seconds: float | None = None) -> bool:
         "-i",
     ]
     result = run_command(command, home_dir, timeout_seconds=timeout_seconds)
-    print(f"is_maintenance:: returncode={result.returncode}")
+    print(f"is_maintenance:: returncode={result.returncode}", flush=True)
     if result.returncode != 0:
         return False
 
@@ -376,7 +376,7 @@ def refresh_talosconfigs(
 ) -> dict[str, dict[str, list[dict[str, Any]]]]:
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = f"{home_dir}/.maestro"
-    print(f"refresh_talosconfigs:: before maestro_config_dir={maestro_config_dir}")
+    print(f"refresh_talosconfigs:: before maestro_config_dir={maestro_config_dir}", flush=True)
 
     talos_config = load_talos_configs()
     cluster_names = list(talos_config["contexts"].keys())
@@ -405,7 +405,7 @@ def refresh_talosconfigs(
     print(
         f"refresh_talosconfigs:: before talos_config={json.dumps(talos_config, indent=2)}"
     )
-    print(f"refresh_talosconfigs:: real_cluster_names={json.dumps(real_cluster_names)}")
+    print(f"refresh_talosconfigs:: real_cluster_names={json.dumps(real_cluster_names)}", flush=True)
 
     new_nodes: dict[str, dict[str, list[dict[str, Any]]]] = {
         "_Orphans": {"controlplanes": [], "workers": []},
@@ -439,18 +439,18 @@ def refresh_talosconfigs(
             new_nodes[to_cluster_name].setdefault("workers", [])
 
             print(
-                f"refresh_talosconfigs:: ip={ip} port 50000 open to_cluster_name={to_cluster_name}"
+                f"refresh_talosconfigs:: ip={ip} port 50000 open to_cluster_name={to_cluster_name}", flush=True
             )
             if is_port_open(ip, 6443, timeout=port_check_timeout_seconds):
                 kube_node_type = "controlplanes"
                 print(
-                    f"refresh_talosconfigs:: ip={ip} port 6443 opened controlplane in cluster {to_cluster_name}"
+                    f"refresh_talosconfigs:: ip={ip} port 6443 opened controlplane in cluster {to_cluster_name}", flush=True
                 )
             else:
                 kube_node_type = "workers"
                 changed = True
                 print(
-                    f"refresh_talosconfigs:: ip={ip} port 6443 closed, move to worker in cluster {to_cluster_name}"
+                    f"refresh_talosconfigs:: ip={ip} port 6443 closed, move to worker in cluster {to_cluster_name}", flush=True
                 )
         else:
             kube_node_type = "controlplanes"
@@ -458,7 +458,7 @@ def refresh_talosconfigs(
             node_stage = "unavailable or installing"
             print(
                 f"refresh_talosconfigs:: ip={ip} ports closed, keep controlplane in old cluster "
-                f"{from_cluster_name if from_cluster_name else '-'}"
+                f"{from_cluster_name if from_cluster_name else '-'}", flush=True
             )
 
         if (
@@ -519,11 +519,11 @@ def refresh_talosconfigs(
     if set(previous_node_placement.keys()) != processed_ips:
         changed = True
 
-    print(f"refresh_talosconfigs:: new_nodes={json.dumps(new_nodes, indent=2)}")
-    print(f"refresh_talosconfigs:: changed={changed}")
+    print(f"refresh_talosconfigs:: new_nodes={json.dumps(new_nodes, indent=2)}", flush=True)
+    print(f"refresh_talosconfigs:: changed={changed}", flush=True)
 
     if changed:
-        print("refresh_talosconfigs:: talosctl changed")
+        print("refresh_talosconfigs:: talosctl changed", flush=True)
         for cluster_name, cluster_nodes in new_nodes.items():
             for talos_node_type, kube_node_type in TALOS_NODE_TYPE_TO_KUBE.items():
                 node_ips: list[str] = []
@@ -531,10 +531,10 @@ def refresh_talosconfigs(
                     print(
                         "refresh_talosconfigs:: "
                         f"cluster_name={cluster_name} kube_node_type={kube_node_type} "
-                        f"node={json.dumps(cluster_nodes[kube_node_type])}"
+                        f"node={json.dumps(cluster_nodes[kube_node_type])}", flush=True
                     )
                     for node in cluster_nodes[kube_node_type]:
-                        print(f"refresh_talosconfigs:: node={json.dumps(node)}")
+                        print(f"refresh_talosconfigs:: node={json.dumps(node)}", flush=True)
                         node_ips.append(node["ip"])
 
                 talosconfig_dir = f"{maestro_config_dir}/{cluster_name}"
@@ -547,7 +547,7 @@ def refresh_talosconfigs(
                     )
                 print(
                     "refresh_talosconfigs:: "
-                    f"cluster_name={cluster_name} {talos_node_type}={json.dumps(node_ips)}"
+                    f"cluster_name={cluster_name} {talos_node_type}={json.dumps(node_ips)}", flush=True
                 )
 
     if new_nodes["_Orphans"]["workers"]:

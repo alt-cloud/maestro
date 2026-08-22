@@ -296,7 +296,7 @@ def apply():
                         try:
                             print(
                                 "start_background_command "
-                                f"cwd={talosconfig_dir} ip={ip} output_file={bootstrap_file}"
+                                f"cwd={talosconfig_dir} ip={ip} output_file={bootstrap_file}", flush=True
                             )
 
                             bootstrap_command = f"""set -x
