@@ -588,7 +588,7 @@ export default function ClusterConfigDialog({
         setSavedConfigs(Array.isArray(data) ? data : []);
       })
       .catch(() => setSavedConfigs([]));
-  }, [open])
+  }, [open]);
 
   // Reset every config field to its default value
   const resetConfigFields = () => {
@@ -724,6 +724,7 @@ export default function ClusterConfigDialog({
       worker: workerPatches,
     };
     onSubmit(imageConfig, patches);
+    onClose();
   };
 
   const submitDisabled = setupType === 'installer' ? !installerImageUrl.trim() : !version;
