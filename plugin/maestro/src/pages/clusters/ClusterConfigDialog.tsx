@@ -35,8 +35,7 @@ import {
   useTheme,
 } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { buildServerUrl } from '../../config/server';
-
+import { apiClient } from '../../shared/utils/apiClient';
 // Theme-aware accent color from the design
 const ACCENT_LIGHT = '#664AE3';
 const ACCENT_DARK = '#A999EF';
@@ -539,17 +538,13 @@ export default function ClusterConfigDialog({
     if (!open || setupType !== 'manual') return;
     setVersionsLoading(true);
     setVersionsError(null);
-    fetch(buildServerUrl('/factory/versions'))
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then((data: string[]) => {
-        const sorted = [...data].sort(compareVersionsDesc);
+    apiClient.get<string[]>('/factory/versions')
+      .then(response => {
+        const sorted = [...response].sort(compareVersionsDesc);
         setVersions(sorted);
         if (sorted.length > 0 && !version) setVersion(sorted[0]);
       })
-      .catch(err => setVersionsError(err.message))
+      .catch(err => setVersionsError(err.message || 'Failed to load versions'))
       .finally(() => setVersionsLoading(false));
   }, [open, setupType]);
 
@@ -558,13 +553,9 @@ export default function ClusterConfigDialog({
     if (!open || setupType !== 'manual' || !version) return;
     setExtensionsLoading(true);
     setExtensionsError(null);
-    fetch(buildServerUrl(`/factory/extensions/${encodeURIComponent(version)}`))
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then((data: FactoryExtension[]) => setExtensions(data))
-      .catch(err => setExtensionsError(err.message))
+    apiClient.get<FactoryExtension[]>(`/factory/extensions/${encodeURIComponent(version)}`)
+      .then(response => setExtensions(response))
+      .catch(err => setExtensionsError(err.message || 'Failed to load extensions'))
       .finally(() => setExtensionsLoading(false));
   }, [open, setupType, version]);
 
@@ -573,36 +564,33 @@ export default function ClusterConfigDialog({
     if (!open) return;
     setKubeVersionsLoading(true);
     setKubeVersionsError(null);
-    fetch(buildServerUrl('/kubernetes/versions'))
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then((data: { versions: string[]; recommended: string | null }) => {
+    apiClient.get<{ versions: string[]; recommended: string | null }>('/kubernetes/versions')
+      .then(response => {
+        const data = response;
         const sorted = [...(data.versions ?? [])].sort(compareVersionsDesc);
         setKubeVersions(sorted);
-        // Prefer the server recommendation (compatible with the running Talos),
-        // fall back to the newest available version.
         const preferred =
           data.recommended && sorted.includes(data.recommended) ? data.recommended : sorted[0];
         setRecommendedKubeVersion(preferred ?? '');
         if (preferred && !kubernetesVersion) setKubernetesVersion(preferred);
       })
-      .catch(err => setKubeVersionsError(err.message))
+      .catch(err => setKubeVersionsError(err.message || 'Failed to load k8s versions'))
       .finally(() => setKubeVersionsLoading(false));
   }, [open]);
 
   // Load saved config names
   useEffect(() => {
     if (!open) return;
-    fetch(buildServerUrl('/configs'))
-      .then(r => r.json())
-      .then((data: string[]) => setSavedConfigs(data))
+    apiClient.get<string[]>('/configs')
+      .then(response => {
+        // Гарантируем, что в стейт попадёт именно массив
+        const data = response;
+        setSavedConfigs(Array.isArray(data) ? data : []);
+      })
       .catch(() => setSavedConfigs([]));
   }, [open]);
 
-  // Reset every config field to its default value (used when selecting a config
-  // that is not saved yet, e.g. `default`).
+  // Reset every config field to its default value
   const resetConfigFields = () => {
     setVersion(versions[0] ?? '');
     setArch('amd64');
@@ -616,41 +604,40 @@ export default function ClusterConfigDialog({
     setWorkerPatches({ general: [], nodes: {} });
   };
 
-  const handleLoadConfig = (name: string) => {
+  const handleLoadConfig = async (name: string) => {
     if (!name) return;
     setConfigName(name);
     setActiveConfigName(name);
-    fetch(buildServerUrl(`/configs/${encodeURIComponent(name)}`))
-      .then(r => (r.ok ? r.json() : null))
-      .then(data => {
-        // Missing config (e.g. `default` before it is saved) — reset to defaults
-        // rather than keeping the previously loaded config's values.
-        if (!data || typeof data !== 'object') {
-          resetConfigFields();
-          return;
-        }
-        // Start from defaults, then overlay whatever the saved config provides,
-        // so fields absent in the config don't leak from the previous one.
-        setVersion(data.version || versions[0] || '');
-        setArch(data.arch || 'amd64');
-        setSecureBoot(typeof data.secureBoot === 'boolean' ? data.secureBoot : false);
-        setSelectedExtensions(Array.isArray(data.extensions) ? data.extensions : []);
-        setKernelArgsText(Array.isArray(data.kernelArgs) ? data.kernelArgs.join('\n') : '');
-        setCniName(data.cni || 'flannel');
-        setKubernetesVersion(data.kubernetesVersion || recommendedKubeVersion || kubeVersions[0] || '');
-        // Only group-level patches are stored in a config (per-IP patches are
-        // tied to specific addresses and intentionally not persisted).
-        setCommonPatches(Array.isArray(data.patches?.common) ? data.patches.common : []);
-        setCpPatches({
-          general: Array.isArray(data.patches?.controlplane) ? data.patches.controlplane : [],
-          nodes: {},
-        });
-        setWorkerPatches({
-          general: Array.isArray(data.patches?.worker) ? data.patches.worker : [],
-          nodes: {},
-        });
-      })
-      .catch(() => resetConfigFields());
+    try {
+      const response = await apiClient.get<any>(`/configs/${encodeURIComponent(name)}`);
+      const data = response;
+
+      // Missing config (e.g. `default` before it is saved) — reset to defaults
+      if (!data || typeof data !== 'object') {
+        resetConfigFields();
+        return;
+      }
+
+      // Start from defaults, then overlay whatever the saved config provides
+      setVersion(data.version || versions[0] || '');
+      setArch(data.arch || 'amd64');
+      setSecureBoot(typeof data.secureBoot === 'boolean' ? data.secureBoot : false);
+      setSelectedExtensions(Array.isArray(data.extensions) ? data.extensions : []);
+      setKernelArgsText(Array.isArray(data.kernelArgs) ? data.kernelArgs.join('\n') : '');
+      setCniName(data.cni || 'flannel');
+      setKubernetesVersion(data.kubernetesVersion || recommendedKubeVersion || kubeVersions[0] || '');
+      setCommonPatches(Array.isArray(data.patches?.common) ? data.patches.common : []);
+      setCpPatches({
+        general: Array.isArray(data.patches?.controlplane) ? data.patches.controlplane : [],
+        nodes: {},
+      });
+      setWorkerPatches({
+        general: Array.isArray(data.patches?.worker) ? data.patches.worker : [],
+        nodes: {},
+      });
+    } catch {
+      resetConfigFields();
+    }
   };
 
   const handleDeleteConfig = async () => {
@@ -658,18 +645,11 @@ export default function ClusterConfigDialog({
     if (!name) return;
     setConfigSaveError(null);
     try {
-      const resp = await fetch(buildServerUrl(`/configs/${encodeURIComponent(name)}`), {
-        method: 'DELETE',
-      });
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({}));
-        setConfigSaveError(err.error || `HTTP ${resp.status}`);
-        return;
-      }
-      const updated: string[] = await fetch(buildServerUrl('/configs')).then(r => r.json());
-      setSavedConfigs(updated);
-    } catch (err: unknown) {
-      setConfigSaveError(err instanceof Error ? err.message : 'Unknown error');
+      await apiClient.delete(`/configs/${encodeURIComponent(name)}`);
+      const configs = await apiClient.get<string[]>('/configs');
+      setSavedConfigs(Array.isArray(configs) ? configs : []);
+    } catch (err: any) {
+      setConfigSaveError(err.response?.data?.error || err.message || 'Unknown error');
     }
   };
 
@@ -681,6 +661,7 @@ export default function ClusterConfigDialog({
       .split('\n')
       .map(s => s.trim())
       .filter(Boolean);
+
     const configData = {
       version,
       arch,
@@ -695,21 +676,13 @@ export default function ClusterConfigDialog({
         worker: workerPatches.general,
       },
     };
+
     try {
-      const resp = await fetch(buildServerUrl(`/configs/${encodeURIComponent(name)}`), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(configData),
-      });
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({}));
-        setConfigSaveError(err.error || `HTTP ${resp.status}`);
-        return;
-      }
-      const updated: string[] = await fetch(buildServerUrl('/configs')).then(r => r.json());
-      setSavedConfigs(updated);
-    } catch (err: unknown) {
-      setConfigSaveError(err instanceof Error ? err.message : 'Unknown error');
+      await apiClient.post(`/configs/${encodeURIComponent(name)}`, configData);
+      const configs = await apiClient.get<string[]>('/configs');
+      setSavedConfigs(Array.isArray(configs) ? configs : []);
+    } catch (err: any) {
+      setConfigSaveError(err.response?.data?.error || err.message || 'Unknown error');
     }
   };
 
@@ -751,6 +724,7 @@ export default function ClusterConfigDialog({
       worker: workerPatches,
     };
     onSubmit(imageConfig, patches);
+    onClose();
   };
 
   const submitDisabled = setupType === 'installer' ? !installerImageUrl.trim() : !version;
