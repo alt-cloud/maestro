@@ -1,0 +1,43 @@
+FROM registry.altlinux.org/p11/python AS maestro_api_dev
+
+RUN apt-get update && apt-get install -y git
+
+COPY Docker/requrements.txt /tmp/requirements.txt
+
+RUN \
+  mkdir -p /home/maestro; \
+  cd  /home/maestro; \
+  python3 -m venv maestro_api_venv; \
+  . /home/maestro/maestro_api_venv/bin/activate; \
+  pip install -r /tmp/requirements.txt
+
+FROM registry.altlinux.org/p11/python
+
+RUN apt-get update && \
+  apt-get install -y headlamp talosctl su sudo nmap iputils caddy jq yq net-tools curl tcpdump
+
+COPY /Docker/entrypoint.sh /
+
+COPY /plugin/maestro/dist/ /usr/share/headlamp/plugins/maestro/
+
+COPY /plugin/maestro/package.json /usr/share/headlamp/plugins/maestro/
+
+# COPY Docker/Caddyfile /etc/caddy/Caddyfile
+
+RUN adduser maestro
+
+RUN chmod 755 /home/maestro
+
+# USER maestro
+
+COPY --from=maestro_api_dev --chown=maestro:maestro /home/maestro/maestro_api_venv  /home/maestro/maestro_api_venv
+
+# USER root
+
+EXPOSE 4466
+
+CMD /entrypoint.sh
+
+# CMD /usr/bin/su -c /entrypoint.sh maestro
+
+# CMD /usr/bin/sleep infinity
