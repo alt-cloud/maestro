@@ -352,6 +352,66 @@ function ClusterRows(props) {
   const isClusterPage = props.isClusterPage;
   const isOrphan = clusterName === orphansClusterName;
   const clusterLink = buildPathWithQuery('/maestro/cluster', { cluster: clusterName });
+
+  const clusterNameCell = (
+    <TableCell
+      rowSpan={clusterNameRowSpans[clusterName]['all']}
+      sx={{ fontWeight: 600, verticalAlign: 'top' }}
+    >
+      {isClusterPage || clusterName[0] === '_' ? (
+        <span>{clusterName}</span>
+      ) : (
+        <Link to={clusterLink}>{clusterName}</Link>
+      )}
+    </TableCell>
+  );
+
+  if (isOrphan) {
+    // No machine config applied, or unreachable — there's no reliable role to report.
+    const [firstRow, ...restRows] = nodeTypes['unassigned'] ?? [];
+    return (
+      <>
+        <ClusterSeparator />
+        <TableRow>
+          {clusterNameCell}
+          <TableCell rowSpan={clusterNameRowSpans[clusterName]['unassigned']} sx={nodeTypeCellSx('text.disabled')}>
+            -
+          </TableCell>
+          <NodeColumns
+            clusterName={props.clusterName}
+            cols={firstRow}
+            currentStage={clusterNodeStages[firstRow?.ip]}
+            isClusterPage={isClusterPage}
+            isOrphan={isOrphan}
+            onChangeStage={(nextStage: string) => {
+              if (firstRow?.ip) {
+                props.onStageChange(clusterName, firstRow.ip, nextStage);
+              }
+            }}
+            t={t}
+          />
+        </TableRow>
+        {restRows.map((value, index) => (
+          <TableRow key={`${clusterName}-unassigned-${value?.ip || index}`}>
+            <NodeColumns
+              clusterName={props.clusterName}
+              cols={value}
+              currentStage={clusterNodeStages[value?.ip]}
+              isClusterPage={isClusterPage}
+              isOrphan={isOrphan}
+              onChangeStage={(nextStage: string) => {
+                if (value?.ip) {
+                  props.onStageChange(clusterName, value.ip, nextStage);
+                }
+              }}
+              t={t}
+            />
+          </TableRow>
+        ))}
+      </>
+    );
+  }
+
   const [firstControlPlaneRow, ...controlPlaneRows] = nodeTypes['controlplanes'] ?? [];
   const [firstWorkerRow, ...workerRows] = nodeTypes['workers'] ?? [];
 
@@ -359,21 +419,12 @@ function ClusterRows(props) {
     <>
       <ClusterSeparator />
       <TableRow>
-        <TableCell
-          rowSpan={clusterNameRowSpans[clusterName]['all']}
-          sx={{ fontWeight: 600, verticalAlign: 'top' }}
-        >
-          {isClusterPage || clusterName[0] === '_' ? (
-            <span>{clusterName}</span>
-          ) : (
-            <Link to={clusterLink}>{clusterName}</Link>
-          )}
-        </TableCell>
+        {clusterNameCell}
         <TableCell
           rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}
           sx={nodeTypeCellSx('info.main')}
         >
-          {isOrphan ? '-' : t('common.controlplane')}
+          {t('common.controlplane')}
         </TableCell>
         <NodeColumns
           clusterName={props.clusterName}
@@ -408,50 +459,46 @@ function ClusterRows(props) {
           />
         </TableRow>
       ))}
-      {!isOrphan && (
-        <>
-          <TableRow>
-            <TableCell
-              rowSpan={clusterNameRowSpans[clusterName]['workers']}
-              sx={nodeTypeCellSx('success.main')}
-            >
-              {t('common.worker')}
-            </TableCell>
+        <TableRow>
+          <TableCell
+            rowSpan={clusterNameRowSpans[clusterName]['workers']}
+            sx={nodeTypeCellSx('success.main')}
+          >
+            {t('common.worker')}
+          </TableCell>
+          <NodeColumns
+            clusterName={props.clusterName}
+            cols={firstWorkerRow}
+            currentStage={clusterNodeStages[firstWorkerRow?.ip]}
+            isClusterPage={isClusterPage}
+            isOrphan={false}
+            nodeType="worker"
+            onChangeStage={(nextStage: string) => {
+              if (firstWorkerRow?.ip) {
+                props.onStageChange(clusterName, firstWorkerRow.ip, nextStage);
+              }
+            }}
+            t={t}
+          />
+        </TableRow>
+        {workerRows.map((value, index) => (
+          <TableRow key={`${clusterName}-worker-${value?.ip || index}`}>
             <NodeColumns
               clusterName={props.clusterName}
-              cols={firstWorkerRow}
-              currentStage={clusterNodeStages[firstWorkerRow?.ip]}
+              cols={value}
+              currentStage={clusterNodeStages[value?.ip]}
               isClusterPage={isClusterPage}
               isOrphan={false}
               nodeType="worker"
               onChangeStage={(nextStage: string) => {
-                if (firstWorkerRow?.ip) {
-                  props.onStageChange(clusterName, firstWorkerRow.ip, nextStage);
+                if (value?.ip) {
+                  props.onStageChange(clusterName, value.ip, nextStage);
                 }
               }}
               t={t}
             />
           </TableRow>
-          {workerRows.map((value, index) => (
-            <TableRow key={`${clusterName}-worker-${value?.ip || index}`}>
-              <NodeColumns
-                clusterName={props.clusterName}
-                cols={value}
-                currentStage={clusterNodeStages[value?.ip]}
-                isClusterPage={isClusterPage}
-                isOrphan={false}
-                nodeType="worker"
-                onChangeStage={(nextStage: string) => {
-                  if (value?.ip) {
-                    props.onStageChange(clusterName, value.ip, nextStage);
-                  }
-                }}
-                t={t}
-              />
-            </TableRow>
-          ))}
-        </>
-      )}
+        ))}
     </>
   );
 }
@@ -525,18 +572,32 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
   }, [hasOrphans, isClusterPage, rows, selectedCluster]);
 
   const clusterNameRowSpans = useMemo(() => {
-    const rowSpansByCluster: Record<string, { all: number; controlplanes: number; workers: number }> = {};
+    const rowSpansByCluster: Record<
+      string,
+      { all: number; controlplanes: number; workers: number; unassigned: number }
+    > = {};
     for (const clusterName of Object.keys(filteredRows)) {
       const isOrphan = clusterName === orphansClusterName;
       const nodeTypes = filteredRows[clusterName] || {};
+      if (isOrphan) {
+        const unassignedRowSpan = Math.max((nodeTypes['unassigned'] || []).length, 1);
+        rowSpansByCluster[clusterName] = {
+          all: unassignedRowSpan,
+          controlplanes: 0,
+          workers: 0,
+          unassigned: unassignedRowSpan,
+        };
+        continue;
+      }
       const controlPlanes = nodeTypes['controlplanes'] || [];
       const workers = nodeTypes['workers'] || [];
-      const controlPlanesRowSpan = isOrphan ? controlPlanes.length : Math.max(controlPlanes.length, 1);
+      const controlPlanesRowSpan = Math.max(controlPlanes.length, 1);
       const workersRowSpan = Math.max(workers.length, 1);
       rowSpansByCluster[clusterName] = {
-        all: isOrphan ? Math.max(controlPlanes.length, 1) : controlPlanesRowSpan + workersRowSpan,
+        all: controlPlanesRowSpan + workersRowSpan,
         controlplanes: controlPlanesRowSpan,
         workers: workersRowSpan,
+        unassigned: 0,
       };
     }
     return rowSpansByCluster;
@@ -549,6 +610,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       const nodeTypes = filteredRows[clusterName] || {};
       const controlPlanes = nodeTypes['controlplanes'] || [];
       const workers = nodeTypes['workers'] || [];
+      const unassigned = nodeTypes['unassigned'] || [];
       nextSelections[clusterName] = {};
 
       for (const node of controlPlanes) {
@@ -560,6 +622,12 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       for (const node of workers) {
         if (node?.ip) {
           nextSelections[clusterName][node.ip] = isOrphan ? 'maintenance' : 'running';
+        }
+      }
+
+      for (const node of unassigned) {
+        if (node?.ip) {
+          nextSelections[clusterName][node.ip] = 'maintenance';
         }
       }
     }
