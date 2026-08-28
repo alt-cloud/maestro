@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, Response
 from flask_cors import CORS
 
 def init_extensions(app: Flask) -> None:
@@ -17,3 +17,10 @@ def init_extensions(app: Flask) -> None:
         methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         max_age=3600,  # Cache preflight for 1 hour
     )
+
+    @app.after_request
+    def disable_caching(response: Response) -> Response:
+        # Every response here reflects live cluster/node state — the browser must
+        # never serve a stale cached copy of it on a repeated GET.
+        response.headers["Cache-Control"] = "no-store"
+        return response
