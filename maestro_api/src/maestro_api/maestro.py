@@ -3,6 +3,7 @@ import os
 import shlex
 import socket
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, TypedDict
 
@@ -496,11 +497,15 @@ def classify_known_node(
     authenticates against a different real cluster, or it confirms maintenance stage.
     Anything short of that keeps its old placement — an ambiguous blip must never erase a
     node's recorded membership, only a real answer can.
+
+    The reachability check itself uses the short probe timeout, not the full command
+    timeout: a node that's actually there answers in well under a second, so there's no
+    reason to let a genuinely silent one block the batch for the full 30s twice over.
     """
-    node_info = fetch_cluster_node_info(cluster_name, ip, command_timeout_seconds)
+    node_info = fetch_cluster_node_info(cluster_name, ip, port_check_timeout_seconds)
     if node_info is None:
         to_cluster_name, node_is_maintenance = node_cluster_name(
-            real_cluster_names, ip, timeout_seconds=command_timeout_seconds
+            real_cluster_names, ip, timeout_seconds=port_check_timeout_seconds
         )
         if to_cluster_name is not None:
             print(
@@ -601,12 +606,18 @@ def classify_candidate_node(
     The port probe here is purely a cheap pre-filter to skip spawning talosctl against
     addresses with nothing listening at all (most of a freshly scanned /24) — it never
     decides a node's identity or role by itself, real talosctl calls do.
+
+    A completed TCP handshake doesn't mean the Talos protocol will actually answer —
+    some addresses on a noisy network accept the connection and then never respond. So
+    the identity check (which cluster owns this, or is it in maintenance) also runs on
+    the short probe timeout: a real apid answers near-instantly, and a silent one would
+    otherwise cost up to two full command timeouts per address.
     """
     if not is_port_open(ip, 50000, timeout=port_check_timeout_seconds):
         return None
 
     to_cluster_name, node_is_maintenance = node_cluster_name(
-        real_cluster_names, ip, timeout_seconds=command_timeout_seconds
+        real_cluster_names, ip, timeout_seconds=port_check_timeout_seconds
     )
     if to_cluster_name is None:
         print(
@@ -627,7 +638,7 @@ def classify_scanned_node(
     command_timeout_seconds: float | None,
     port_check_timeout_seconds: float,
 ) -> NodeClassification | None:
-    """Classifies one scanned IP.
+    """Classifies one scanned IP. Pure w.r.t. the caller's state — safe to run on a worker thread.
 
     Returns None if the node should be dropped entirely (not Talos, not yet confirmable,
     or a brand-new cluster member whose machinestatus couldn't be fetched).
@@ -708,28 +719,34 @@ def refresh_talosconfigs(
     # nodes are never written to a talosconfig, so they'd never match on a later poll otherwise.
     trackable_ips: set[str] = set()
 
-    for ip in scanned_nodes.keys():
-        result = classify_scanned_node(
-            ip,
-            real_cluster_names,
-            previous_node_placement,
-            command_timeout_seconds,
-            port_check_timeout_seconds,
+    # Each node's classification is independent network I/O (sockets, talosctl)
+    # with no shared state, so a scan of hundreds of IPs doesn't have to run one at a time.
+    with ThreadPoolExecutor(max_workers=32) as executor:
+        results = executor.map(
+            lambda ip: classify_scanned_node(
+                ip,
+                real_cluster_names,
+                previous_node_placement,
+                command_timeout_seconds,
+                port_check_timeout_seconds,
+            ),
+            scanned_nodes.keys(),
         )
-        if result is None:
-            continue
+        for result in results:
+            if result is None:
+                continue
 
-        to_cluster_name = result["to_cluster_name"]
-        kube_node_type = result["kube_node_type"]
-        new_nodes.setdefault(to_cluster_name, {})
-        new_nodes[to_cluster_name].setdefault("controlplanes", [])
-        new_nodes[to_cluster_name].setdefault("workers", [])
-        new_nodes[to_cluster_name][kube_node_type].append(result["node_info"])
+            to_cluster_name = result["to_cluster_name"]
+            kube_node_type = result["kube_node_type"]
+            new_nodes.setdefault(to_cluster_name, {})
+            new_nodes[to_cluster_name].setdefault("controlplanes", [])
+            new_nodes[to_cluster_name].setdefault("workers", [])
+            new_nodes[to_cluster_name][kube_node_type].append(result["node_info"])
 
-        if result["trackable"]:
-            trackable_ips.add(result["ip"])
-            if result["changed"]:
-                changed = True
+            if result["trackable"]:
+                trackable_ips.add(result["ip"])
+                if result["changed"]:
+                    changed = True
 
     if set(previous_node_placement.keys()) != trackable_ips:
         changed = True
