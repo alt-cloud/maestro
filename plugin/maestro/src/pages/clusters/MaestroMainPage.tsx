@@ -5,6 +5,7 @@ import {
   AlertColor,
   Box,
   Button,
+  CircularProgress,
   FormControl,
   MenuItem,
   Paper,
@@ -353,7 +354,6 @@ function ClusterRows(props) {
   const isClusterPage = props.isClusterPage;
   const isOrphan = clusterName === orphansClusterName;
   const clusterLink = buildPathWithQuery('/maestro/cluster', { cluster: clusterName });
-
   const clusterNameCell = (
     <TableCell
       rowSpan={clusterNameRowSpans[clusterName]['all']}
@@ -460,46 +460,46 @@ function ClusterRows(props) {
           />
         </TableRow>
       ))}
-        <TableRow>
-          <TableCell
-            rowSpan={clusterNameRowSpans[clusterName]['workers']}
-            sx={nodeTypeCellSx('success.main')}
-          >
-            {t('common.worker')}
-          </TableCell>
+      <TableRow>
+        <TableCell
+          rowSpan={clusterNameRowSpans[clusterName]['workers']}
+          sx={nodeTypeCellSx('success.main')}
+        >
+          {t('common.worker')}
+        </TableCell>
+        <NodeColumns
+          clusterName={props.clusterName}
+          cols={firstWorkerRow}
+          currentStage={clusterNodeStages[firstWorkerRow?.ip]}
+          isClusterPage={isClusterPage}
+          isOrphan={isOrphan}
+          nodeType="worker"
+          onChangeStage={(nextStage: string) => {
+            if (firstWorkerRow?.ip) {
+              props.onStageChange(clusterName, firstWorkerRow.ip, nextStage);
+            }
+          }}
+          t={t}
+        />
+      </TableRow>
+      {workerRows.map((value, index) => (
+        <TableRow key={`${clusterName}-worker-${value?.ip || index}`}>
           <NodeColumns
             clusterName={props.clusterName}
-            cols={firstWorkerRow}
-            currentStage={clusterNodeStages[firstWorkerRow?.ip]}
+            cols={value}
+            currentStage={clusterNodeStages[value?.ip]}
             isClusterPage={isClusterPage}
-            isOrphan={false}
+            isOrphan={isOrphan}
             nodeType="worker"
             onChangeStage={(nextStage: string) => {
-              if (firstWorkerRow?.ip) {
-                props.onStageChange(clusterName, firstWorkerRow.ip, nextStage);
+              if (value?.ip) {
+                props.onStageChange(clusterName, value.ip, nextStage);
               }
             }}
             t={t}
           />
         </TableRow>
-        {workerRows.map((value, index) => (
-          <TableRow key={`${clusterName}-worker-${value?.ip || index}`}>
-            <NodeColumns
-              clusterName={props.clusterName}
-              cols={value}
-              currentStage={clusterNodeStages[value?.ip]}
-              isClusterPage={isClusterPage}
-              isOrphan={false}
-              nodeType="worker"
-              onChangeStage={(nextStage: string) => {
-                if (value?.ip) {
-                  props.onStageChange(clusterName, value.ip, nextStage);
-                }
-              }}
-              t={t}
-            />
-          </TableRow>
-        ))}
+      ))}
     </>
   );
 }
@@ -540,6 +540,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
 
   const [rows, setRows] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [snackbar, setSnackbar] = useState<SnackbarState>({
     open: false,
@@ -681,6 +682,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
         return;
       }
       isFetching = true;
+      setRefreshing(true);
       try {
         const responseRows = await safeApiCall(() =>
           apiClient.get<Record<string, any>>('/nodesTree', {
@@ -702,6 +704,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
+          setRefreshing(false);
         }
         isFetching = false;
       }
@@ -915,11 +918,13 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
           </Box>
           <Stack direction="row" spacing={1}>
             <Button
+              disabled={refreshing}
               onClick={() => setRefreshTick(current => current + 1)}
               size="small"
+              startIcon={refreshing ? <CircularProgress color="inherit" size={14} /> : undefined}
               variant="outlined"
             >
-              {t('clustersPage.refreshNow')}
+              {refreshing ? t('clustersPage.refreshing') : t('clustersPage.refreshNow')}
             </Button>
             <Button component={Link} size="small" to="/maestro/cluster/scanNets" variant="contained">
               {t('clustersPage.scanNetworks')}

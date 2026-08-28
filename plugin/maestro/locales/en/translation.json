@@ -76,7 +76,8 @@
       "upgrading": "Upgrading"
     },
     "subtitle": "Cluster topology and node lifecycle actions.",
-    "title": "Clusters"
+    "title": "Clusters",
+    "refreshing": "Refreshing..."
   },
   "scanNetworks": {
     "addAtLeastOne": "Add at least one network before scanning",
@@ -94,7 +95,9 @@
     "serverError": "Server error",
     "startScan": "Start scan",
     "subtitle": "Configure CIDR networks that should be scanned for cluster nodes.",
-    "title": "Cluster network scan"
+    "title": "Cluster network scan",
+    "scanning": "Scanning...",
+    "scanningHint": "Scanning the network can take up to a couple of minutes."
   },
   "nodePage": {
     "cards": {
