@@ -352,27 +352,62 @@ def talos_machine_type(
     return machine_type
 
 
-def init_talosconfig() -> None:
-    home_dir = os.getenv("HOME", "")
-    maestro_config_dir = Path(f"{home_dir}/.maestro")
-    cluster_dir = maestro_config_dir / ORPHANS_CLUSTER_NAME
-    if cluster_dir.exists():
-        return
+def read_talosconfig_context(
+    talosconfig_file: Path,
+    cluster_name: str,
+) -> dict[str, Any] | None:
+    """Reads the context named `cluster_name` out of a talosconfig file.
 
-    cluster_dir.mkdir(parents=True, exist_ok=True)
-    talosconfig_file = cluster_dir / "talosconfig"
-    talosconfig_file.write_text(
-        f"""context: {ORPHANS_CLUSTER_NAME}
-contexts:
-  {ORPHANS_CLUSTER_NAME}:
-    endpoints: []
-    nodes: []
-""",
-        encoding="utf-8",
-    )
+    Returns None whenever that context can't be produced with confidence: the file is
+    unreadable, isn't even UTF-8 text, isn't valid YAML, isn't a mapping at all, or
+    simply holds no context of that name. `~/.maestro` is a user-writable directory that
+    can pick up hand-edited, truncated, binary or entirely unrelated files, and none of
+    those may take the whole node tree down with them — every caller treats None as
+    "not a cluster, skip it".
+    """
+    try:
+        with open(talosconfig_file, "r", encoding="utf-8") as file_pointer:
+            talosconfig = yaml.safe_load(file_pointer)
+    except (OSError, UnicodeDecodeError, yaml.YAMLError) as err:
+        print(f"read_talosconfig_context:: {talosconfig_file} is unreadable ({err})", flush=True)
+        return None
+
+    if not isinstance(talosconfig, dict):
+        return None
+
+    contexts = talosconfig.get("contexts")
+    if not isinstance(contexts, dict):
+        return None
+
+    context = contexts.get(cluster_name)
+    return context if isinstance(context, dict) else None
+
+
+def talosconfig_ips(context: dict[str, Any], field: str) -> list[str]:
+    """The IP list stored under `field` of a talosconfig context.
+
+    Anything that isn't a list of strings is reported as empty rather than iterated:
+    a bare string there would otherwise splat into individual characters and invent
+    node "addresses" that were never in the file.
+    """
+    values = context.get(field)
+    if not isinstance(values, list):
+        return []
+    return [value for value in values if isinstance(value, str)]
 
 
 def load_talos_configs() -> dict[str, dict[str, Any]]:
+    """Loads every real cluster's talosconfig context from `~/.maestro/<cluster_name>/`.
+
+    A directory's name is only ever treated as trustworthy cluster identity once it's
+    corroborated by the file itself: its talosconfig must define a context of that exact
+    name (a directory renamed after the fact, so its content still names some other
+    cluster, is skipped rather than silently read as — or written into — the wrong
+    cluster's credentials) and that context must carry real ca/crt/key (a directory
+    without them was never actually bootstrapped, whatever it's named). "_Orphans" is
+    reserved and never read from disk at all, by name alone, regardless of contents —
+    it's a purely virtual grouping in the API response, never backed by a real cluster.
+    """
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = Path(f"{home_dir}/.maestro")
     talos_configs: dict[str, dict[str, Any]] = {"context": "", "contexts": {}}
@@ -381,17 +416,32 @@ def load_talos_configs() -> dict[str, dict[str, Any]]:
         if not maestro_dir.is_dir():
             continue
 
+        cluster_name = maestro_dir.name
+        if cluster_name == ORPHANS_CLUSTER_NAME:
+            continue
+
         talosconfig_file = maestro_dir / "talosconfig"
         if not talosconfig_file.is_file():
             continue
 
-        cluster_name = maestro_dir.name
-        with open(talosconfig_file, "r", encoding="utf-8") as file_pointer:
-            cluster_talosconfig = yaml.safe_load(file_pointer) or {}
+        context = read_talosconfig_context(talosconfig_file, cluster_name)
+        if context is None:
+            print(
+                f"load_talos_configs:: {maestro_dir} has no context named '{cluster_name}' "
+                "matching its own directory — skipping",
+                flush=True,
+            )
+            continue
 
-        contexts = cluster_talosconfig.get("contexts", {})
-        if cluster_name in contexts:
-            talos_configs["contexts"][cluster_name] = contexts[cluster_name]
+        if not all(context.get(field) for field in ("ca", "crt", "key")):
+            print(
+                f"load_talos_configs:: {maestro_dir} has no ca/crt/key — not a real "
+                "bootstrapped cluster, skipping",
+                flush=True,
+            )
+            continue
+
+        talos_configs["contexts"][cluster_name] = context
 
     return talos_configs
 
@@ -680,8 +730,8 @@ def refresh_talosconfigs(
 
     previous_node_placement: dict[str, dict[str, str]] = {}
     for source_cluster_name, context in talos_config["contexts"].items():
-        endpoints = context.get("endpoints") or []
-        workers = context.get("nodes") or []
+        endpoints = talosconfig_ips(context, "endpoints")
+        workers = talosconfig_ips(context, "nodes")
         for endpoint_ip in endpoints:
             previous_node_placement[endpoint_ip] = {
                 "cluster_name": source_cluster_name,
