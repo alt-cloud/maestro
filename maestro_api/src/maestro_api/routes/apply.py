@@ -307,7 +307,17 @@ until nmap "{ip}/32" -p 50000 | grep open; do
   sleep 5
 done
 
-until talosctl bootstrap -e "{ip}" -n "{ip}" 2>&1 | grep AlreadyExists; do
+# Bootstrap has to be requested exactly once. Piping into `grep AlreadyExists`
+# used to make a *successful* bootstrap look like a failure (it prints nothing),
+# so the loop kept firing more requests — and a second request arriving while
+# Talos is stopping etcd to apply the first leaves the service wedged in
+# "Finished / Bootstrap requested", where it never restarts and the cluster
+# never forms. Stop on success; treat AlreadyExists as success too, since it
+# just means etcd is bootstrapped already. Only retry a genuine "node isn't
+# accepting the call yet" error.
+until bootstrap_output=$(talosctl bootstrap -e "{ip}" -n "{ip}" 2>&1); do
+  printf '%s\n' "$bootstrap_output"
+  printf '%s' "$bootstrap_output" | grep -q AlreadyExists && break
   sleep 5
 done
 
