@@ -8,7 +8,8 @@ from typing import Any
 
 import yaml
 
-VIRTUAL_CLUSTERS = ["_Orphans", "_Unknown"]
+from maestro_api.services.validators import ORPHANS_CLUSTER_NAME
+
 TALOS_NODE_TYPE_TO_KUBE = {"endpoints": "controlplanes", "nodes": "workers"}
 
 
@@ -258,9 +259,6 @@ def talos_get_spec(
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = f"{home_dir}/.maestro"
     cluster_config_dir = f"{maestro_config_dir}/{cluster_name}"
-    if cluster_name == "_Unknown":
-        return {}, -1, ""
-
     result_spec: dict[str, Any] = {}
     command = [
         "talosctl",
@@ -273,7 +271,7 @@ def talos_get_spec(
         "-o",
         "json",
     ]
-    if cluster_name == "_Orphans":
+    if cluster_name == ORPHANS_CLUSTER_NAME:
         command.append("-i")
     result = run_command(command, cluster_config_dir, timeout_seconds=timeout_seconds)
 
@@ -298,22 +296,21 @@ def talos_get_spec(
 def init_talosconfig() -> None:
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = Path(f"{home_dir}/.maestro")
-    for virtual_cluster in VIRTUAL_CLUSTERS:
-        cluster_dir = maestro_config_dir / virtual_cluster
-        if cluster_dir.exists():
-            continue
+    cluster_dir = maestro_config_dir / ORPHANS_CLUSTER_NAME
+    if cluster_dir.exists():
+        return
 
-        cluster_dir.mkdir(parents=True, exist_ok=True)
-        talosconfig_file = cluster_dir / "talosconfig"
-        talosconfig_file.write_text(
-            f"""context: {virtual_cluster}
+    cluster_dir.mkdir(parents=True, exist_ok=True)
+    talosconfig_file = cluster_dir / "talosconfig"
+    talosconfig_file.write_text(
+        f"""context: {ORPHANS_CLUSTER_NAME}
 contexts:
-  {virtual_cluster}:
+  {ORPHANS_CLUSTER_NAME}:
     endpoints: []
     nodes: []
 """,
-            encoding="utf-8",
-        )
+        encoding="utf-8",
+    )
 
 
 def load_talos_configs() -> dict[str, dict[str, Any]]:
@@ -344,7 +341,13 @@ def node_cluster_name(
     cluster_names: list[str],
     node: str,
     timeout_seconds: float | None = None,
-) -> str:
+) -> str | None:
+    """The cluster `node` belongs to, or "_Orphans" when it has no config applied yet.
+
+    None means neither could be established. Such a node used to be filed under an
+    "_Unknown" pseudo-cluster, which put an entry in the tree that stood for nothing —
+    the caller drops it instead, so the tree only ever shows nodes we can actually name.
+    """
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = f"{home_dir}/.maestro"
     for cluster_name in cluster_names:
@@ -366,8 +369,8 @@ def node_cluster_name(
         if result.returncode == 0:
             return cluster_name
     if is_maintenance(node, timeout_seconds=timeout_seconds):
-        return "_Orphans"
-    return "_Unknown"
+        return ORPHANS_CLUSTER_NAME
+    return None
 
 
 def refresh_talosconfigs(
@@ -383,7 +386,7 @@ def refresh_talosconfigs(
     real_cluster_names = sorted(
         cluster_name
         for cluster_name in cluster_names
-        if cluster_name not in VIRTUAL_CLUSTERS
+        if cluster_name != ORPHANS_CLUSTER_NAME
     )
 
     previous_node_placement: dict[str, dict[str, str]] = {}
@@ -403,13 +406,13 @@ def refresh_talosconfigs(
                 }
 
     print(
-        f"refresh_talosconfigs:: before talos_config={json.dumps(talos_config, indent=2)}"
+        f"refresh_talosconfigs:: before talos_config={json.dumps(talos_config, indent=2)}",
+        flush=True,
     )
     print(f"refresh_talosconfigs:: real_cluster_names={json.dumps(real_cluster_names)}", flush=True)
 
     new_nodes: dict[str, dict[str, list[dict[str, Any]]]] = {
-        "_Orphans": {"controlplanes": [], "workers": []},
-        "_Unknown": {"controlplanes": [], "workers": []},
+        ORPHANS_CLUSTER_NAME: {"controlplanes": [], "workers": []},
     }
     changed = False
 
@@ -434,31 +437,43 @@ def refresh_talosconfigs(
                 ip,
                 timeout_seconds=command_timeout_seconds,
             )
+            if to_cluster_name is None:
+                print(
+                    f"refresh_talosconfigs:: ip={ip} belongs to no known cluster and isn't "
+                    "in maintenance, dropping from the tree",
+                    flush=True,
+                )
+                continue
+
             new_nodes.setdefault(to_cluster_name, {})
             new_nodes[to_cluster_name].setdefault("controlplanes", [])
             new_nodes[to_cluster_name].setdefault("workers", [])
 
             print(
-                f"refresh_talosconfigs:: ip={ip} port 50000 open to_cluster_name={to_cluster_name}", flush=True
+                f"refresh_talosconfigs:: ip={ip} port 50000 open to_cluster_name={to_cluster_name}",
+                flush=True,
             )
             if is_port_open(ip, 6443, timeout=port_check_timeout_seconds):
                 kube_node_type = "controlplanes"
                 print(
-                    f"refresh_talosconfigs:: ip={ip} port 6443 opened controlplane in cluster {to_cluster_name}", flush=True
+                    f"refresh_talosconfigs:: ip={ip} port 6443 opened controlplane in cluster {to_cluster_name}",
+                    flush=True,
                 )
             else:
                 kube_node_type = "workers"
                 changed = True
                 print(
-                    f"refresh_talosconfigs:: ip={ip} port 6443 closed, move to worker in cluster {to_cluster_name}", flush=True
+                    f"refresh_talosconfigs:: ip={ip} port 6443 closed, move to worker in cluster {to_cluster_name}",
+                    flush=True,
                 )
         else:
             kube_node_type = "controlplanes"
-            to_cluster_name = "_Orphans"
+            to_cluster_name = ORPHANS_CLUSTER_NAME
             node_stage = "unavailable or installing"
             print(
                 f"refresh_talosconfigs:: ip={ip} ports closed, keep controlplane in old cluster "
-                f"{from_cluster_name if from_cluster_name else '-'}", flush=True
+                f"{from_cluster_name if from_cluster_name else '-'}",
+                flush=True,
             )
 
         if (
@@ -467,7 +482,7 @@ def refresh_talosconfigs(
         ):
             changed = True
 
-        if to_cluster_name in VIRTUAL_CLUSTERS:
+        if to_cluster_name == ORPHANS_CLUSTER_NAME:
             if is_maintenance(ip, timeout_seconds=command_timeout_seconds):
                 node_stage = "maintenance"
             node_info["stage"] = node_stage if node_stage else "-"
@@ -531,7 +546,8 @@ def refresh_talosconfigs(
                     print(
                         "refresh_talosconfigs:: "
                         f"cluster_name={cluster_name} kube_node_type={kube_node_type} "
-                        f"node={json.dumps(cluster_nodes[kube_node_type])}", flush=True
+                        f"node={json.dumps(cluster_nodes[kube_node_type])}",
+                        flush=True,
                     )
                     for node in cluster_nodes[kube_node_type]:
                         print(f"refresh_talosconfigs:: node={json.dumps(node)}", flush=True)
@@ -547,7 +563,8 @@ def refresh_talosconfigs(
                     )
                 print(
                     "refresh_talosconfigs:: "
-                    f"cluster_name={cluster_name} {talos_node_type}={json.dumps(node_ips)}", flush=True
+                    f"cluster_name={cluster_name} {talos_node_type}={json.dumps(node_ips)}",
+                    flush=True,
                 )
 
     if new_nodes["_Orphans"]["workers"]:

@@ -79,7 +79,6 @@ const orphanStatusOptions: StatusOption[] = [
 ];
 
 const orphansClusterName = '_Orphans';
-const unknownClusterName = '_Unknown';
 type SelectedNodeStages = Record<string, Record<string, string>>;
 
 interface Column {
@@ -293,7 +292,6 @@ function NodeColumns(props) {
   const nodeType = props.nodeType;
   const node = cols['ip'];
   const clusterName = props.clusterName;
-  const isUnknownClusterName = clusterName === unknownClusterName;
   const href = clusterName[0] === '_' ? '/maestro/node/get' : '/maestro/node';
   const nodeLinkParams = new URLSearchParams();
   nodeLinkParams.set('cluster', props.clusterName);
@@ -312,13 +310,9 @@ function NodeColumns(props) {
   return (
     <>
     <TableCell>
-      {isUnknownClusterName ?
-        <span>{node}</span>
-      :
       <Link key={node} to={nodeLink} >
         {node}
       </Link>
-      }
     </TableCell>
     <NodeStage
       isClusterPage={props.isClusterPage}
