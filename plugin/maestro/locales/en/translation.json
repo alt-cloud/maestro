@@ -65,7 +65,15 @@
       "restart": "Restart",
       "running": "Running",
       "shutdown": "Shutdown",
-      "worker": "Worker"
+      "worker": "Worker",
+      "booting": "Booting",
+      "installing": "Installing",
+      "rebooting": "Rebooting",
+      "resetting": "Resetting",
+      "shutting down": "Shutting down",
+      "unknown": "Unknown",
+      "unreachable": "Unreachable",
+      "upgrading": "Upgrading"
     },
     "subtitle": "Cluster topology and node lifecycle actions.",
     "title": "Clusters"

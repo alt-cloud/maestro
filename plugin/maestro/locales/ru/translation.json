@@ -65,7 +65,15 @@
       "restart": "Рестарт",
       "running": "Работает",
       "shutdown": "Выключение",
-      "worker": "Worker"
+      "worker": "Worker",
+      "booting": "Загрузка",
+      "installing": "Установка",
+      "rebooting": "Перезагружается",
+      "resetting": "Сбрасывается",
+      "shutting down": "Выключается",
+      "unknown": "Неизвестно",
+      "unreachable": "Недоступна",
+      "upgrading": "Обновление ОС"
     },
     "subtitle": "Топология кластера и действия жизненного цикла узлов.",
     "title": "Кластеры"

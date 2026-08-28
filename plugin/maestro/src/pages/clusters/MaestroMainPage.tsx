@@ -267,7 +267,7 @@ function NodeStage(props) {
   }
   return (
     <TableCell>
-      <StageIndicator stage={stage} t={t} />
+      <StageIndicator stage={originalStage} t={t} />
     </TableCell>
   );
 }
@@ -296,16 +296,17 @@ function NodeColumns(props) {
   const nodeLinkParams = new URLSearchParams();
   nodeLinkParams.set('cluster', props.clusterName);
   nodeLinkParams.set('node', node);
-  nodeLinkParams.set('type', nodeType);
+  if (nodeType) {
+    nodeLinkParams.set('type', nodeType);
+  }
   const nodeLink = `${href}?${nodeLinkParams.toString()}`;
   let unmet = '-';
   const stage = props.currentStage ?? cols['stage'];
-  if (cols['status'] !== undefined) {
-    const unmetConditions: string[] = [];
-    for (const nameReason of cols['status']['unmetConditions']) {
-      unmetConditions.push(nameReason.name + ': ' + nameReason.reason);
-    }
-    unmet = unmetConditions.join(",\n")
+  const unmetConditions = cols['status']?.unmetConditions;
+  if (Array.isArray(unmetConditions) && unmetConditions.length > 0) {
+    unmet = unmetConditions
+      .map((nameReason: { name: string; reason: string }) => `${nameReason.name}: ${nameReason.reason}`)
+      .join(',\n');
   }
   return (
     <>
@@ -322,9 +323,9 @@ function NodeColumns(props) {
       stage={stage}
       t={t}
       />
-    <TableCell>{cols['nodeReady'] ? t('common.yes') : t('common.no')}</TableCell>
+    <TableCell>{cols['nodeReady'] === undefined ? '-' : cols['nodeReady'] ? t('common.yes') : t('common.no')}</TableCell>
     <TableCell>{cols['status'] === undefined ? '-' : cols['status']['ready'] ? t('common.yes') : t('common.no')}</TableCell>
-    <TableCell>{cols['memberID'] === '-' ? t('common.no') : t('common.yes')}</TableCell>
+    <TableCell>{cols['memberID'] === undefined ? '-' : cols['memberID'] === '-' ? t('common.no') : t('common.yes')}</TableCell>
     <TableCell>{cols['manifestsApplied'] === undefined ? '-' : cols['manifestsApplied'].length}</TableCell>
     <TableCell>{unmet}</TableCell>
     </>
