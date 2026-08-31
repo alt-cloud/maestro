@@ -35,6 +35,16 @@ def create_app() -> Flask:
     # (reads the X-Forwarded-For, X-Forwarded-Proto, etc. headers).
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
+    @app.before_request
+    def debug_log_pre_cors():
+        # We use WARNING to ensure the output, given that the base logger level in the code is set to WARNING
+        print('debug_log_pre_cors:: ', flush=True)
+        app.logger.warning(
+            f"[DEBUG PRE-CORS] {request.method} {request.path} | "
+            f"IP: {request.remote_addr} | "
+            f"Headers: {dict(request.headers)}"
+        )
+
     init_extensions(app)
     register_api_key_auth(app)
 

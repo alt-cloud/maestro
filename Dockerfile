@@ -6,10 +6,11 @@ COPY Docker/requrements.txt /tmp/requirements.txt
 
 RUN \
   mkdir -p /home/maestro; \
-  cd  /home/maestro; \
-  python3 -m venv maestro_api_venv; \
-  . /home/maestro/maestro_api_venv/bin/activate; \
-  pip install -r /tmp/requirements.txt
+  cd  /home/maestro; 
+RUN  python3 -m venv maestro_api_venv;
+RUN ls -lR /home/maestro/;
+RUN  . /home/maestro/maestro_api_venv/bin/activate; 
+RUN  pip3 install -r /tmp/requirements.txt
 
 FROM registry.altlinux.org/p11/python
 

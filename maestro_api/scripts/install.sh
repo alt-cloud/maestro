@@ -5,7 +5,8 @@ SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 API_DIR="$(dirname "$SCRIPT_DIR")"
 VENV_DIR="$API_DIR/.venv"
 
-apt-get install -y python3 python3-pip python3-venv talosctl nmap yq
+apt-get install -y python3 python3-module-pip python3-module-virtualenv talosctl nmap yq
+
 
 python3 -m venv "$VENV_DIR"
 # shellcheck disable=SC1091
