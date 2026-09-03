@@ -769,6 +769,16 @@ def refresh_talosconfigs(
     # nodes are never written to a talosconfig, so they'd never match on a later poll otherwise.
     trackable_ips: set[str] = set()
 
+    # Already-recorded nodes are classified even when the last scan didn't see them.
+    # "/scanNets" only keeps addresses whose apid port answered, so a member that was
+    # rebooting while the scan ran drops out of nodes.json — and classifying the scan
+    # alone would silently forget it: gone from the tree, and gone from its cluster's
+    # talosconfig on the next reconciliation. Passing it through classify_known_node
+    # instead lets the usual rule apply: keep the recorded placement unless a different
+    # identity is actually confirmed.
+    ips_to_classify = list(scanned_nodes)
+    ips_to_classify.extend(ip for ip in previous_node_placement if ip not in scanned_nodes)
+
     # Each node's classification is independent network I/O (sockets, talosctl)
     # with no shared state, so a scan of hundreds of IPs doesn't have to run one at a time.
     with ThreadPoolExecutor(max_workers=32) as executor:
@@ -780,7 +790,7 @@ def refresh_talosconfigs(
                 command_timeout_seconds,
                 port_check_timeout_seconds,
             ),
-            scanned_nodes.keys(),
+            ips_to_classify,
         )
         for result in results:
             if result is None:
