@@ -1,18 +1,22 @@
 FROM registry.altlinux.org/p11/python AS maestro_api_dev
 
-RUN apt-get update && apt-get install -y git
+RUN apt-get update && apt-get install -y git python3-module-pip
 
 COPY Docker/requrements.txt /tmp/requirements.txt
 
 RUN \
-  mkdir -p /home/maestro; \
-  cd  /home/maestro; 
-RUN  python3 -m venv maestro_api_venv;
-RUN ls -lR /home/maestro/;
-RUN  . /home/maestro/maestro_api_venv/bin/activate; 
-RUN  pip3 install -r /tmp/requirements.txt
+  mkdir -p /home/maestro;
 
-FROM registry.altlinux.org/p11/python
+COPY maestro_api /home/maestro/maestro_api
+
+RUN  cd  /home/maestro/maestro_api/; rm -rf .venv; python3 -m venv .venv; \
+  source /home/maestro/maestro_api/.venv/bin/activate; \
+  pip3 install -e /home/maestro/maestro_api
+# RUN ls -lR /home/maestro/;
+
+# RUN  pip3 install -r /tmp/requirements.txt
+
+FROM registry.altlinux.org/p11/alt
 
 RUN apt-get update && \
   apt-get install -y headlamp talosctl su sudo nmap iputils caddy jq yq net-tools curl tcpdump
@@ -31,14 +35,9 @@ RUN chmod 755 /home/maestro
 
 # USER maestro
 
-COPY --from=maestro_api_dev --chown=maestro:maestro /home/maestro/maestro_api_venv  /home/maestro/maestro_api_venv
-
-# USER root
+COPY --from=maestro_api_dev --chown=maestro:maestro /home/maestro/maestro_api  /home/maestro/maestro_api
 
 EXPOSE 4466
 
 CMD /entrypoint.sh
 
-# CMD /usr/bin/su -c /entrypoint.sh maestro
-
-# CMD /usr/bin/sleep infinity

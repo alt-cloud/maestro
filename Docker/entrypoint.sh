@@ -43,8 +43,11 @@ do
       useradd -u $MAESTRO_API_UID -d /home/maestro $MAESTRO_API_USER
       chown $MAESTRO_API_UID /home/maestro/.maestro /home/maestro/.kube
     fi
-    source /home/maestro/maestro_api_venv/bin/activate
-    sudo -u $MAESTRO_API_USER --preserve-env=$VARS /home/maestro/maestro_api_venv/bin/maestro-api >&2  &
+    source /home/maestro/maestro_api/.venv/bin/activate
+    set -a
+    source /home/maestro/maestro_api/.env
+    type maestro-api
+    sudo -u $MAESTRO_API_USER --preserve-env=$VARS,PATH /home/maestro/maestro_api/.venv/bin/maestro-api >&2  &
     ;;
   esac
 done
