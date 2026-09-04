@@ -7,7 +7,7 @@ then
   MAESTRO_DEPLOYMENT_MODE="frontend backend"
 fi
 
-caddy run --config /etc/caddy/Caddyfile &
+# caddy run --config /etc/caddy/Caddyfile &
 
 for mode in $MAESTRO_DEPLOYMENT_MODE
 do
@@ -45,7 +45,8 @@ do
     fi
     source /home/maestro/maestro_api/.venv/bin/activate
     set -a
-    source /home/maestro/maestro_api/.env
+    set
+    # source /home/maestro/maestro_api/.env
     type maestro-api
     sudo -u $MAESTRO_API_USER --preserve-env=$VARS,PATH /home/maestro/maestro_api/.venv/bin/maestro-api >&2  &
     ;;

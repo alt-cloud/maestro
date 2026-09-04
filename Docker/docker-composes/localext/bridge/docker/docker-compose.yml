@@ -1,4 +1,12 @@
 services:
+  caddy:
+    image: caddy
+    network_mode: host
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
   maestro:
     image: altlinux.space/alt-orchestra-dev/maestro-dev:latest
     ports:
@@ -10,8 +18,13 @@ services:
       MAESTRO_FRONTEBD_HOST: 0.0.0.0
       MAESTRO_API_HOST: 0.0.0.0
       MAESTRO_API_KEYS: $MAESTRO_API_KEYS
+      MAESTRO_API_URL: $MAESTRO_API_URL
       MAESTRO_CORS_ORIGINS: $MAESTRO_CORS_ORIGINS
       MAESTRO_API_WHITELIST: $MAESTRO_API_WHITELIST
     volumes:
       - /home/$MAESTRO_API_USER/.maestro:/home/maestro/.maestro
       - /home/$MAESTRO_API_USER/.kube:/home/maestro/.kube
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -159,6 +159,7 @@ class Config:
     API_DEBUG = os.getenv("MAESTRO_API_DEBUG", "false").lower() == "true"
 
     CORS_ORIGINS = parse_cors_origins(os.getenv("MAESTRO_CORS_ORIGINS", "http://127.0.0.1:4466"))
+    print('Config:: CORS_ORIGINS=', CORS_ORIGINS)
 
     API_WHITELIST = parse_api_whitelist(os.getenv("MAESTRO_API_WHITELIST", "127.0.0.1"))
 
