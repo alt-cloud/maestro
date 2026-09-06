@@ -1,16 +1,1 @@
-{
-    log {
-        output stdout
-        format console             # Формат: console, json, filter
-        level DEBUG                 # Уровень: DEBUG, INFO, WARN, ERROR, PANIC
-    }
-    local_certs
-}
-
-www.maestro.local:443 {
-    reverse_proxy 127.0.0.1:4466
-}
-
-api.maestro.local:5443 {
-    reverse_proxy 127.0.0.1:5000
-}
+../../Caddyfile
