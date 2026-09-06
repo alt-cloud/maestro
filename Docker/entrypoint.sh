@@ -45,10 +45,11 @@ do
     fi
     source /home/maestro/maestro_api/.venv/bin/activate
     set -a
-    set
-    # source /home/maestro/maestro_api/.env
-    type maestro-api
-    sudo -u $MAESTRO_API_USER --preserve-env=$VARS,PATH /home/maestro/maestro_api/.venv/bin/maestro-api >&2  &
+    while true
+    do
+      sudo -u $MAESTRO_API_USER --preserve-env=$VARS,PATH /home/maestro/maestro_api/.venv/bin/maestro-api >&2
+      echo 'Restart maestro API'
+    done &
     ;;
   esac
 done
