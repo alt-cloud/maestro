@@ -1,1 +1,0 @@
-../../../maestro-docker-compose.sh

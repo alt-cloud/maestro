@@ -52,6 +52,7 @@ def scan_nets():
         return jsonify({"error": result.stderr.strip() or "nmap failed"}), 502
 
     nodes = maestro.nodes_list(result.stdout.strip())
+    print('scan_nets:: nodes=', nodes, flush=True)
     nodes = {ip: info for ip, info in nodes.items() if info.get("apidState") == "open"}
 
     nodes_file = os.path.join(maestro_config_dir, "nodes.json")
