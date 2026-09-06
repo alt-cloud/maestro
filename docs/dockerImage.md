@@ -47,7 +47,7 @@ default *   Current DOCKER_HOST based configuration   unix:///var/run/docker.soc
 - `maestro frontend` - плагин maestro, поддерживаюший в интерфейсе headlamp страницы для работы с kubernetes кластером и узлами Альт Орнестрации;
 - `maestro API`- REST/API интерфейс, принимающий запросы от `maestro frontend`, выполняющий переданный запрос и возвращающий ему результат. 
 
-Следует заметить, что при разворачивании кластера через `maestro API` он формирует в файле `~/.kube/cobfig` контекст, описывающий кластер:
+Следует заметить, что при разворачивании кластера через `maestro API` он формирует в файле `~/.kube/config` контекст, описывающий кластер:
 ```yaml
 - name: <имя_класткра>
   cluster:
@@ -55,18 +55,14 @@ default *   Current DOCKER_HOST based configuration   unix:///var/run/docker.soc
     server: <URL kube-apiserver или proxy>
   name: "3"
 ```
-Этот контекст должен быть доступен в `maestro frontend`. Таким образов оба компонента должны функуионировать в рамках одного контейнера. 
+Этот контекст должен быть доступен в `maestro frontend`. Таким образов оба компонента должны функционировать в рамках одного контейнера. 
 
 В зависимости от места запуска компонента `maestro API` варианты разворачивания могут быть следующие:
 - `maestro API` разворачивается на компьютере администратора на локальном интерейсе `lo` (localhost=127.0.0.1) с доступом из браузера клиента только по локальному интерфейсу (максимально защищенный режим);
-- `maestro API` разворачивается на компьютере администратора на одном или нескольких интерфейсов локальной сети с доступом из браузера клиента из локальной или внешней сети;
-- `maestro API` разворачивается на сервере локальной сети с удаленным доступом из браузера клиента как админстратора так и остальных клиентов. 
+- `maestro API` разворачивается на компьютере администратора на одном или нескольких интерфейсов локальной сети с доступом из браузеров администратора и клиентов из локальной или внешней сети по протоколу `https`;
+- `maestro API` разворачивается в кластере `kubernetes`.  
 
-Кроме этого при запуске на компьютере администратора на локальном интерейсе (первые два варианта)
-бывают ситуации, когда доступ из docker-контейнера `maestro API` к узлам кластера Альт Оркестра закрыт файерволами.
-Например при разворачивании на компьютере виртуальных машин в рамках `virt manager`. В этом случае контейне должен разворачиваться в режиме host - использование локальной сети HOST-системы (по умолчанию контейнеры равзорачиваются в режиме bridge - создание собстванной overlay-сети).  
-
-Таким образм ниже рассматриывются следующее дерево вариантов разворачивания:
+Таким образом ниже рассматриваются следующее дерево вариантов разворачивания:
 <pre>
 ├── localonly  
 │   └── bridge
@@ -122,9 +118,7 @@ docker compose -p $projectName $action
 
 ### Разворачивание Мaestro API и Мaestro frontend на компьютере администратора на локальном интерфейсе lo
 
-#### Стандартный вариант разворачивания с overlay сетью
-
-##### Файл .env
+#### Файл .env
 
 Файл [.env](../Docker/docker-composes/localonly/bridge/docker/.env):
 ```yaml
@@ -157,7 +151,7 @@ MAESTRO_API_WHITELIST=127.0.0.1,172.0.0.0/8
 
 Переменная `MAESTRO_API_WHITELIST` определяет список IP-адресов с которых возможен доступ к API-интерфейсу из браузера и других сетевых приложений (`curl`, `podman`, ...).
 
-##### Файл docker-compose.yml
+#### Файл docker-compose.yml
 
 Файл [docker-compose.yml](../Docker/docker-composes/net_overlay/docker-compose.yml):
 ```yaml
@@ -198,70 +192,15 @@ services:
 
 Так как API интерфейс в контейнере запускается с `uid=$MAESTRO_API_UID`, `gid=$MAESTRO_API_GID пользователя`, запустившего контейнер он имеет права на запись и чтение указанных аталогов.
 
-#### Стандартный вариант разворачивания с host сетью HOST системы
 
-В ряде случаев (например при разворачивании на том же компьютере виртуальных машин в virt-manager) доступ из docker-контейнера из overlay-сети к виртуальным машинам закрыт. В этом случае необходимо запускать контейнеры в сетевом окружении HOST-машины. 
-
-##### Файл .env
-
-Файл [.env](../Docker/docker-composes/localonly/bridge/docker/.env):
-```
-MAESTRO_API_KEYS='[
-  {
-    "key": "scope-read-write",
-    "scopes": ["read", "write"],
-    "rate_limit_per_minute": 60
-  },
-  {
-    "key": "scope-read-expired",
-    "scopes": ["read"],
-    "rate_limit_per_minute": 10,
-    "expires_at": "2026-07-01T00:00:00Z"
-  },
-  {
-    "key": "scope-superadmin-key",
-    "scopes": ["admin"],
-    "rate_limit_per_minute": 1000
-  }
-]'
-MAESTRO_CORS_ORIGINS=http://127.0.0.1:4466,http://localhost:4466
-MAESTRO_API_WHITELIST=127.0.0.1
-```
-Так в этом варианте используется сетевой стек HOST-компьютера в переменной `MAESTRO_API_WHITELIST` адреса в подсети `172.0.0.0/8` отсутствуют.
-
-##### Файл docker-compose.yml
-
-Файл [docker-compose.yml](../Docker/docker-composes/net_host/docker-compose.yml):
-```
-services:
-  maestro:
-    image: altlinux.space/alt-orchestra-dev/maestro-dev:latest
-    network_mode: host
-    environment:
-      MAESTRO_API_USER: $MAESTRO_API_USER
-      MAESTRO_API_UID: $MAESTRO_API_UID
-      MAESTRO_FRONTEBD_HOST: 127.0.0.1
-      MAESTRO_API_HOST: 127.0.0.1
-      MAESTRO_API_KEYS: $MAESTRO_API_KEYS
-      MAESTRO_CORS_ORIGINS: $MAESTRO_CORS_ORIGINS
-      MAESTRO_API_WHITELIST: $MAESTRO_API_WHITELIST
-    volumes:
-      - /home/$MAESTRO_API_USER/.maestro:/home/maestro/.maestro
-      - /home/$MAESTRO_API_USER/.kube:/home/maestro/.kube
-```
-
-Элемент `network_mode: host` выносит внутренние порты контейнера в сетевой стек HOST-системы.
-Локальный интерфейс HOST-системы совпадает с локальным интерфейсом контейнера. Так что переменнык `MAESTRO_API_HOST`, `MAESTRO_FRONTEBD_HOST` устанавливается в значение `127.0.0.1`.
-
-> Ситуация отсутствия доступа из docker-контейнеров к узлам кластера возникает в члучае, когда узлы кластера развернуты в virt-manager и docker контейнеры запускаются на этом же хосте. Возникает она в блокировке трафика с узлов кластера по интерфейсу virbr0 другим сетям (включая docker0) HOST-системы. Данная проблема решается удалением nft-правила в цепочке guest_input сети libvirt_network.  
-> Определите командой   
-<pre> 
+> Возможны ситуации отсутствия доступа из docker-контейнеров к узлам кластера. Например когда узлы кластера развернуты в `virt-manager` и docker контейнеры запускаются на этом же компьютере. Обычно `virt-manager` блокирует трафик с узлов кластера по интерфейсу `virbr0` другим сетям (включая docker0) HOST-системы. Данная проблема решается удалением nft-правила в цепочке `guest_input` сети `libvirt_network`.  Определите командой   
+```sh
 # nft -a list chain ip libvirt_network guest_input
-</pre>  
-> номер правила в цепочке guest_input и удалите её командрй
-<pre> 
+```
+``` 
+> номер правила в цепочке guest_input и удалите его командой
 # nft delete rule ip libvirt_network guest_input handle <номмер правила>
-</pre>
+```
 
 ### Pазворачивание с удаленным доступом из браузера клиента как админстратора так и остальных клиентов
 
