@@ -37,7 +37,7 @@ def scan_nets():
     with open(scan_nets_file, "w", encoding="utf-8") as file_pointer:
         json.dump({"scanNets": scan_networks}, file_pointer, indent=2)
 
-    command = ["nmap", "-p", "50000,6443", *scan_networks]
+    command = ["nmap", "-n", "-PS50000,6443", "-p50000,6443", *scan_networks]
     nmap_timeout_seconds = float(current_app.config["NMAP_COMMAND_TIMEOUT_SECONDS"])
     try:
         result = maestro.run_command(
