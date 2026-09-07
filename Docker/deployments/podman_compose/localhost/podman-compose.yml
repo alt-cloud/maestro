@@ -1,0 +1,24 @@
+services:
+  maestro:
+    image: altlinux.space/alt-orchestra-dev/maestro-dev:latest
+    ports:
+      - 127.0.0.1:4466:4466
+      - 127.0.0.1:5000:5000
+    # cap_add:
+    #   - CAP_NET_RAW
+      # - CAP_NET_ADMIN
+    userns_mode: keep-id
+    user: "${MAESTRO_API_UID}:${MAESTRO_API_GID}"
+    environment:
+      MAESTRO_API_USER: $MAESTRO_API_USER
+      MAESTRI_API_HOME: $HOME
+      MAESTRO_API_UID: $MAESTRO_API_UID
+      MAESTRO_FRONTEBD_HOST: 0.0.0.0
+      MAESTRO_API_HOST: 0.0.0.0
+      MAESTRO_API_KEYS: $MAESTRO_API_KEYS
+      MAESTRO_CORS_ORIGINS: $MAESTRO_CORS_ORIGINS
+      MAESTRO_API_WHITELIST: $MAESTRO_API_WHITELIST
+    volumes:
+      - /home/$MAESTRO_API_USER/.maestro:/home/maestro/.maestro:U
+      - /home/$MAESTRO_API_USER/.kube:/home/maestro/.kube:U
+      - /home/kaf/2026/Maestro/maestro/maestro_api/src:/home/maestro/maestro_api/src
