@@ -1,0 +1,50 @@
+#!/bin/sh
+
+source ../../getProjectName.sh
+projectName=$(getProjectName)
+source ./.env
+export MAESTRO_API_USER=$USER
+export MAESTRO_API_UID=$(id -u $MAESTRO_API_USER)
+export MAESTRO_API_GID=$(id -g $MAESTRO_API_USER)
+
+caddyProjectName="${projectName}_caddy"
+maestroProjectName="${projectName}_maestro"
+action=$1
+case "$action" in
+'up')
+  ifs=$IFS;IFS=,;set -- $MAESTRO_API_WHITELIST;IFS=$ifs
+  sed "/@blocked not remote_ip*/ s|$| $*|" ../../Caddyfile > Caddyfile
+  sudo podman run -d --name $caddyProjectName\
+    --net=host \
+    -v ./Caddyfile:/etc/caddy/Caddyfile:ro \
+    -v ${caddyProjectName}_data:/data \
+    -v ${caddyProjectName}_config:/config \
+    docker.io/library/caddy:latest
+
+    # --userns="keep-id:uid=1000,gid=1000" \
+  podman run -d --name $maestroProjectName \
+    --cap-add CAP_NET_RAW \
+    --cap-add CAP_NET_ADMIN \
+    -p 127.0.0.1:4466:4466 \
+    -p 127.0.0.1:5000:5000 \
+    -e MAESTRO_API_USER="$MAESTRO_API_USER" \
+    -e MAESTRO_API_UID="$MAESTRO_API_UID" \
+    -e MAESTRO_FRONTEBD_HOST=0.0.0.0 \
+    -e MAESTRO_API_HOST=0.0.0.0 \
+    -e MAESTRO_API_KEYS="$MAESTRO_API_KEYS" \
+    -e MAESTRO_CORS_ORIGINS="$MAESTRO_CORS_ORIGINS" \
+    -e MAESTRO_API_WHITELIST="$MAESTRO_API_WHITELIST" \
+    -v /home/$MAESTRO_API_USER/.maestro:/home/maestro/.maestro:z \
+    -v /home/$MAESTRO_API_USER/.kube:/home/maestro/.kube:z \
+    -v /home/kaf/2026/Maestro/maestro/maestro_api/src:/home/maestro/maestro_api/src \
+    altlinux.space/alt-orchestra-dev/maestro-dev:latest
+  break;;
+'down')
+  podman rm -f $caddyProjectName
+  podman rm -f $maestroProjectName
+  break;;
+*) echo "Формат $0 up|down" >&2; exit 1
+esac
+
+    # --userns="keep-id:$MAESTRO_API_UID,$MAESTRO_API_GID" \
+#

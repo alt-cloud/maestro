@@ -24,6 +24,9 @@ fi
 echo 'root ALL=(ALL) ALL' >/etc/sudoers.d/root
 echo "{\"MAESTRO_API_URL\": \"$MAESTRO_API_URL\"}" | jq . > /usr/share/headlamp/plugins/maestro/config.json
 
+VARS=$(env | grep '^MAESTRO_' | cut -d= -f1 | paste -sd, -)
+EXPORTVARS="UID=$MAESTRO_API_UID USER=maestro HOME=/home/maestro LOGNAME=maestro"
+
 cmd="/usr/bin/headlamp-server \
     -listen-addr $MAESTRO_FRONTEBD_HOST\
     -port 4466\
@@ -33,24 +36,23 @@ while true
 do
   if [ "$container" = 'podman' ]
   then
-    $cmd >&2
+    sudo $EXPORTVARS --preserve-env=$VARS $cmd >&2
   else
-    sudo -u $MAESTRO_API_USER  $cmd >&2
+    sudo -u $MAESTRO_API_USER $EXPORTVARS --preserve-env=$VARS $cmd >&2
   fi
   echo 'Restart headlamp plugin'
   sleep 1
 done &
 # Backend
-VARS=$(env | grep '^MAESTRO_' | cut -d= -f1 | paste -sd, -)
 source /home/maestro/maestro_api/.venv/bin/activate
 cmd="/home/maestro/maestro_api/.venv/bin/maestro-api"
 while true
 do
   if [ "$container" = 'podman' ]
   then
-    $cmd >&2
+    sudo $EXPORTVARS --preserve-env=$VARS $cmd >&2
   else
-    sudo -u $MAESTRO_API_USER --preserve-env=$VARS,HOME,PATH,UID $cmd >&2
+    sudo -u $MAESTRO_API_USER $EXPORTVARS --preserve-env=$VARS $cmd >&2
   fi
   echo 'Restart maestro API'
   sleep 1

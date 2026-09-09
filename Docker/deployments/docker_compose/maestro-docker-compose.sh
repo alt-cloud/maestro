@@ -6,8 +6,13 @@ then
   exit 1
 fi
 action=$1
+source ./.env
+
 case "$action" in
-'up') action='up -d';break;;
+'up')
+  sudo ../../tuneCaddy.sh ../../Caddyfile.template $MAESTRO_API_WHITELIST
+  action='up -d';
+  break;;
 'down') break;;
 *) echo "Формат $0 up|down" >&2; exit 1
 esac
