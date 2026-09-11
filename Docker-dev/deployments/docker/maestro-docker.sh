@@ -2,7 +2,7 @@
 
 source ../../getProjectName.sh
 projectName=$(getProjectName)
-source ./.env
+source ../../envVars.sh
 export MAESTRO_API_USER=$USER
 export MAESTRO_API_UID=$(id -u $MAESTRO_API_USER)
 export MAESTRO_API_GID=$(id -g $MAESTRO_API_USER)
@@ -10,6 +10,11 @@ export MAESTRO_API_GID=$(id -g $MAESTRO_API_USER)
 action=$1
 case "$action" in
 'up')
+  if [ -f .env ]
+  then
+    source ./.env
+  fi
+  set | grep MAESTRO
   sudo ../../tuneCaddy.sh ../../Caddyfile.template $MAESTRO_API_WHITELIST
   docker run -d --name $projectName \
     -p 127.0.0.1:4466:4466 \
@@ -19,8 +24,9 @@ case "$action" in
     -e MAESTRO_FRONTEBD_HOST=0.0.0.0 \
     -e MAESTRO_API_HOST=0.0.0.0 \
     -e MAESTRO_API_KEYS="$MAESTRO_API_KEYS" \
-    -e MAESTRO_CORS_ORIGINS="$MAESTRO_CORS_ORIGINS" \
-    -e MAESTRO_API_WHITELIST="$MAESTRO_API_WHITELIST" \
+    -e MAESTRO_CORS_ORIGINS="http://127.0.0.1:4466,http://localhost:4466$HTTPS_CORS_ORIGIN" \
+    -e MAESTRO_API_WHITELIST="127.0.0.1$DOCKER_NETS" \
+    -e MAESTRO_API_URL="" \
     -v /home/$MAESTRO_API_USER/.maestro:/home/maestro/.maestro \
     -v /home/$MAESTRO_API_USER/.kube:/home/maestro/.kube \
     -v /home/kaf/2026/Maestro/maestro/maestro_api/src:/home/maestro/maestro_api/src \

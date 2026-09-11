@@ -2,7 +2,7 @@ FROM registry.altlinux.org/p11/python AS maestro_api_dev
 
 RUN apt-get update && apt-get install -y git python3-module-pip
 
-COPY Docker/requrements.txt /tmp/requirements.txt
+COPY Docker-dev/requrements.txt /tmp/requirements.txt
 
 RUN \
   mkdir -p /home/maestro;
@@ -21,13 +21,11 @@ FROM registry.altlinux.org/p11/alt
 RUN apt-get update && \
   apt-get install -y headlamp talosctl su sudo nmap iputils caddy jq yq net-tools curl tcpdump
 
-COPY /Docker/entrypoint.sh /
+COPY /Docker-dev/entrypoint.sh /
 
 COPY /plugin/maestro/dist/ /usr/share/headlamp/plugins/maestro/
 
 COPY /plugin/maestro/package.json /usr/share/headlamp/plugins/maestro/
-
-# COPY Docker/Caddyfile /etc/caddy/Caddyfile
 
 RUN adduser maestro
 
