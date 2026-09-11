@@ -1,4 +1,4 @@
-MAESTRO_API_KEYS='[
+export MAESTRO_API_KEYS='[
   {
     "key": "scope-read-write",
     "scopes": ["read", "write"],
@@ -16,6 +16,13 @@ MAESTRO_API_KEYS='[
     "rate_limit_per_minute": 1000
   }
 ]'
-MAESTRO_CORS_ORIGINS=http://127.0.0.1:4466,http://localhost:4466,https://www.maestro.local
-MAESTRO_API_WHITELIST=127.0.0.1,172.0.0.0/8,10.150.7.0/24,192.168.100.0/24
-MAESTRO_API_URL=https://api.maestro.local:5443
+
+export DOCKER_NETS=',172.16.0.0/12'
+
+export PODMAN_NETS=',10.88.0.0/8'
+
+export HTTPS_CORS_ORIGIN=',https://www.maestro.local'
+
+export MAESTRO_API_URL=https://api.maestro.local:5443
+
+export INET_API_WHITELIST=',10.150.7.0/24,192.168.100.0/24'

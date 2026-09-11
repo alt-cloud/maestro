@@ -6,10 +6,13 @@ then
   exit 1
 fi
 action=$1
-source ./.env
-
 case "$action" in
 'up')
+  source ../../envVars.sh
+  if [ -f ./.env ]
+  then
+    source ./.env
+  fi
   sudo ../../tuneCaddy.sh ../../Caddyfile.template $MAESTRO_API_WHITELIST
   action='up -d';
   break;;

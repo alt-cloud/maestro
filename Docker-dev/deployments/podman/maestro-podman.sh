@@ -6,16 +6,21 @@ source ./.env
 export MAESTRO_API_USER=$USER
 export MAESTRO_API_UID=$(id -u $MAESTRO_API_USER)
 export MAESTRO_API_GID=$(id -g $MAESTRO_API_USER)
-
-caddyProjectName="${projectName}_caddy"
-maestroProjectName="${projectName}_maestro"
 action=$1
 case "$action" in
 'up')
+  source ../../envVars.sh
+  if [ -f ./.env ]
+  then
+    source ./.env
+  fi
   sudo ../../tuneCaddy.sh ../../Caddyfile.template $MAESTRO_API_WHITELIST
-  docker run -d --name $maestroProjectName \
+    # --userns=keep-id \
+  podman run -d --name $projectName \
     -p 127.0.0.1:4466:4466 \
     -p 127.0.0.1:5000:5000 \
+    --cap-add CAP_NET_RAW \
+    --cap-add CAP_NET_ADMIN \
     -e MAESTRO_API_USER="$MAESTRO_API_USER" \
     -e MAESTRO_API_UID="$MAESTRO_API_UID" \
     -e MAESTRO_FRONTEBD_HOST=0.0.0.0 \
@@ -29,10 +34,7 @@ case "$action" in
     altlinux.space/alt-orchestra-dev/maestro-dev:latest
   break;;
 'down')
-  docker rm -f $caddyProjectName
-  docker rm -f $maestroProjectName
+  podman rm -f $projectName
   break;;
 *) echo "Формат $0 up|down" >&2; exit 1
 esac
-
-

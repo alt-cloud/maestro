@@ -15,4 +15,3 @@ services:
     volumes:
       - /home/$MAESTRO_API_USER/.maestro:/home/maestro/.maestro
       - /home/$MAESTRO_API_USER/.kube:/home/maestro/.kube
-      - /home/kaf/2026/Maestro/maestro/maestro_api/src:/home/maestro/maestro_api/src
