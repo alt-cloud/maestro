@@ -10,19 +10,15 @@ action=$1
 case "$action" in
 'up')
   source ../../envVars.sh
-  if [ -f ./.env ]
-  then
-    source ./.env
-  fi
+  source ./.env
+
   sudo ../../tuneCaddy.sh ../../Caddyfile.template $MAESTRO_API_WHITELIST
-    # --userns=keep-id \
   podman run -d --name $projectName \
     -p 127.0.0.1:4466:4466 \
     -p 127.0.0.1:5000:5000 \
     --cap-add CAP_NET_RAW \
     --cap-add CAP_NET_ADMIN \
     -e MAESTRO_API_USER="$MAESTRO_API_USER" \
-    -e MAESTRO_API_UID="$MAESTRO_API_UID" \
     -e MAESTRO_FRONTEBD_HOST=0.0.0.0 \
     -e MAESTRO_API_HOST=0.0.0.0 \
     -e MAESTRO_API_KEYS="$MAESTRO_API_KEYS" \
@@ -30,7 +26,6 @@ case "$action" in
     -e MAESTRO_API_WHITELIST="$MAESTRO_API_WHITELIST" \
     -v /home/$MAESTRO_API_USER/.maestro:/home/maestro/.maestro \
     -v /home/$MAESTRO_API_USER/.kube:/home/maestro/.kube \
-    -v /home/kaf/2026/Maestro/maestro/maestro_api/src:/home/maestro/maestro_api/src \
     altlinux.space/alt-orchestra-dev/maestro-dev:latest
   break;;
 'down')

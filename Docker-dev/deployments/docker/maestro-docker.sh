@@ -2,7 +2,7 @@
 
 source ../../getProjectName.sh
 projectName=$(getProjectName)
-source ../../envVars.sh
+SOURCE ../../ENVVARS.SH
 export MAESTRO_API_USER=$USER
 export MAESTRO_API_UID=$(id -u $MAESTRO_API_USER)
 export MAESTRO_API_GID=$(id -g $MAESTRO_API_USER)
@@ -29,7 +29,6 @@ case "$action" in
     -e MAESTRO_API_URL="" \
     -v /home/$MAESTRO_API_USER/.maestro:/home/maestro/.maestro \
     -v /home/$MAESTRO_API_USER/.kube:/home/maestro/.kube \
-    -v /home/kaf/2026/Maestro/maestro/maestro_api/src:/home/maestro/maestro_api/src \
     altlinux.space/alt-orchestra-dev/maestro-dev:latest
   break;;
 'down')
