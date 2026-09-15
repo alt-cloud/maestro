@@ -19,6 +19,7 @@ case "$action" in
     --cap-add CAP_NET_RAW \
     --cap-add CAP_NET_ADMIN \
     -e MAESTRO_API_USER="$MAESTRO_API_USER" \
+    -e MAESTRO_API_UID="$MAESTRO_API_UID" \
     -e MAESTRO_FRONTEBD_HOST=0.0.0.0 \
     -e MAESTRO_API_HOST=0.0.0.0 \
     -e MAESTRO_API_KEYS="$MAESTRO_API_KEYS" \
