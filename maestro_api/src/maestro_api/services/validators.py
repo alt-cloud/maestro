@@ -21,7 +21,9 @@ TEXT_COMMANDS = {
 }
 
 APPLY_ACTIONS = {"controlplane", "worker"}
-VIRTUAL_CLUSTERS = {"_Orphans", "_Unknown"}
+# The one reserved (non-creatable) cluster name — maestro.py imports this rather than
+# keeping its own copy, so the two can't drift apart.
+ORPHANS_CLUSTER_NAME = "_Orphans"
 
 _CLUSTER_NAME_RE = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.-]{0,62}$")
 _COMMAND_SEGMENT_RE = re.compile(r"^[A-Za-z0-9_.:-]+$")
@@ -57,7 +59,7 @@ def validate_cluster_name(cluster_name: str) -> None:
         raise ValueError("Cluster name cannot contain path separators")
     if not _CLUSTER_NAME_RE.fullmatch(cluster_name):
         raise ValueError("Cluster name contains unsupported characters")
-    if cluster_name.startswith("_") and cluster_name not in VIRTUAL_CLUSTERS:
+    if cluster_name.startswith("_") and cluster_name != ORPHANS_CLUSTER_NAME:
         raise ValueError("Cluster names starting with '_' are reserved")
 
 

@@ -3,13 +3,24 @@ import os
 import shlex
 import socket
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from typing import Any
+from typing import Any, TypedDict
 
 import yaml
 
-VIRTUAL_CLUSTERS = ["_Orphans", "_Unknown"]
+from maestro_api.services.validators import ORPHANS_CLUSTER_NAME
+
 TALOS_NODE_TYPE_TO_KUBE = {"endpoints": "controlplanes", "nodes": "workers"}
+
+
+class NodeClassification(TypedDict):
+    ip: str
+    to_cluster_name: str
+    kube_node_type: str
+    node_info: dict[str, Any]
+    trackable: bool
+    changed: bool
 
 
 class CommandTimeoutError(RuntimeError):
@@ -219,6 +230,13 @@ def is_port_open(host: str, port: int, timeout: float = 3.0) -> bool:
 
 
 def is_maintenance(ip: str, timeout_seconds: float | None = None) -> bool:
+    """Tells whether the node has no machine config applied yet.
+
+    Talos's maintenance service accepts unauthenticated requests only while no config
+    is applied, so an insecure (no client certificate) machinestatus call succeeds only
+    against a genuinely unconfigured node; a configured node's apid rejects it outright
+    for lacking a client certificate. This needs no talosconfig for the node's cluster.
+    """
     home_dir = os.getenv("HOME", "")
     command = [
         "talosctl",
@@ -232,8 +250,10 @@ def is_maintenance(ip: str, timeout_seconds: float | None = None) -> bool:
         ip,
         "-i",
     ]
-    result = run_command(command, home_dir, timeout_seconds=timeout_seconds)
-    print(f"is_maintenance:: returncode={result.returncode}", flush=True)
+    try:
+        result = run_command(command, home_dir, timeout_seconds=timeout_seconds)
+    except CommandTimeoutError:
+        return False
     if result.returncode != 0:
         return False
 
@@ -258,9 +278,6 @@ def talos_get_spec(
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = f"{home_dir}/.maestro"
     cluster_config_dir = f"{maestro_config_dir}/{cluster_name}"
-    if cluster_name == "_Unknown":
-        return {}, -1, ""
-
     result_spec: dict[str, Any] = {}
     command = [
         "talosctl",
@@ -273,9 +290,10 @@ def talos_get_spec(
         "-o",
         "json",
     ]
-    if cluster_name == "_Orphans":
-        command.append("-i")
-    result = run_command(command, cluster_config_dir, timeout_seconds=timeout_seconds)
+    try:
+        result = run_command(command, cluster_config_dir, timeout_seconds=timeout_seconds)
+    except CommandTimeoutError as err:
+        return {}, -1, str(err)
 
     if result.returncode == 0:
         json_str = result.stdout.strip()
@@ -295,28 +313,101 @@ def talos_get_spec(
     return result_spec, result.returncode, result.stderr
 
 
-def init_talosconfig() -> None:
-    home_dir = os.getenv("HOME", "")
-    maestro_config_dir = Path(f"{home_dir}/.maestro")
-    for virtual_cluster in VIRTUAL_CLUSTERS:
-        cluster_dir = maestro_config_dir / virtual_cluster
-        if cluster_dir.exists():
-            continue
+def talos_machine_type(
+    cluster_name: str,
+    node: str,
+    timeout_seconds: float | None = None,
+) -> str | None:
+    """Returns the node's configured Talos role ("controlplane", "init", "worker").
 
-        cluster_dir.mkdir(parents=True, exist_ok=True)
-        talosconfig_file = cluster_dir / "talosconfig"
-        talosconfig_file.write_text(
-            f"""context: {virtual_cluster}
-contexts:
-  {virtual_cluster}:
-    endpoints: []
-    nodes: []
-""",
-            encoding="utf-8",
-        )
+    None means no role could be established — the call failed, or Talos itself reported
+    "unknown", which is what it returns when the node has no machine config at all.
+    """
+    home_dir = os.getenv("HOME", "")
+    cluster_config_dir = f"{home_dir}/.maestro/{cluster_name}"
+    command = ["talosctl", "get", "machinetype", "-e", node, "-n", node, "-o", "json"]
+    try:
+        result = run_command(command, cluster_config_dir, timeout_seconds=timeout_seconds)
+    except CommandTimeoutError:
+        return None
+    if result.returncode != 0:
+        return None
+
+    raw_output = result.stdout.strip()
+    if not raw_output:
+        return None
+
+    try:
+        data = json.loads(raw_output)
+    except json.JSONDecodeError:
+        return None
+
+    machine_type = data.get("spec")
+    if not isinstance(machine_type, str) or machine_type == "unknown":
+        # Talos's machine.Type stringifies to "unknown" when no machine config is applied
+        # yet. That's the absence of a role, not a role — reporting it as None keeps both
+        # callers on their "can't confirm, don't guess" path instead of silently filing
+        # the node under "workers" as any non-controlplane string otherwise would.
+        return None
+    return machine_type
+
+
+def read_talosconfig_context(
+    talosconfig_file: Path,
+    cluster_name: str,
+) -> dict[str, Any] | None:
+    """Reads the context named `cluster_name` out of a talosconfig file.
+
+    Returns None whenever that context can't be produced with confidence: the file is
+    unreadable, isn't even UTF-8 text, isn't valid YAML, isn't a mapping at all, or
+    simply holds no context of that name. `~/.maestro` is a user-writable directory that
+    can pick up hand-edited, truncated, binary or entirely unrelated files, and none of
+    those may take the whole node tree down with them — every caller treats None as
+    "not a cluster, skip it".
+    """
+    try:
+        with open(talosconfig_file, "r", encoding="utf-8") as file_pointer:
+            talosconfig = yaml.safe_load(file_pointer)
+    except (OSError, UnicodeDecodeError, yaml.YAMLError) as err:
+        print(f"read_talosconfig_context:: {talosconfig_file} is unreadable ({err})", flush=True)
+        return None
+
+    if not isinstance(talosconfig, dict):
+        return None
+
+    contexts = talosconfig.get("contexts")
+    if not isinstance(contexts, dict):
+        return None
+
+    context = contexts.get(cluster_name)
+    return context if isinstance(context, dict) else None
+
+
+def talosconfig_ips(context: dict[str, Any], field: str) -> list[str]:
+    """The IP list stored under `field` of a talosconfig context.
+
+    Anything that isn't a list of strings is reported as empty rather than iterated:
+    a bare string there would otherwise splat into individual characters and invent
+    node "addresses" that were never in the file.
+    """
+    values = context.get(field)
+    if not isinstance(values, list):
+        return []
+    return [value for value in values if isinstance(value, str)]
 
 
 def load_talos_configs() -> dict[str, dict[str, Any]]:
+    """Loads every real cluster's talosconfig context from `~/.maestro/<cluster_name>/`.
+
+    A directory's name is only ever treated as trustworthy cluster identity once it's
+    corroborated by the file itself: its talosconfig must define a context of that exact
+    name (a directory renamed after the fact, so its content still names some other
+    cluster, is skipped rather than silently read as — or written into — the wrong
+    cluster's credentials) and that context must carry real ca/crt/key (a directory
+    without them was never actually bootstrapped, whatever it's named). "_Orphans" is
+    reserved and never read from disk at all, by name alone, regardless of contents —
+    it's a purely virtual grouping in the API response, never backed by a real cluster.
+    """
     home_dir = os.getenv("HOME", "")
     maestro_config_dir = Path(f"{home_dir}/.maestro")
     talos_configs: dict[str, dict[str, Any]] = {"context": "", "contexts": {}}
@@ -325,17 +416,32 @@ def load_talos_configs() -> dict[str, dict[str, Any]]:
         if not maestro_dir.is_dir():
             continue
 
+        cluster_name = maestro_dir.name
+        if cluster_name == ORPHANS_CLUSTER_NAME:
+            continue
+
         talosconfig_file = maestro_dir / "talosconfig"
         if not talosconfig_file.is_file():
             continue
 
-        cluster_name = maestro_dir.name
-        with open(talosconfig_file, "r", encoding="utf-8") as file_pointer:
-            cluster_talosconfig = yaml.safe_load(file_pointer) or {}
+        context = read_talosconfig_context(talosconfig_file, cluster_name)
+        if context is None:
+            print(
+                f"load_talos_configs:: {maestro_dir} has no context named '{cluster_name}' "
+                "matching its own directory — skipping",
+                flush=True,
+            )
+            continue
 
-        contexts = cluster_talosconfig.get("contexts", {})
-        if cluster_name in contexts:
-            talos_configs["contexts"][cluster_name] = contexts[cluster_name]
+        if not all(context.get(field) for field in ("ca", "crt", "key")):
+            print(
+                f"load_talos_configs:: {maestro_dir} has no ca/crt/key — not a real "
+                "bootstrapped cluster, skipping",
+                flush=True,
+            )
+            continue
+
+        talos_configs["contexts"][cluster_name] = context
 
     return talos_configs
 
@@ -344,30 +450,266 @@ def node_cluster_name(
     cluster_names: list[str],
     node: str,
     timeout_seconds: float | None = None,
-) -> str:
-    home_dir = os.getenv("HOME", "")
-    maestro_config_dir = f"{home_dir}/.maestro"
+) -> tuple[str | None, bool]:
+    """Returns (cluster_name, is_maintenance).
+
+    cluster_name is None when the node doesn't belong to any cluster we manage and isn't
+    in maintenance either — the caller should drop it rather than filing it under a
+    placeholder cluster. is_maintenance is only meaningful when cluster_name is "_Orphans".
+    """
     for cluster_name in cluster_names:
-        cluster_config_dir = f"{maestro_config_dir}/{cluster_name}"
-        command = [
-            "talosctl",
-            "get",
-            "info",
-            "-e",
-            node,
-            "-n",
-            node,
-            "-o",
-            "json",
-        ]
-        result = run_command(
-            command, cluster_config_dir, timeout_seconds=timeout_seconds
-        )
-        if result.returncode == 0:
-            return cluster_name
+        if node_belongs_to_cluster(cluster_name, node, timeout_seconds=timeout_seconds):
+            return cluster_name, False
+
     if is_maintenance(node, timeout_seconds=timeout_seconds):
-        return "_Orphans"
-    return "_Unknown"
+        return ORPHANS_CLUSTER_NAME, True
+    return None, False
+
+
+def node_belongs_to_cluster(
+    cluster_name: str,
+    node: str,
+    timeout_seconds: float | None = None,
+) -> bool:
+    """True if `node` still authenticates against `cluster_name`'s own talosconfig."""
+    home_dir = os.getenv("HOME", "")
+    cluster_config_dir = f"{home_dir}/.maestro/{cluster_name}"
+    command = ["talosctl", "get", "info", "-e", node, "-n", node, "-o", "json"]
+    try:
+        result = run_command(command, cluster_config_dir, timeout_seconds=timeout_seconds)
+    except CommandTimeoutError:
+        return False
+    return result.returncode == 0
+
+
+def fetch_cluster_node_info(
+    cluster_name: str,
+    ip: str,
+    timeout_seconds: float | None,
+) -> dict[str, Any] | None:
+    """Gathers a real cluster member's status via that cluster's own authenticated API.
+
+    Returns None if the node's machinestatus can't be fetched at all — the caller decides
+    what that means (drop a not-yet-confirmed node, or mark a known member unreachable).
+    """
+    node_info: dict[str, Any] = {"ip": ip}
+    machine_spec, return_code, _ = talos_get_spec(
+        cluster_name, "machinestatus", ip, timeout_seconds=timeout_seconds
+    )
+    if return_code != 0 or not machine_spec:
+        return None
+
+    node_info["stage"] = machine_spec.get("stage", "unavailable or installing")
+    status = machine_spec.get("status")
+    node_info["status"] = status if isinstance(status, dict) else {}
+
+    node_status_spec, return_code, _ = talos_get_spec(
+        cluster_name, "nodestatus", ip, timeout_seconds=timeout_seconds
+    )
+    if return_code == 0 and node_status_spec:
+        node_info["nodeReady"] = node_status_spec.get("nodeReady", "-")
+        manifest_spec, _, _ = talos_get_spec(
+            cluster_name, "manifeststatus", ip, timeout_seconds=timeout_seconds
+        )
+        manifests_applied = (
+            manifest_spec.get("manifestsApplied", []) if manifest_spec else []
+        )
+        node_info["manifestsApplied"] = (
+            manifests_applied if isinstance(manifests_applied, list) else []
+        )
+        etcd_member_spec, _, _ = talos_get_spec(
+            cluster_name, "etcdmember", ip, timeout_seconds=timeout_seconds
+        )
+        node_info["memberID"] = (
+            etcd_member_spec.get("memberID", "-") if etcd_member_spec else "-"
+        )
+
+    return node_info
+
+
+def classify_known_node(
+    ip: str,
+    cluster_name: str,
+    kube_node_type: str,
+    real_cluster_names: list[str],
+    command_timeout_seconds: float | None,
+    port_check_timeout_seconds: float,
+) -> NodeClassification | None:
+    """Re-checks a node already tracked under a real cluster.
+
+    Talosctl's own authenticated API is the reachability check here — no raw port probe.
+    A node that doesn't answer at all, or answers ambiguously (mid-reboot connections can
+    reset mid-handshake without meaning anything), stays listed under its real cluster as
+    unreachable — that includes a node still installing after a fresh bootstrap, which is
+    exactly as unauthenticatable as one that was actually `talosctl reset`.
+
+    It's reclassified away from here only on POSITIVE proof of a new identity: it now
+    authenticates against a different real cluster, or it confirms maintenance stage.
+    Anything short of that keeps its old placement — an ambiguous blip must never erase a
+    node's recorded membership, only a real answer can.
+
+    The reachability check itself uses the short probe timeout, not the full command
+    timeout: a node that's actually there answers in well under a second, so there's no
+    reason to let a genuinely silent one block the batch for the full 30s twice over.
+    """
+    node_info = fetch_cluster_node_info(cluster_name, ip, port_check_timeout_seconds)
+    if node_info is None:
+        to_cluster_name, node_is_maintenance = node_cluster_name(
+            real_cluster_names, ip, timeout_seconds=port_check_timeout_seconds
+        )
+        if to_cluster_name is not None:
+            print(
+                f"refresh_talosconfigs:: ip={ip} no longer part of cluster={cluster_name}, "
+                f"now {to_cluster_name}",
+                flush=True,
+            )
+            return build_cluster_node_result(
+                ip, to_cluster_name, node_is_maintenance, command_timeout_seconds
+            )
+
+        print(
+            f"refresh_talosconfigs:: ip={ip} cluster={cluster_name} unreachable, keeping placement",
+            flush=True,
+        )
+        return {
+            "ip": ip,
+            "to_cluster_name": cluster_name,
+            "kube_node_type": kube_node_type,
+            "node_info": {"ip": ip, "stage": "unreachable"},
+            "trackable": True,
+            "changed": False,
+        }
+
+    machine_type = talos_machine_type(
+        cluster_name, ip, timeout_seconds=command_timeout_seconds
+    )
+    if machine_type is None:
+        new_kube_node_type = kube_node_type
+    elif machine_type in ("controlplane", "init"):
+        new_kube_node_type = "controlplanes"
+    else:
+        new_kube_node_type = "workers"
+    return {
+        "ip": ip,
+        "to_cluster_name": cluster_name,
+        "kube_node_type": new_kube_node_type,
+        "node_info": node_info,
+        "trackable": True,
+        "changed": new_kube_node_type != kube_node_type,
+    }
+
+
+def build_cluster_node_result(
+    ip: str,
+    to_cluster_name: str,
+    node_is_maintenance: bool,
+    command_timeout_seconds: float | None,
+) -> NodeClassification | None:
+    """Builds the final classification once a node's cluster (or _Orphans) is already
+    resolved — shared by the fresh-candidate and reclassified-known-node paths.
+    """
+    if to_cluster_name == ORPHANS_CLUSTER_NAME:
+        # No machine config applied yet — there's no reliable role to report.
+        return {
+            "ip": ip,
+            "to_cluster_name": to_cluster_name,
+            "kube_node_type": "unassigned",
+            "node_info": {"ip": ip, "stage": "maintenance" if node_is_maintenance else "-"},
+            "trackable": False,
+            "changed": False,
+        }
+
+    machine_type = talos_machine_type(
+        to_cluster_name, ip, timeout_seconds=command_timeout_seconds
+    )
+    if machine_type is None:
+        # Can't confirm a role yet — try again on the next scan rather than guess.
+        print(
+            f"refresh_talosconfigs:: ip={ip} cluster={to_cluster_name} machinetype unreadable, retrying later",
+            flush=True,
+        )
+        return None
+    kube_node_type = "controlplanes" if machine_type in ("controlplane", "init") else "workers"
+
+    node_info = fetch_cluster_node_info(to_cluster_name, ip, command_timeout_seconds)
+    if node_info is None:
+        return None
+
+    return {
+        "ip": ip,
+        "to_cluster_name": to_cluster_name,
+        "kube_node_type": kube_node_type,
+        "node_info": node_info,
+        "trackable": True,
+        "changed": True,
+    }
+
+
+def classify_candidate_node(
+    ip: str,
+    real_cluster_names: list[str],
+    command_timeout_seconds: float | None,
+    port_check_timeout_seconds: float,
+) -> NodeClassification | None:
+    """Classifies an IP that isn't in any talosconfig yet.
+
+    The port probe here is purely a cheap pre-filter to skip spawning talosctl against
+    addresses with nothing listening at all (most of a freshly scanned /24) — it never
+    decides a node's identity or role by itself, real talosctl calls do.
+
+    A completed TCP handshake doesn't mean the Talos protocol will actually answer —
+    some addresses on a noisy network accept the connection and then never respond. So
+    the identity check (which cluster owns this, or is it in maintenance) also runs on
+    the short probe timeout: a real apid answers near-instantly, and a silent one would
+    otherwise cost up to two full command timeouts per address.
+    """
+    if not is_port_open(ip, 50000, timeout=port_check_timeout_seconds):
+        return None
+
+    to_cluster_name, node_is_maintenance = node_cluster_name(
+        real_cluster_names, ip, timeout_seconds=port_check_timeout_seconds
+    )
+    if to_cluster_name is None:
+        print(
+            f"refresh_talosconfigs:: ip={ip} no known cluster and not in maintenance, dropping from the tree",
+            flush=True,
+        )
+        return None
+
+    return build_cluster_node_result(
+        ip, to_cluster_name, node_is_maintenance, command_timeout_seconds
+    )
+
+
+def classify_scanned_node(
+    ip: str,
+    real_cluster_names: list[str],
+    previous_node_placement: dict[str, dict[str, str]],
+    command_timeout_seconds: float | None,
+    port_check_timeout_seconds: float,
+) -> NodeClassification | None:
+    """Classifies one scanned IP. Pure w.r.t. the caller's state — safe to run on a worker thread.
+
+    Returns None if the node should be dropped entirely (not Talos, not yet confirmable,
+    or a brand-new cluster member whose machinestatus couldn't be fetched).
+    """
+    previous_placement = previous_node_placement.get(ip, {})
+    from_cluster_name = previous_placement.get("cluster_name")
+    from_kube_node_type = previous_placement.get("kube_node_type")
+
+    if from_cluster_name is not None and from_kube_node_type is not None:
+        return classify_known_node(
+            ip,
+            from_cluster_name,
+            from_kube_node_type,
+            real_cluster_names,
+            command_timeout_seconds,
+            port_check_timeout_seconds,
+        )
+
+    return classify_candidate_node(
+        ip, real_cluster_names, command_timeout_seconds, port_check_timeout_seconds
+    )
 
 
 def refresh_talosconfigs(
@@ -383,13 +725,13 @@ def refresh_talosconfigs(
     real_cluster_names = sorted(
         cluster_name
         for cluster_name in cluster_names
-        if cluster_name not in VIRTUAL_CLUSTERS
+        if cluster_name != ORPHANS_CLUSTER_NAME
     )
 
     previous_node_placement: dict[str, dict[str, str]] = {}
     for source_cluster_name, context in talos_config["contexts"].items():
-        endpoints = context.get("endpoints") or []
-        workers = context.get("nodes") or []
+        endpoints = talosconfig_ips(context, "endpoints")
+        workers = talosconfig_ips(context, "nodes")
         for endpoint_ip in endpoints:
             previous_node_placement[endpoint_ip] = {
                 "cluster_name": source_cluster_name,
@@ -403,13 +745,17 @@ def refresh_talosconfigs(
                 }
 
     print(
-        f"refresh_talosconfigs:: before talos_config={json.dumps(talos_config, indent=2)}"
+        f"refresh_talosconfigs:: before talos_config={json.dumps(talos_config, indent=2)}",
+        flush=True,
     )
     print(f"refresh_talosconfigs:: real_cluster_names={json.dumps(real_cluster_names)}", flush=True)
 
+    # Every real cluster gets an entry up front, even with zero members right now — a
+    # cluster that just lost its last node still needs its talosconfig's node list
+    # cleared, and that only happens if it's present here for the reconciliation below.
     new_nodes: dict[str, dict[str, list[dict[str, Any]]]] = {
-        "_Orphans": {"controlplanes": [], "workers": []},
-        "_Unknown": {"controlplanes": [], "workers": []},
+        ORPHANS_CLUSTER_NAME: {"controlplanes": [], "workers": [], "unassigned": []},
+        **{name: {"controlplanes": [], "workers": []} for name in real_cluster_names},
     }
     changed = False
 
@@ -419,104 +765,50 @@ def refresh_talosconfigs(
         with open(node_file_name, "r", encoding="utf-8") as file_pointer:
             scanned_nodes = json.load(file_pointer)
 
-    processed_ips: set[str] = set()
-    for ip in scanned_nodes.keys():
-        processed_ips.add(ip)
-        node_stage = ""
-        node_info: dict[str, Any] = {"ip": ip}
-        previous_placement = previous_node_placement.get(ip, {})
-        from_cluster_name = previous_placement.get("cluster_name")
-        from_kube_node_type = previous_placement.get("kube_node_type")
+    # Only nodes with a persistable role (controlplanes/workers) are tracked here — "unassigned"
+    # nodes are never written to a talosconfig, so they'd never match on a later poll otherwise.
+    trackable_ips: set[str] = set()
 
-        if is_port_open(ip, 50000, timeout=port_check_timeout_seconds):
-            to_cluster_name = node_cluster_name(
-                real_cluster_names,
+    # Already-recorded nodes are classified even when the last scan didn't see them.
+    # "/scanNets" only keeps addresses whose apid port answered, so a member that was
+    # rebooting while the scan ran drops out of nodes.json — and classifying the scan
+    # alone would silently forget it: gone from the tree, and gone from its cluster's
+    # talosconfig on the next reconciliation. Passing it through classify_known_node
+    # instead lets the usual rule apply: keep the recorded placement unless a different
+    # identity is actually confirmed.
+    ips_to_classify = list(scanned_nodes)
+    ips_to_classify.extend(ip for ip in previous_node_placement if ip not in scanned_nodes)
+
+    # Each node's classification is independent network I/O (sockets, talosctl)
+    # with no shared state, so a scan of hundreds of IPs doesn't have to run one at a time.
+    with ThreadPoolExecutor(max_workers=32) as executor:
+        results = executor.map(
+            lambda ip: classify_scanned_node(
                 ip,
-                timeout_seconds=command_timeout_seconds,
-            )
+                real_cluster_names,
+                previous_node_placement,
+                command_timeout_seconds,
+                port_check_timeout_seconds,
+            ),
+            ips_to_classify,
+        )
+        for result in results:
+            if result is None:
+                continue
+
+            to_cluster_name = result["to_cluster_name"]
+            kube_node_type = result["kube_node_type"]
             new_nodes.setdefault(to_cluster_name, {})
             new_nodes[to_cluster_name].setdefault("controlplanes", [])
             new_nodes[to_cluster_name].setdefault("workers", [])
+            new_nodes[to_cluster_name][kube_node_type].append(result["node_info"])
 
-            print(
-                f"refresh_talosconfigs:: ip={ip} port 50000 open to_cluster_name={to_cluster_name}", flush=True
-            )
-            if is_port_open(ip, 6443, timeout=port_check_timeout_seconds):
-                kube_node_type = "controlplanes"
-                print(
-                    f"refresh_talosconfigs:: ip={ip} port 6443 opened controlplane in cluster {to_cluster_name}", flush=True
-                )
-            else:
-                kube_node_type = "workers"
-                changed = True
-                print(
-                    f"refresh_talosconfigs:: ip={ip} port 6443 closed, move to worker in cluster {to_cluster_name}", flush=True
-                )
-        else:
-            kube_node_type = "controlplanes"
-            to_cluster_name = "_Orphans"
-            node_stage = "unavailable or installing"
-            print(
-                f"refresh_talosconfigs:: ip={ip} ports closed, keep controlplane in old cluster "
-                f"{from_cluster_name if from_cluster_name else '-'}", flush=True
-            )
+            if result["trackable"]:
+                trackable_ips.add(result["ip"])
+                if result["changed"]:
+                    changed = True
 
-        if (
-            from_cluster_name != to_cluster_name
-            or from_kube_node_type != kube_node_type
-        ):
-            changed = True
-
-        if to_cluster_name in VIRTUAL_CLUSTERS:
-            if is_maintenance(ip, timeout_seconds=command_timeout_seconds):
-                node_stage = "maintenance"
-            node_info["stage"] = node_stage if node_stage else "-"
-        else:
-            machine_spec, return_code, _ = talos_get_spec(
-                to_cluster_name,
-                "machinestatus",
-                ip,
-                timeout_seconds=command_timeout_seconds,
-            )
-            if return_code != 0 or not machine_spec:
-                continue
-
-            node_info["stage"] = machine_spec.get("stage", "unavailable or installing")
-            node_info["status"] = machine_spec.get("status", "-")
-
-            node_status_spec, return_code, _ = talos_get_spec(
-                to_cluster_name,
-                "nodestatus",
-                ip,
-                timeout_seconds=command_timeout_seconds,
-            )
-            if return_code == 0 and node_status_spec:
-                node_info["nodeReady"] = node_status_spec.get("nodeReady", "-")
-                manifest_spec, _, _ = talos_get_spec(
-                    to_cluster_name,
-                    "manifeststatus",
-                    ip,
-                    timeout_seconds=command_timeout_seconds,
-                )
-                manifests_applied = (
-                    manifest_spec.get("manifestsApplied", []) if manifest_spec else []
-                )
-                node_info["manifestsApplied"] = (
-                    manifests_applied if isinstance(manifests_applied, list) else []
-                )
-                etcd_member_spec, _, _ = talos_get_spec(
-                    to_cluster_name,
-                    "etcdmember",
-                    ip,
-                    timeout_seconds=command_timeout_seconds,
-                )
-                node_info["memberID"] = (
-                    etcd_member_spec.get("memberID", "-") if etcd_member_spec else "-"
-                )
-
-        new_nodes[to_cluster_name][kube_node_type].append(node_info)
-
-    if set(previous_node_placement.keys()) != processed_ips:
+    if set(previous_node_placement.keys()) != trackable_ips:
         changed = True
 
     print(f"refresh_talosconfigs:: new_nodes={json.dumps(new_nodes, indent=2)}", flush=True)
@@ -525,20 +817,35 @@ def refresh_talosconfigs(
     if changed:
         print("refresh_talosconfigs:: talosctl changed", flush=True)
         for cluster_name, cluster_nodes in new_nodes.items():
+            # "_Orphans" is virtual — a grouping in the response, never a directory on
+            # disk. There's no talosconfig here to reconcile, and running talosctl in a
+            # missing cwd would raise outright.
+            talosconfig_dir = f"{maestro_config_dir}/{cluster_name}"
+            if cluster_name == ORPHANS_CLUSTER_NAME or not os.path.isdir(talosconfig_dir):
+                continue
+
             for talos_node_type, kube_node_type in TALOS_NODE_TYPE_TO_KUBE.items():
                 node_ips: list[str] = []
                 if kube_node_type in cluster_nodes:
                     print(
                         "refresh_talosconfigs:: "
                         f"cluster_name={cluster_name} kube_node_type={kube_node_type} "
-                        f"node={json.dumps(cluster_nodes[kube_node_type])}", flush=True
+                        f"node={json.dumps(cluster_nodes[kube_node_type])}",
+                        flush=True,
                     )
                     for node in cluster_nodes[kube_node_type]:
                         print(f"refresh_talosconfigs:: node={json.dumps(node)}", flush=True)
                         node_ips.append(node["ip"])
 
-                talosconfig_dir = f"{maestro_config_dir}/{cluster_name}"
-                if node_ips:
+                # Run even with an empty node_ips: "talosctl config node" with no arguments
+                # clears the list, which is exactly right when a cluster just lost its last
+                # worker — a stale IP must not linger in its talosconfig just because this
+                # round reported nothing for that role. "config endpoint" is the exception:
+                # talosctl itself refuses zero endpoints ("requires at least 1 arg(s)"), since
+                # a context needs at least one entry point to be usable at all — so a cluster
+                # that just lost its last controlplane keeps its last-known (now dead) endpoint
+                # rather than erroring out here every cycle for no effect.
+                if node_ips or talos_node_type != "endpoints":
                     command = ["talosctl", "config", talos_node_type[:-1], *node_ips]
                     run_command(
                         command,
@@ -547,11 +854,8 @@ def refresh_talosconfigs(
                     )
                 print(
                     "refresh_talosconfigs:: "
-                    f"cluster_name={cluster_name} {talos_node_type}={json.dumps(node_ips)}", flush=True
+                    f"cluster_name={cluster_name} {talos_node_type}={json.dumps(node_ips)}",
+                    flush=True,
                 )
-
-    if new_nodes["_Orphans"]["workers"]:
-        new_nodes["_Orphans"]["controlplanes"] += new_nodes["_Orphans"]["workers"]
-        new_nodes["_Orphans"]["workers"] = []
 
     return new_nodes

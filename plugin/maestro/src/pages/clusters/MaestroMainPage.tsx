@@ -5,6 +5,7 @@ import {
   AlertColor,
   Box,
   Button,
+  CircularProgress,
   FormControl,
   MenuItem,
   Paper,
@@ -79,7 +80,6 @@ const orphanStatusOptions: StatusOption[] = [
 ];
 
 const orphansClusterName = '_Orphans';
-const unknownClusterName = '_Unknown';
 type SelectedNodeStages = Record<string, Record<string, string>>;
 
 interface Column {
@@ -268,7 +268,7 @@ function NodeStage(props) {
   }
   return (
     <TableCell>
-      <StageIndicator stage={stage} t={t} />
+      <StageIndicator stage={originalStage} t={t} />
     </TableCell>
   );
 }
@@ -293,32 +293,28 @@ function NodeColumns(props) {
   const nodeType = props.nodeType;
   const node = cols['ip'];
   const clusterName = props.clusterName;
-  const isUnknownClusterName = clusterName === unknownClusterName;
   const href = clusterName[0] === '_' ? '/maestro/node/get' : '/maestro/node';
   const nodeLinkParams = new URLSearchParams();
   nodeLinkParams.set('cluster', props.clusterName);
   nodeLinkParams.set('node', node);
-  nodeLinkParams.set('type', nodeType);
+  if (nodeType) {
+    nodeLinkParams.set('type', nodeType);
+  }
   const nodeLink = `${href}?${nodeLinkParams.toString()}`;
   let unmet = '-';
   const stage = props.currentStage ?? cols['stage'];
-  if (cols['status'] !== undefined) {
-    const unmetConditions: string[] = [];
-    for (const nameReason of cols['status']['unmetConditions']) {
-      unmetConditions.push(nameReason.name + ': ' + nameReason.reason);
-    }
-    unmet = unmetConditions.join(",\n")
+  const unmetConditions = cols['status']?.unmetConditions;
+  if (Array.isArray(unmetConditions) && unmetConditions.length > 0) {
+    unmet = unmetConditions
+      .map((nameReason: { name: string; reason: string }) => `${nameReason.name}: ${nameReason.reason}`)
+      .join(',\n');
   }
   return (
     <>
     <TableCell>
-      {isUnknownClusterName ?
-        <span>{node}</span>
-      :
       <Link key={node} to={nodeLink} >
         {node}
       </Link>
-      }
     </TableCell>
     <NodeStage
       isClusterPage={props.isClusterPage}
@@ -328,9 +324,9 @@ function NodeColumns(props) {
       stage={stage}
       t={t}
       />
-    <TableCell>{cols['nodeReady'] ? t('common.yes') : t('common.no')}</TableCell>
+    <TableCell>{cols['nodeReady'] === undefined ? '-' : cols['nodeReady'] ? t('common.yes') : t('common.no')}</TableCell>
     <TableCell>{cols['status'] === undefined ? '-' : cols['status']['ready'] ? t('common.yes') : t('common.no')}</TableCell>
-    <TableCell>{cols['memberID'] === '-' ? t('common.no') : t('common.yes')}</TableCell>
+    <TableCell>{cols['memberID'] === undefined ? '-' : cols['memberID'] === '-' ? t('common.no') : t('common.yes')}</TableCell>
     <TableCell>{cols['manifestsApplied'] === undefined ? '-' : cols['manifestsApplied'].length}</TableCell>
     <TableCell>{unmet}</TableCell>
     </>
@@ -358,6 +354,65 @@ function ClusterRows(props) {
   const isClusterPage = props.isClusterPage;
   const isOrphan = clusterName === orphansClusterName;
   const clusterLink = buildPathWithQuery('/maestro/cluster', { cluster: clusterName });
+  const clusterNameCell = (
+    <TableCell
+      rowSpan={clusterNameRowSpans[clusterName]['all']}
+      sx={{ fontWeight: 600, verticalAlign: 'top' }}
+    >
+      {isClusterPage || clusterName[0] === '_' ? (
+        <span>{clusterName}</span>
+      ) : (
+        <Link to={clusterLink}>{clusterName}</Link>
+      )}
+    </TableCell>
+  );
+
+  if (isOrphan) {
+    // No machine config applied, or unreachable — there's no reliable role to report.
+    const [firstRow, ...restRows] = nodeTypes['unassigned'] ?? [];
+    return (
+      <>
+        <ClusterSeparator />
+        <TableRow>
+          {clusterNameCell}
+          <TableCell rowSpan={clusterNameRowSpans[clusterName]['unassigned']} sx={nodeTypeCellSx('text.disabled')}>
+            -
+          </TableCell>
+          <NodeColumns
+            clusterName={props.clusterName}
+            cols={firstRow}
+            currentStage={clusterNodeStages[firstRow?.ip]}
+            isClusterPage={isClusterPage}
+            isOrphan={isOrphan}
+            onChangeStage={(nextStage: string) => {
+              if (firstRow?.ip) {
+                props.onStageChange(clusterName, firstRow.ip, nextStage);
+              }
+            }}
+            t={t}
+          />
+        </TableRow>
+        {restRows.map((value, index) => (
+          <TableRow key={`${clusterName}-unassigned-${value?.ip || index}`}>
+            <NodeColumns
+              clusterName={props.clusterName}
+              cols={value}
+              currentStage={clusterNodeStages[value?.ip]}
+              isClusterPage={isClusterPage}
+              isOrphan={isOrphan}
+              onChangeStage={(nextStage: string) => {
+                if (value?.ip) {
+                  props.onStageChange(clusterName, value.ip, nextStage);
+                }
+              }}
+              t={t}
+            />
+          </TableRow>
+        ))}
+      </>
+    );
+  }
+
   const [firstControlPlaneRow, ...controlPlaneRows] = nodeTypes['controlplanes'] ?? [];
   const [firstWorkerRow, ...workerRows] = nodeTypes['workers'] ?? [];
 
@@ -365,21 +420,12 @@ function ClusterRows(props) {
     <>
       <ClusterSeparator />
       <TableRow>
-        <TableCell
-          rowSpan={clusterNameRowSpans[clusterName]['all']}
-          sx={{ fontWeight: 600, verticalAlign: 'top' }}
-        >
-          {isClusterPage || clusterName[0] === '_' ? (
-            <span>{clusterName}</span>
-          ) : (
-            <Link to={clusterLink}>{clusterName}</Link>
-          )}
-        </TableCell>
+        {clusterNameCell}
         <TableCell
           rowSpan={clusterNameRowSpans[clusterName]['controlplanes']}
           sx={nodeTypeCellSx('info.main')}
         >
-          {isOrphan ? '-' : t('common.controlplane')}
+          {t('common.controlplane')}
         </TableCell>
         <NodeColumns
           clusterName={props.clusterName}
@@ -414,50 +460,46 @@ function ClusterRows(props) {
           />
         </TableRow>
       ))}
-      {!isOrphan && (
-        <>
-          <TableRow>
-            <TableCell
-              rowSpan={clusterNameRowSpans[clusterName]['workers']}
-              sx={nodeTypeCellSx('success.main')}
-            >
-              {t('common.worker')}
-            </TableCell>
-            <NodeColumns
-              clusterName={props.clusterName}
-              cols={firstWorkerRow}
-              currentStage={clusterNodeStages[firstWorkerRow?.ip]}
-              isClusterPage={isClusterPage}
-              isOrphan={false}
-              nodeType="worker"
-              onChangeStage={(nextStage: string) => {
-                if (firstWorkerRow?.ip) {
-                  props.onStageChange(clusterName, firstWorkerRow.ip, nextStage);
-                }
-              }}
-              t={t}
-            />
-          </TableRow>
-          {workerRows.map((value, index) => (
-            <TableRow key={`${clusterName}-worker-${value?.ip || index}`}>
-              <NodeColumns
-                clusterName={props.clusterName}
-                cols={value}
-                currentStage={clusterNodeStages[value?.ip]}
-                isClusterPage={isClusterPage}
-                isOrphan={false}
-                nodeType="worker"
-                onChangeStage={(nextStage: string) => {
-                  if (value?.ip) {
-                    props.onStageChange(clusterName, value.ip, nextStage);
-                  }
-                }}
-                t={t}
-              />
-            </TableRow>
-          ))}
-        </>
-      )}
+      <TableRow>
+        <TableCell
+          rowSpan={clusterNameRowSpans[clusterName]['workers']}
+          sx={nodeTypeCellSx('success.main')}
+        >
+          {t('common.worker')}
+        </TableCell>
+        <NodeColumns
+          clusterName={props.clusterName}
+          cols={firstWorkerRow}
+          currentStage={clusterNodeStages[firstWorkerRow?.ip]}
+          isClusterPage={isClusterPage}
+          isOrphan={isOrphan}
+          nodeType="worker"
+          onChangeStage={(nextStage: string) => {
+            if (firstWorkerRow?.ip) {
+              props.onStageChange(clusterName, firstWorkerRow.ip, nextStage);
+            }
+          }}
+          t={t}
+        />
+      </TableRow>
+      {workerRows.map((value, index) => (
+        <TableRow key={`${clusterName}-worker-${value?.ip || index}`}>
+          <NodeColumns
+            clusterName={props.clusterName}
+            cols={value}
+            currentStage={clusterNodeStages[value?.ip]}
+            isClusterPage={isClusterPage}
+            isOrphan={isOrphan}
+            nodeType="worker"
+            onChangeStage={(nextStage: string) => {
+              if (value?.ip) {
+                props.onStageChange(clusterName, value.ip, nextStage);
+              }
+            }}
+            t={t}
+          />
+        </TableRow>
+      ))}
     </>
   );
 }
@@ -498,6 +540,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
 
   const [rows, setRows] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [snackbar, setSnackbar] = useState<SnackbarState>({
     open: false,
@@ -531,18 +574,32 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
   }, [hasOrphans, isClusterPage, rows, selectedCluster]);
 
   const clusterNameRowSpans = useMemo(() => {
-    const rowSpansByCluster: Record<string, { all: number; controlplanes: number; workers: number }> = {};
+    const rowSpansByCluster: Record<
+      string,
+      { all: number; controlplanes: number; workers: number; unassigned: number }
+    > = {};
     for (const clusterName of Object.keys(filteredRows)) {
       const isOrphan = clusterName === orphansClusterName;
       const nodeTypes = filteredRows[clusterName] || {};
+      if (isOrphan) {
+        const unassignedRowSpan = Math.max((nodeTypes['unassigned'] || []).length, 1);
+        rowSpansByCluster[clusterName] = {
+          all: unassignedRowSpan,
+          controlplanes: 0,
+          workers: 0,
+          unassigned: unassignedRowSpan,
+        };
+        continue;
+      }
       const controlPlanes = nodeTypes['controlplanes'] || [];
       const workers = nodeTypes['workers'] || [];
-      const controlPlanesRowSpan = isOrphan ? controlPlanes.length : Math.max(controlPlanes.length, 1);
+      const controlPlanesRowSpan = Math.max(controlPlanes.length, 1);
       const workersRowSpan = Math.max(workers.length, 1);
       rowSpansByCluster[clusterName] = {
-        all: isOrphan ? Math.max(controlPlanes.length, 1) : controlPlanesRowSpan + workersRowSpan,
+        all: controlPlanesRowSpan + workersRowSpan,
         controlplanes: controlPlanesRowSpan,
         workers: workersRowSpan,
+        unassigned: 0,
       };
     }
     return rowSpansByCluster;
@@ -555,6 +612,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       const nodeTypes = filteredRows[clusterName] || {};
       const controlPlanes = nodeTypes['controlplanes'] || [];
       const workers = nodeTypes['workers'] || [];
+      const unassigned = nodeTypes['unassigned'] || [];
       nextSelections[clusterName] = {};
 
       for (const node of controlPlanes) {
@@ -566,6 +624,12 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       for (const node of workers) {
         if (node?.ip) {
           nextSelections[clusterName][node.ip] = isOrphan ? 'maintenance' : 'running';
+        }
+      }
+
+      for (const node of unassigned) {
+        if (node?.ip) {
+          nextSelections[clusterName][node.ip] = 'maintenance';
         }
       }
     }
@@ -618,6 +682,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
         return;
       }
       isFetching = true;
+      setRefreshing(true);
       try {
         const responseRows = await safeApiCall(() =>
           apiClient.get<Record<string, any>>('/nodesTree', {
@@ -639,6 +704,7 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
+          setRefreshing(false);
         }
         isFetching = false;
       }
@@ -852,11 +918,13 @@ const MaestroMainPage: React.FC<PageProps> = ({ delay }) => {
           </Box>
           <Stack direction="row" spacing={1}>
             <Button
+              disabled={refreshing}
               onClick={() => setRefreshTick(current => current + 1)}
               size="small"
+              startIcon={refreshing ? <CircularProgress color="inherit" size={14} /> : undefined}
               variant="outlined"
             >
-              {t('clustersPage.refreshNow')}
+              {refreshing ? t('clustersPage.refreshing') : t('clustersPage.refreshNow')}
             </Button>
             <Button component={Link} size="small" to="/maestro/cluster/scanNets" variant="contained">
               {t('clustersPage.scanNetworks')}
