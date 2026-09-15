@@ -59,5 +59,4 @@ def scan_nets():
     with open(nodes_file, "w", encoding="utf-8") as file_pointer:
         json.dump(nodes, file_pointer, indent=2)
 
-    maestro.init_talosconfig()
     return jsonify({"status": "success", "message": "Successfully scanned"}), 200

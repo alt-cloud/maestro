@@ -3,6 +3,7 @@ import { SectionBox } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import {
   Box,
   Button,
+  CircularProgress,
   IconButton,
   List,
   ListItem,
@@ -52,6 +53,7 @@ const ScanNetworksPage: React.FC<{}> = () => {
   const [formError, setFormError] = useState('');
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [snackbar, setSnackbar] = useState<SnackbarState>({
     open: false,
     message: '',
@@ -119,11 +121,15 @@ const ScanNetworksPage: React.FC<{}> = () => {
   };
 
   const handleSubmit = async () => {
+    if (submitting) {
+      return;
+    }
     if (scanNetworks.length === 0) {
       setSnackbar({ open: true, message: t('scanNetworks.addAtLeastOne'), severity: 'warning' });
       return;
     }
 
+    setSubmitting(true);
     try {
       await apiClient.postNoContent('/scanNets', { scanNets: scanNetworks });
       history.push('/maestro');
@@ -135,6 +141,7 @@ const ScanNetworksPage: React.FC<{}> = () => {
         console.error(t('clustersPage.requestFailed'), err);
         setSnackbar({ open: true, message: t('scanNetworks.requestFailed') + `: ${err}`, severity: 'error' });
       }
+      setSubmitting(false);
     }
   };
 
@@ -200,9 +207,20 @@ const ScanNetworksPage: React.FC<{}> = () => {
               )}
             </Box>
 
-            <Button disabled={scanNetworks.length === 0} onClick={handleSubmit} size="large" variant="contained">
-              {t('scanNetworks.startScan')}
+            <Button
+              disabled={scanNetworks.length === 0 || submitting}
+              onClick={handleSubmit}
+              size="large"
+              startIcon={submitting ? <CircularProgress color="inherit" size={18} /> : undefined}
+              variant="contained"
+            >
+              {submitting ? t('scanNetworks.scanning') : t('scanNetworks.startScan')}
             </Button>
+            {submitting && (
+              <Typography color="text.secondary" variant="body2">
+                {t('scanNetworks.scanningHint')}
+              </Typography>
+            )}
           </Stack>
         </Paper>
       )}

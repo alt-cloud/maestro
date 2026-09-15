@@ -143,6 +143,10 @@ async function request<T>(
     headers,
     signal: options.signal,
     credentials: 'same-origin',
+    // Every endpoint here reports live cluster/node state. Without this the browser is
+    // free to answer a repeated GET from its own cache, which showed nodes still sitting
+    // in a cluster they had already been reset out of.
+    cache: 'no-store',
   };
 
   if (body !== undefined && body !== null) {
