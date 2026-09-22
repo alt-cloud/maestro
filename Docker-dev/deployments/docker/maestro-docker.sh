@@ -14,7 +14,6 @@ case "$action" in
   then
     source ./.env
   fi
-  set | grep MAESTRO
   sudo ../../tuneCaddy.sh ../../Caddyfile.template $MAESTRO_API_WHITELIST
   docker run -d --name $projectName \
     -p 127.0.0.1:4466:4466 \
