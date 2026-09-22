@@ -1,6 +1,5 @@
 #!/bin/sh
 
-set -x
 caddyTemplateFile=$1
 shift
 ifs=$IFS;IFS+=,;set -- $@;IFS=$ifs

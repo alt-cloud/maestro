@@ -93,7 +93,7 @@ cd deployments/docker_compose/localhost  # или inet
 - Имя проекта передаётся в `docker compose` через флаг `-p $projectName`.
 - Файл `docker-compose.yml` декларативно описывает сервис `maestro`:
   - Использует образ `altlinux.space/alt-orchestra-dev/maestro-dev:latest`.
-  - Принимает переменные окружения (`MAESTRO_API_USER`, `MAESTRO_API_UID`, `MAESTRO_FRONTEBD_HOST`, `MAESTRO_API_HOST`, `MAESTRO_API_KEYS`, `MAESTRO_CORS_ORIGINS`, `MAESTRO_API_WHITELIST`).
+  - Принимает переменные окружения (`MAESTRO_API_USER`, `MAESTRO_API_UID`, `MAESTRO_FRONTEND_HOST`, `MAESTRO_API_HOST`, `MAESTRO_API_KEYS`, `MAESTRO_CORS_ORIGINS`, `MAESTRO_API_WHITELIST`).
   - Монтирует те же тома `~/.maestro` и `~/.kube`.
 - Как и в первом варианте, перед запуском настраивается Caddy через `tuneCaddy.sh`.
 

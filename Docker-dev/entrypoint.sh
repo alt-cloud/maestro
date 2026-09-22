@@ -1,6 +1,4 @@
 #!/bin/sh
-set -x
-# export HOME="/home/maestro"
 if [ $(id -u maestro) -eq "$MAESTRO_API_UID" ]
 then
   MAESTRO_API_USER='maestro'
@@ -12,9 +10,9 @@ else
 fi
 
 # Frontend
-if [ -z "$MAESTRO_FRONTEBD_HOST" ]
+if [ -z "$MAESTRO_FRONTEND_HOST" ]
 then
-  MAESTRO_FRONTEBD_HOST=127.0.0.1
+  MAESTRO_FRONTEND_HOST=127.0.0.1
 fi
 if [ -z "$MAESTRO_API_URL" ]
 then
@@ -28,7 +26,7 @@ VARS=$(env | grep '^MAESTRO_' | cut -d= -f1 | paste -sd, -)
 EXPORTVARS="UID=$MAESTRO_API_UID USER=maestro HOME=/home/maestro LOGNAME=maestro"
 
 cmd="/usr/bin/headlamp-server \
-    -listen-addr $MAESTRO_FRONTEBD_HOST\
+    -listen-addr $MAESTRO_FRONTEND_HOST\
     -port 4466\
     -html-static-dir /usr/share/headlamp/frontend\
     -plugins-dir /usr/share/headlamp/plugins"
