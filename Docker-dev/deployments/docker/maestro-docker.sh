@@ -2,7 +2,7 @@
 
 source ../../getProjectName.sh
 projectName=$(getProjectName)
-SOURCE ../../ENVVARS.SH
+source ../../envVars.sh
 export MAESTRO_API_USER=$USER
 export MAESTRO_API_UID=$(id -u $MAESTRO_API_USER)
 export MAESTRO_API_GID=$(id -g $MAESTRO_API_USER)
@@ -27,6 +27,8 @@ case "$action" in
     -e MAESTRO_CORS_ORIGINS="http://127.0.0.1:4466,http://localhost:4466$HTTPS_CORS_ORIGIN" \
     -e MAESTRO_API_WHITELIST="127.0.0.1$DOCKER_NETS" \
     -e MAESTRO_API_URL="" \
+    -e FLASK_DEBUG=1 \
+    -e MAESTRO_API_DEBUG=True \
     -v /home/$MAESTRO_API_USER/.maestro:/home/maestro/.maestro \
     -v /home/$MAESTRO_API_USER/.kube:/home/maestro/.kube \
     altlinux.space/alt-orchestra-dev/maestro-dev:latest

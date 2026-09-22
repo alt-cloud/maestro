@@ -23,13 +23,14 @@ echo 'root ALL=(ALL) ALL' >/etc/sudoers.d/root
 echo "{\"MAESTRO_API_URL\": \"$MAESTRO_API_URL\"}" | jq . > /usr/share/headlamp/plugins/maestro/config.json
 
 VARS=$(env | grep '^MAESTRO_' | cut -d= -f1 | paste -sd, -)
-EXPORTVARS="UID=$MAESTRO_API_UID USER=maestro HOME=/home/maestro LOGNAME=maestro"
+EXPORTVARS="UID=$MAESTRO_API_UID USER=maestro HOME=/home/maestro LOGNAME=maestro FLASK_DEBUG=$FLASK_DEBUG MAESTRO_API_DEBUG=$MAESTRO_API_DEBUG"
 
 cmd="/usr/bin/headlamp-server \
     -listen-addr $MAESTRO_FRONTEND_HOST\
     -port 4466\
     -html-static-dir /usr/share/headlamp/frontend\
     -plugins-dir /usr/share/headlamp/plugins"
+
 while true
 do
   if [ "$container" = 'podman' ]
@@ -52,8 +53,12 @@ do
   else
     sudo -u $MAESTRO_API_USER $EXPORTVARS --preserve-env=$VARS $cmd >&2
   fi
+  if [ $? -ne 0 ]
+  then
+    echo 'Stop maestro API'
+    exit 1
+  fi
   echo 'Restart maestro API'
   sleep 1
-done &
+done
 
-sleep infinity
