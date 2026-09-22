@@ -13,7 +13,7 @@ services:
       MAESTRO_CORS_ORIGINS: $MAESTRO_CORS_ORIGINS
       MAESTRO_API_WHITELIST: $MAESTRO_API_WHITELIST
       FLASK_DEBUG: 1
-      MAESTRO_API_DEBUG: True
+      MAESTRO_API_DEBUG: true
     volumes:
       - /home/$MAESTRO_API_USER/.maestro:/home/maestro/.maestro
       - /home/$MAESTRO_API_USER/.kube:/home/maestro/.kube

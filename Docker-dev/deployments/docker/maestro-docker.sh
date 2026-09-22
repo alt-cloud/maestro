@@ -27,7 +27,7 @@ case "$action" in
     -e MAESTRO_API_WHITELIST="127.0.0.1$DOCKER_NETS" \
     -e MAESTRO_API_URL="" \
     -e FLASK_DEBUG=1 \
-    -e MAESTRO_API_DEBUG=True \
+    -e MAESTRO_API_DEBUG=true \
     -v /home/$MAESTRO_API_USER/.maestro:/home/maestro/.maestro \
     -v /home/$MAESTRO_API_USER/.kube:/home/maestro/.kube \
     altlinux.space/alt-orchestra-dev/maestro-dev:latest
