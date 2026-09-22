@@ -41,7 +41,6 @@ def parse_cors_origins(raw_value: str) -> List[str]:
         message = '''Using MAESTRO_CORS_ORIGINS='*' is prohibited for security reasons.
 Please provide a specific list of IP addresses separated by commas.
 (for example, 'http://127.0.0.1:4466')'''
-        current_app.logger.warning(message)
         raise RuntimeError(message)
 
     if not stripped or stripped.lower() in ("localhost", "127.0.0.1"):
