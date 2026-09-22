@@ -25,6 +25,8 @@ case "$action" in
     -e MAESTRO_API_KEYS="$MAESTRO_API_KEYS" \
     -e MAESTRO_CORS_ORIGINS="$MAESTRO_CORS_ORIGINS" \
     -e MAESTRO_API_WHITELIST="$MAESTRO_API_WHITELIST" \
+    -e FLASK_DEBUG=1 \
+    -e MAESTRO_API_DEBUG=True \
     -v /home/$MAESTRO_API_USER/.maestro:/home/maestro/.maestro \
     -v /home/$MAESTRO_API_USER/.kube:/home/maestro/.kube \
     altlinux.space/alt-orchestra-dev/maestro-dev:latest
