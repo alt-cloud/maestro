@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 import ipaddress
 from typing import List, Set, Union
+from flask import current_app, jsonify
+
 
 LOCALHOST_ORIGINS = [
     "http://localhost",
@@ -36,11 +38,11 @@ def parse_cors_origins(raw_value: str) -> List[str]:
     stripped = raw_value.strip()
 
     if stripped == "*":
-        raise RuntimeError(
-            "Using MAESTRO_CORS_ORIGINS='*' is prohibited for security reasons. "
-            "Please provide a specific list of IP addresses separated by commas. "
-            "(for example, 'http://127.0.0.1:4466')."
-        )
+        message = '''Using MAESTRO_CORS_ORIGINS='*' is prohibited for security reasons.
+Please provide a specific list of IP addresses separated by commas.
+(for example, 'http://127.0.0.1:4466')'''
+        current_app.logger.warning(message)
+        raise RuntimeError(message)
 
     if not stripped or stripped.lower() in ("localhost", "127.0.0.1"):
         return LOCALHOST_ORIGINS.copy()
@@ -159,7 +161,6 @@ class Config:
     API_DEBUG = os.getenv("MAESTRO_API_DEBUG", "false").lower() == "true"
 
     CORS_ORIGINS = parse_cors_origins(os.getenv("MAESTRO_CORS_ORIGINS", "http://127.0.0.1:4466"))
-    print('Config:: CORS_ORIGINS=', CORS_ORIGINS)
 
     API_WHITELIST = parse_api_whitelist(os.getenv("MAESTRO_API_WHITELIST", "127.0.0.1"))
 
@@ -169,10 +170,12 @@ class Config:
         "MAESTRO_TALOS_COMMAND_TIMEOUT_SECONDS",
         30.0,
     )
+
     NMAP_COMMAND_TIMEOUT_SECONDS = parse_positive_float(
         "MAESTRO_NMAP_COMMAND_TIMEOUT_SECONDS",
         120.0,
     )
+
     PORT_CHECK_TIMEOUT_SECONDS = parse_positive_float(
         "MAESTRO_PORT_CHECK_TIMEOUT_SECONDS",
         3.0,

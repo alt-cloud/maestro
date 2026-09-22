@@ -11,6 +11,6 @@ if [ -f "$ENV_FILE" ]; then
   . "$ENV_FILE"
   set +a
 fi
-DEBUG=1
-
+export FLASK_DEBUG=1
+export MAESTRO_API_DEBUG=True
 exec maestro-api
