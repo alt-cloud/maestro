@@ -18,7 +18,10 @@ case "$action" in
   then
     source ./.env
   fi
-  sudo ../../tuneCaddy.sh ../../Caddyfile.template $MAESTRO_API_WHITELIST
+  if [ $(basename $PWD ) = 'inet' ]
+  then
+    sudo ../../tuneCaddy.sh ../../Caddyfile.template $MAESTRO_API_WHITELIST
+  fi
   docker run -d --name $projectName \
     -p 127.0.0.1:4466:4466 \
     -p 127.0.0.1:5000:5000 \

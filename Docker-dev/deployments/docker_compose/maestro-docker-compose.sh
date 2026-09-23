@@ -16,7 +16,10 @@ case "$action" in
   then
     source ./.env
   fi
-  sudo ../../tuneCaddy.sh ../../Caddyfile.template $MAESTRO_API_WHITELIST
+  if [ $(basename $PWD ) = 'inet' ]
+  then
+    sudo ../../tuneCaddy.sh ../../Caddyfile.template $MAESTRO_API_WHITELIST
+  fi
   action='up -d';
   break;;
 'down') break;;
