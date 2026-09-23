@@ -9,6 +9,9 @@ action=$1
 case "$action" in
 'up')
   source ../../envVars.sh
+  maestroApiKeysFile="../../maestroApiKeysFile.json"
+  ../../apikeyGenerator.sh
+  export MAESTRO_API_KEYS=$(cat $maestroApiKeysFile)
   if [ -f ./.env ]
   then
     source ./.env

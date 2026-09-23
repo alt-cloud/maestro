@@ -2,7 +2,7 @@
 
 source ../../getProjectName.sh
 projectName=$(getProjectName)
-source ../../envVars.sh
+
 export MAESTRO_API_USER=$USER
 export MAESTRO_API_UID=$(id -u $MAESTRO_API_USER)
 export MAESTRO_API_GID=$(id -g $MAESTRO_API_USER)
@@ -10,6 +10,10 @@ export MAESTRO_API_GID=$(id -g $MAESTRO_API_USER)
 action=$1
 case "$action" in
 'up')
+  source ../../envVars.sh
+  maestroApiKeysFile="../../maestroApiKeysFile.json"
+  ../../apikeyGenerator.sh
+  export MAESTRO_API_KEYS=$(cat $maestroApiKeysFile)
   if [ -f .env ]
   then
     source ./.env
