@@ -26,14 +26,27 @@ class NodeClassification(TypedDict):
     trackable: bool
     changed: bool
 
+def mask_args(args: list[str]) -> list[str]:
+    masked_args = []
+    mask_next = False
+
+    for arg in args:
+        if mask_next:
+            masked_args.append("***MASKED***")
+            mask_next = False
+        else:
+            masked_args.append(arg)
+            if arg[0:14] == "--config-patch":
+                mask_next = True
+
+    return masked_args
 
 class CommandTimeoutError(RuntimeError):
     def __init__(self, args: list[str], timeout_seconds: float):
         command = shlex.join(args)
-        super().__init__(f"Command timed out after {timeout_seconds:.1f}s: {command}")
+        super().__init__(f"Command timed out after {timeout_seconds:.1f}s: {shlex.join(mask_args(args))}")
         self.command = command
         self.timeout_seconds = timeout_seconds
-
 
 def _parse_json_stream(raw_output: str) -> list[dict[str, Any]]:
     normalized = f"[{raw_output.replace('}\n{', '},{')}]"
@@ -41,11 +54,13 @@ def _parse_json_stream(raw_output: str) -> list[dict[str, Any]]:
 
 
 def build_command_env(cluster_dir: str) -> dict[str, str]:
-    env = os.environ.copy()
-    env["clusterDir"] = cluster_dir
-    env["TALOSCONFIG"] = "talosconfig"
+    env = {
+        "PATH": os.environ.get("PATH", ""),
+        "HOME": os.environ.get("HOME", ""),
+        "TALOSCONFIG": "talosconfig",
+        "clusterDir": cluster_dir,
+    }
     return env
-
 
 def run_command(
     args: list[str],
@@ -58,7 +73,7 @@ def run_command(
         raise ValueError("timeout_seconds must be greater than zero")
 
     timeout_info = f" timeout={timeout_seconds}s" if timeout_seconds is not None else ""
-    print(f"run_command cwd={cluster_dir} args={shlex.join(args)}{timeout_info}", flush=True)
+    print(f"run_command cwd={cluster_dir} args={shlex.join(mask_args(args))}{timeout_info}", flush=True)
     try:
         return subprocess.run(
             args,
