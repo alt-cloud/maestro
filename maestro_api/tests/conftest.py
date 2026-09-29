@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 BaseALT LLC
+#
+# SPDX-License-Identifier: MPL-2.0
+
 """Shared pytest fixtures for the security tests.
 
 The environment must be configured BEFORE ``maestro_api.config`` is imported,

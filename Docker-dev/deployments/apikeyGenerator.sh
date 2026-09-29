@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: 2026 BaseALT LLC
+#
+# SPDX-License-Identifier: MPL-2.0
+
 format() {
   echo -ne "Format:\n\t$1 <catalog>\n" >&2
   exit 1

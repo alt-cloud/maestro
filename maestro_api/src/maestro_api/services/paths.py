@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 BaseALT LLC
+#
+# SPDX-License-Identifier: MPL-2.0
+
 import os
 
 from maestro_api.services.validators import validate_cluster_name

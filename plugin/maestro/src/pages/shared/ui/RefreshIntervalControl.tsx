@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 BaseALT LLC
+//
+// SPDX-License-Identifier: MPL-2.0
+
 import { useTranslation } from '@kinvolk/headlamp-plugin/lib';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import React from 'react';

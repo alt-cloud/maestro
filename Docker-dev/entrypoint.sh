@@ -1,4 +1,9 @@
 #!/bin/sh
+
+# SPDX-FileCopyrightText: 2026 BaseALT LLC
+#
+# SPDX-License-Identifier: MPL-2.0
+
 if [ $(id -u maestro) -eq "$MAESTRO_API_UID" ]
 then
   MAESTRO_API_USER='maestro'

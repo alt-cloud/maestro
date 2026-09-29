@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 BaseALT LLC
+//
+// SPDX-License-Identifier: MPL-2.0
+
 const UNIT_MULTIPLIERS: Record<string, number> = {
   '': 1,
   B: 1,

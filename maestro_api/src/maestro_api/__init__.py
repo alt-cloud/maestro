@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 BaseALT LLC
+#
+# SPDX-License-Identifier: MPL-2.0
+
 from flask import Flask
 
 from maestro_api.auth import register_api_key_auth

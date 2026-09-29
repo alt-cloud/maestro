@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 BaseALT LLC
+//
+// SPDX-License-Identifier: MPL-2.0
+
 import { useCallback } from 'react';
 import { MaestroApiError } from '../utils/apiClient';
 import { useApiKey } from './ApiKeyContext';

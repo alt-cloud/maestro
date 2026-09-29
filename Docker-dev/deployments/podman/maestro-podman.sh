@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: 2026 BaseALT LLC
+#
+# SPDX-License-Identifier: MPL-2.0
+
 source ../../getProjectName.sh
 projectName=$(getProjectName)
 export MAESTRO_API_USER=$USER

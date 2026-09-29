@@ -1,3 +1,11 @@
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
+
+## License
+
+This project is licensed under the Mozilla Public License v2.0 - see the [LICENSE](LICENSE) file for details.
+
+Third-party components and their licenses are listed in the [NOTICE](NOTICE) file.
+
 # Maestro API
 
 Backend API for the Maestro Headlamp plugin.

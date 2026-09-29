@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 BaseALT LLC
+#
+# SPDX-License-Identifier: MPL-2.0
+
 """Talos ↔ Kubernetes compatibility.
 
 The only thing meant to be edited here per Talos release shipped in ALT

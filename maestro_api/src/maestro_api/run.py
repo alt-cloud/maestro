@@ -1,4 +1,9 @@
 #!/bin/python3
+
+# SPDX-FileCopyrightText: 2026 BaseALT LLC
+#
+# SPDX-License-Identifier: MPL-2.0
+
 from maestro_api import create_app
 
 

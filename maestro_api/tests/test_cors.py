@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 BaseALT LLC
+#
+# SPDX-License-Identifier: MPL-2.0
+
 """CORS behaviour: allowed vs blocked origin, no credentials, no wildcard."""
 
 import pytest

@@ -1,7 +1,10 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: 2026 BaseALT LLC
+#
+# SPDX-License-Identifier: MPL-2.0
+
 dir="/tmp/getSubcommands_$$"
-# dir="/tmp/getSubcommands"
 mkdir $dir
 rm -f $dir/*
 
@@ -13,10 +16,8 @@ do
   LEVEL1=$2
   LEVEL2=$1
   IFS=$ifs
-#   echo $LEVEL1 $ALIASES
   echo $LEVEL2 $ALIASES >> $dir/$LEVEL1
 done
-# exit
 cd $dir
 for NS in *
 do
@@ -30,6 +31,5 @@ do
     echo "    command: $name"
     echo "    name: $name"
   done < $NS
-#   sed -e 's/^/    - /' $NS
 done
 rm -rf $dir

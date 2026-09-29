@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 BaseALT LLC
+#
+# SPDX-License-Identifier: MPL-2.0
+
 """API-key authentication behaviour (not just header presence)."""
 
 from datetime import datetime, timedelta, timezone

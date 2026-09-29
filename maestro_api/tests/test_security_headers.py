@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 BaseALT LLC
+#
+# SPDX-License-Identifier: MPL-2.0
+
 """Defense-in-depth security headers are present on responses.
 
 These are a cheap secondary control (the real XSS/clickjacking surface is the
